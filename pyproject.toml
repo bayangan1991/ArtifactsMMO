@@ -1,0 +1,28 @@
+[project]
+name = "artifactsmmo"
+version = "0.1.0"
+description = "Backend for Artifacts MMO"
+requires-python = "<4.0,>=3.12"
+dependencies = [
+    "fastapi>=0.115.11",
+    "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "ruff>=0.10.0",
+]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN",
+    "PLR",
+    "D",
+    "E501",
+    "S104",
+    "S311",
+    "T201",
+    "C901",
+]

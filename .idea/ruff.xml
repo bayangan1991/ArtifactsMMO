@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RuffConfigService">
+    <option name="enableRuffLogging" value="true" />
+    <option name="globalRuffExecutablePath" value="C:\Users\Ryan\PycharmProjects\ArtifactsMMO\.venv\Scripts\ruff.exe" />
+    <option name="ruffConfigPath" value="C:\Users\Ryan\PycharmProjects\PythonProject1\pyproject.toml" />
+    <option name="useRuffFormat" value="true" />
+    <option name="useRuffServer" value="true" />
+  </component>
+</project>
