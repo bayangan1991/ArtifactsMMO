@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "biome lint --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-client": "openapi-typescript https://api.artifactsmmo.com/openapi.json -o ./src/artifactsmmo-client/spec.d.ts"
   },
   "dependencies": {
     "react": "^19.0.0",
@@ -19,7 +20,8 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "openapi-fetch": "^0.13.4",
-    "typescript": "~5.8.2",
+    "openapi-typescript": "^7.6.1",
+    "typescript": "^5.8.2",
     "vite": "^6.2.0"
   }
 }

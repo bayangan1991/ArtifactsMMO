@@ -1,31 +1,40 @@
-import { useState } from 'react'
-import viteLogo from '/vite.svg'
-import reactLogo from './assets/react.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { useCharacters, usePosition } from './artifactsmmo-client/client.ts'
+import type { Position } from './types.ts'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const characters = useCharacters()
+  const [activeCharacter, setActiveCharacter] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (characters.length) setActiveCharacter(characters[0])
+  }, [characters])
+
+  const { pos, move } = usePosition(activeCharacter)
+  const [targetPos, setTargetPos] = useState<Position>({ x: 0, y: 0 })
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>
+        {activeCharacter}@{pos.x},{pos.y}
+      </h1>
+
       <div className="card">
-        <button type="button" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <input
+          type="number"
+          value={targetPos.x}
+          onChange={(e) => setTargetPos({ y: targetPos.y, x: Number(e.target.value) })}
+        />
+        <input
+          type="number"
+          value={targetPos.y}
+          onChange={(e) => setTargetPos({ x: targetPos.x, y: Number(e.target.value) })}
+        />
+        <button type="button" onClick={() => move(targetPos)}>
+          Move
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
     </>
   )
 }
