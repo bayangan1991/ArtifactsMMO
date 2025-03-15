@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import './App.scss'
 import { Temporal } from '@js-temporal/polyfill'
+import { Button, Card, Col, Container, Form, Navbar, Row } from 'react-bootstrap'
 import { useCharacters, usePosition } from './artifactsmmo-client/client.ts'
 import { useInterval } from './hooks/use-interval.ts'
 import type { Position } from './types.ts'
@@ -36,28 +37,54 @@ function App() {
 
   return (
     <>
-      <h1>
-        {activeCharacter}@{pos.x},{pos.y}
-      </h1>
-      <h2>
-        {timeUntilReady?.toJSON()} <br />
-        {!timeUntilReady && 'Ready'}
-      </h2>
-      <div className="card">
-        <input
-          type="number"
-          value={targetPos.x}
-          onChange={(e) => setTargetPos({ y: targetPos.y, x: Number(e.target.value) })}
-        />
-        <input
-          type="number"
-          value={targetPos.y}
-          onChange={(e) => setTargetPos({ x: targetPos.x, y: Number(e.target.value) })}
-        />
-        <button type="button" onClick={() => handleMove(targetPos)}>
-          Move
-        </button>
-      </div>
+      <Navbar data-bs-theme="dark" bg="dark">
+        <Container fluid>
+          <Navbar.Brand>{activeCharacter}</Navbar.Brand>
+          <div className="me-auto d-flex gap-2">
+            <Navbar.Text>
+              @{pos.x},{pos.y}
+            </Navbar.Text>
+          </div>
+          <Navbar.Text>
+            {timeUntilReady?.round('second').toLocaleString()}
+            {!timeUntilReady && 'Ready'}
+          </Navbar.Text>
+        </Container>
+      </Navbar>
+      <Container fluid className="mt-3">
+        <Row>
+          <Col lg={3}>
+            <Card>
+              <Form>
+                <Card.Body>
+                  <Card.Title>Move Action</Card.Title>
+                  <Form.Group>
+                    <Form.Label>X</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={targetPos.x}
+                      onChange={(e) => setTargetPos({ y: targetPos.y, x: Number(e.target.value) })}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Y</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={targetPos.y}
+                      onChange={(e) => setTargetPos({ x: targetPos.x, y: Number(e.target.value) })}
+                    />
+                  </Form.Group>
+                </Card.Body>
+                <Card.Footer>
+                  <Button type="button" onClick={() => handleMove(targetPos)}>
+                    Move
+                  </Button>
+                </Card.Footer>
+              </Form>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </>
   )
 }
