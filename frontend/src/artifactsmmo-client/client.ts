@@ -28,42 +28,50 @@ const useCharacters = () => {
   return characters
 }
 
-const usePosition = (character: string | null) => {
-  const [pos, setPos] = useState<Position>({ x: 0, y: 0 })
+const useCharacter = (name: string | null) => {
+  const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
 
-  useEffect(() => {
-    if (character)
-      client.GET('/characters/{name}', { params: { path: { name: character } } }).then(({ data: result }) => {
+  const refetch = () => {
+    if (name)
+      client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
         if (result) {
-          setPos({ x: result.data.x, y: result.data.y })
+          setCharacter(result.data)
         }
       })
-  }, [character])
+  }
+  useEffect(refetch, [])
 
   const move = ({ x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
-    if (character)
+    if (name)
       return client
         .POST('/my/{name}/action/move', {
           body: { x, y },
           params: {
-            path: { name: character },
+            path: { name },
           },
         })
         .then(({ data: moveResult }) => {
-          if (moveResult) {
-            setPos({ x, y })
-            return moveResult.data
-          }
+          if (moveResult) refetch()
           return null
         })
         .catch(() => null)
     return new Promise(() => null)
   }
 
+  const rest = (): Promise<null> => {
+    if (name)
+      return client.POST('/my/{name}/action/rest', { params: { path: { name } } }).then(({ data: restResult }) => {
+        if (restResult) refetch()
+        return null
+      })
+    return new Promise(() => null)
+  }
+
   return {
-    pos,
-    move,
+    character,
+    refetch,
+    actions: { move, rest },
   }
 }
 
-export { usePosition, useCharacters }
+export { useCharacter, useCharacters }

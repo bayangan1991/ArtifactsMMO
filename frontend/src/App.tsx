@@ -1,24 +1,35 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
 import { Temporal } from '@js-temporal/polyfill'
-import { Button, Card, Col, Container, Form, Navbar, Row } from 'react-bootstrap'
-import { useCharacters, usePosition } from './artifactsmmo-client/client.ts'
+import { Button, Card, Col, Container, Form, Navbar, ProgressBar, Row } from 'react-bootstrap'
+import { useCharacter, useCharacters } from './artifactsmmo-client/client.ts'
 import { useInterval } from './hooks/use-interval.ts'
 import type { Position } from './types.ts'
 
 function App() {
-  const [cooldown, setCooldown] = useState(Temporal.Now.instant())
-  const characters = useCharacters()
   const [activeCharacter, setActiveCharacter] = useState<string | null>(null)
+  const [cooldown, setCooldown] = useState(Temporal.Now.instant())
+  const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
+  const characters = useCharacters()
+  const {
+    character,
+    refetch,
+    actions: { move, rest },
+  } = useCharacter(activeCharacter)
 
   useEffect(() => {
-    if (characters.length) setActiveCharacter(characters[0])
+    if (characters.length) {
+      setActiveCharacter(characters[0])
+    }
   }, [characters])
 
-  const { pos, move } = usePosition(activeCharacter)
-  const [targetPos, setTargetPos] = useState<Position>({ x: 0, y: 0 })
+  useEffect(() => {
+    if (character) {
+      if (character.cooldown_expiration) setCooldown(Temporal.Instant.from(character.cooldown_expiration))
+    }
+  }, [character])
 
-  const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
+  const [targetPos, setTargetPos] = useState<Position>({ x: 0, y: 0 })
 
   const onTick = () => {
     const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) !== -1
@@ -42,7 +53,7 @@ function App() {
           <Navbar.Brand>{activeCharacter}</Navbar.Brand>
           <div className="me-auto d-flex gap-2">
             <Navbar.Text>
-              @{pos.x},{pos.y}
+              @{character?.x},{character?.y}
             </Navbar.Text>
           </div>
           <Navbar.Text>
@@ -54,6 +65,16 @@ function App() {
       <Container fluid className="mt-3">
         <Row>
           <Col lg={3}>
+            <Card>
+              <Card.Body>
+                <ProgressBar variant="danger" max={character?.max_hp} now={character?.hp} />
+              </Card.Body>
+              <Card.Footer>
+                <Button variant="danger" onClick={rest}>
+                  Rest
+                </Button>
+              </Card.Footer>
+            </Card>
             <Card>
               <Form>
                 <Card.Body>
