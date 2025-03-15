@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
 import { Temporal } from '@js-temporal/polyfill'
-import { Button, Card, Col, Container, Navbar, ProgressBar, Row } from 'react-bootstrap'
+import { Col, Container, Navbar, Row } from 'react-bootstrap'
 import { useCharacter } from './artifactsmmo-client/hooks/use-characters/useCharacter.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters/useCharacters.ts'
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
+import { StatsCard } from './components/stats-card/StatsCard.tsx'
 import { useInterval } from './hooks/use-interval.ts'
 import type { Position } from './types.ts'
 
@@ -64,28 +65,7 @@ function App() {
       <Container fluid className="mt-3">
         <Row className="g-4">
           <Col lg={6}>
-            <Card>
-              <Card.Body className="d-flex flex-column gap-2">
-                <Card.Title>Stats</Card.Title>
-                <ProgressBar
-                  variant="danger"
-                  max={character?.max_hp}
-                  now={character?.hp}
-                  label={`${character?.hp} / ${character?.max_hp}`}
-                />
-                <ProgressBar
-                  variant="success"
-                  max={character?.max_xp}
-                  now={character?.xp}
-                  label={`${character?.xp} / ${character?.max_xp}`}
-                />
-              </Card.Body>
-              <Card.Footer>
-                <Button variant="danger" onClick={rest}>
-                  Rest
-                </Button>
-              </Card.Footer>
-            </Card>
+            <StatsCard character={character} doRest={rest} />
           </Col>
           <Col lg={6}>
             <ActionMoveCard doMove={handleMove} />
