@@ -4,9 +4,10 @@ import type { Position } from '../../../types.ts'
 
 interface Props {
   doMove: (pos: Position) => void
+  ready: boolean
 }
 
-const ActionMoveCard = ({ doMove }: Props) => {
+const ActionMoveCard = ({ doMove, ready }: Props) => {
   const [targetPos, setTargetPos] = useState<Position>({ x: 0, y: 0 })
   return (
     <Card>
@@ -33,7 +34,7 @@ const ActionMoveCard = ({ doMove }: Props) => {
           </InputGroup>
         </Card.Body>
         <Card.Footer>
-          <Button type="button" onClick={() => doMove(targetPos)}>
+          <Button type="button" onClick={() => doMove(targetPos)} disabled={!ready}>
             Move
           </Button>
         </Card.Footer>

@@ -7,13 +7,15 @@ import { useCharacters } from './artifactsmmo-client/hooks/use-characters/useCha
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
 import { StatsCard } from './components/stats-card/StatsCard.tsx'
 import { useInterval } from './hooks/use-interval.ts'
-import type { Position } from './types.ts'
 
 function App() {
+  const characters = useCharacters()
   const [activeCharacter, setActiveCharacter] = useState<string | null>(null)
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
   const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
-  const characters = useCharacters()
+
+  const ready = timeUntilReady === null
+
   const {
     character,
     actions: { move, rest },
@@ -32,19 +34,11 @@ function App() {
   }, [character])
 
   const onTick = () => {
-    const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) !== -1
+    const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
     if (ready) setTimeUntilReady(null)
     if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
   }
   useInterval(onTick, 100)
-
-  const handleMove = (pos: Position) => {
-    move(pos).then((result) => {
-      if (result) {
-        setCooldown(Temporal.Instant.from(result.cooldown.expiration))
-      }
-    })
-  }
 
   return (
     <>
@@ -65,10 +59,10 @@ function App() {
       <Container fluid className="mt-3">
         <Row className="g-4">
           <Col lg={6}>
-            <StatsCard character={character} doRest={rest} />
+            <StatsCard character={character} doRest={rest} ready={ready} />
           </Col>
           <Col lg={6}>
-            <ActionMoveCard doMove={handleMove} />
+            <ActionMoveCard doMove={move} ready={ready} />
           </Col>
         </Row>
       </Container>

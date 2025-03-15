@@ -3,10 +3,11 @@ import type { components } from '../../artifactsmmo-client/spec'
 
 interface Props {
   character: components['schemas']['CharacterSchema'] | null
+  ready: boolean
   doRest: () => Promise<null>
 }
 
-const StatsCard = ({ character, doRest }: Props) => (
+const StatsCard = ({ character, doRest, ready }: Props) => (
   <Card>
     <Card.Body className="d-flex flex-column gap-2">
       <Card.Title>Stats</Card.Title>
@@ -24,7 +25,7 @@ const StatsCard = ({ character, doRest }: Props) => (
       />
     </Card.Body>
     <Card.Footer>
-      <Button variant="danger" onClick={doRest}>
+      <Button variant="danger" onClick={doRest} disabled={!ready}>
         Rest
       </Button>
     </Card.Footer>
