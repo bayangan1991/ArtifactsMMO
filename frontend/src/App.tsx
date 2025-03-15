@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.scss'
 import { Temporal } from '@js-temporal/polyfill'
 import { Button, Card, Col, Container, Form, Navbar, ProgressBar, Row } from 'react-bootstrap'
-import { useCharacter, useCharacters } from './artifactsmmo-client/client.ts'
+import { useCharacter } from './artifactsmmo-client/hooks/use-characters/useCharacter.ts'
+import { useCharacters } from './artifactsmmo-client/hooks/use-characters/useCharacters.ts'
 import { useInterval } from './hooks/use-interval.ts'
 import type { Position } from './types.ts'
 
@@ -13,7 +14,6 @@ function App() {
   const characters = useCharacters()
   const {
     character,
-    refetch,
     actions: { move, rest },
   } = useCharacter(activeCharacter)
 
@@ -63,8 +63,8 @@ function App() {
         </Container>
       </Navbar>
       <Container fluid className="mt-3">
-        <Row>
-          <Col lg={3}>
+        <Row className="g-4">
+          <Col lg={6}>
             <Card>
               <Card.Body>
                 <ProgressBar variant="danger" max={character?.max_hp} now={character?.hp} />
@@ -75,6 +75,8 @@ function App() {
                 </Button>
               </Card.Footer>
             </Card>
+          </Col>
+          <Col lg={6}>
             <Card>
               <Form>
                 <Card.Body>

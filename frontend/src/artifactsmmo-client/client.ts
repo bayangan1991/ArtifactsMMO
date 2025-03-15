@@ -1,7 +1,5 @@
 import createClient, { type Middleware } from 'openapi-fetch'
-import { useEffect, useState } from 'react'
-import type { Position } from '../types.ts'
-import type { components, paths } from './spec'
+import type { paths } from './spec'
 
 const client = createClient<paths>({ baseUrl: 'https://api.artifactsmmo.com/' })
 
@@ -14,64 +12,4 @@ const authMiddleware: Middleware = {
 
 client.use(authMiddleware)
 
-const useCharacters = () => {
-  const [characters, setCharacters] = useState<string[]>([])
-
-  useEffect(() => {
-    client.GET('/my/characters').then(({ data: result }) => {
-      if (result) {
-        setCharacters(result.data.map((char) => char.name))
-      }
-    })
-  }, [])
-
-  return characters
-}
-
-const useCharacter = (name: string | null) => {
-  const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
-
-  const refetch = () => {
-    if (name)
-      client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
-        if (result) {
-          setCharacter(result.data)
-        }
-      })
-  }
-  useEffect(refetch, [])
-
-  const move = ({ x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
-    if (name)
-      return client
-        .POST('/my/{name}/action/move', {
-          body: { x, y },
-          params: {
-            path: { name },
-          },
-        })
-        .then(({ data: moveResult }) => {
-          if (moveResult) refetch()
-          return null
-        })
-        .catch(() => null)
-    return new Promise(() => null)
-  }
-
-  const rest = (): Promise<null> => {
-    if (name)
-      return client.POST('/my/{name}/action/rest', { params: { path: { name } } }).then(({ data: restResult }) => {
-        if (restResult) refetch()
-        return null
-      })
-    return new Promise(() => null)
-  }
-
-  return {
-    character,
-    refetch,
-    actions: { move, rest },
-  }
-}
-
-export { useCharacter, useCharacters }
+export { client }
