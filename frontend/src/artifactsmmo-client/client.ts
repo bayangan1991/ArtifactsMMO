@@ -1,13 +1,12 @@
 import createClient, { type Middleware } from 'openapi-fetch'
 import { useEffect, useState } from 'react'
 import type { Position } from '../types.ts'
-import type { paths } from './spec'
+import type { components, paths } from './spec'
 
 const client = createClient<paths>({ baseUrl: 'https://api.artifactsmmo.com/' })
 
 const authMiddleware: Middleware = {
   async onRequest({ request }) {
-    console.log(import.meta.env)
     request.headers.set('Authorization', `Bearer ${import.meta.env.VITE_API_TOKEN}`)
     return request
   },
@@ -21,7 +20,6 @@ const useCharacters = () => {
   useEffect(() => {
     client.GET('/my/characters').then(({ data: result }) => {
       if (result) {
-        console.log(result)
         setCharacters(result.data.map((char) => char.name))
       }
     })
@@ -42,9 +40,9 @@ const usePosition = (character: string | null) => {
       })
   }, [character])
 
-  const move = ({ x, y }: Position) => {
+  const move = ({ x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
     if (character)
-      client
+      return client
         .POST('/my/{name}/action/move', {
           body: { x, y },
           params: {
@@ -54,8 +52,12 @@ const usePosition = (character: string | null) => {
         .then(({ data: moveResult }) => {
           if (moveResult) {
             setPos({ x, y })
+            return moveResult.data
           }
+          return null
         })
+        .catch(() => null)
+    return new Promise(() => null)
   }
 
   return {
