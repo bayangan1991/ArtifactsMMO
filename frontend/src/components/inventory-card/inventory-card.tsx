@@ -1,32 +1,42 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 
-interface DepositButtonGroupProps {
+interface ItemActionGroupProps {
+  label: string
   action(code: string, quantity: number): void
   code: string
   quantity: number
 }
 
-const ItemActionGroup = ({ action, code, quantity }: DepositButtonGroupProps) => {
+const ItemActionGroup = ({ label, action, code, quantity }: ItemActionGroupProps) => {
   const [selectedQuantity, setSelectedQuantity] = useState(quantity)
 
+  useEffect(() => {
+    setSelectedQuantity(quantity)
+  }, [quantity])
+
   return (
-    <InputGroup>
-      <InputGroup.Text className="w-50">
-        {code} x {quantity}
-      </InputGroup.Text>
-      <Form.Control
-        type="number"
-        value={selectedQuantity}
-        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-      />
-      <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
-      <Button variant="danger" onClick={() => action(code, quantity)}>
-        All
-      </Button>
-    </InputGroup>
+    <>
+      <img src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} height={25} />
+      <InputGroup>
+        <InputGroup.Text className="w-50">{code}</InputGroup.Text>
+        <InputGroup.Text className="w-50">{quantity}</InputGroup.Text>
+      </InputGroup>
+      <InputGroup>
+        <InputGroup.Text>{label}</InputGroup.Text>
+        <Form.Control
+          type="number"
+          value={selectedQuantity}
+          onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+        />
+        <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
+        <Button variant="danger" onClick={() => action(code, quantity)}>
+          All
+        </Button>
+      </InputGroup>
+    </>
   )
 }
 
@@ -70,7 +80,12 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                   {usedSlots.map((item) => (
                     <ListGroup.Item key={item.slot}>
                       <div className="d-flex align-items-center gap-2">
-                        <ItemActionGroup code={item.code} quantity={item.quantity} action={depositItem} />
+                        <ItemActionGroup
+                          code={item.code}
+                          quantity={item.quantity}
+                          action={depositItem}
+                          label="Deposit:"
+                        />
                       </div>
                     </ListGroup.Item>
                   ))}
@@ -83,7 +98,12 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
               {bankItems.data.map((item) => (
                 <ListGroup.Item key={item.code}>
                   <div className="d-flex align-items-center gap-2">
-                    <ItemActionGroup code={item.code} quantity={item.quantity} action={withdrawItem} />
+                    <ItemActionGroup
+                      code={item.code}
+                      quantity={item.quantity}
+                      action={withdrawItem}
+                      label="Withdraw:"
+                    />
                   </div>
                 </ListGroup.Item>
               ))}
