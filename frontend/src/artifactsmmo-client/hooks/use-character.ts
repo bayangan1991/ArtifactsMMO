@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
 import { useStack } from '../../hooks/use-stack.ts'
 import type { Position, Queue } from '../../types.ts'
@@ -14,6 +14,12 @@ interface UseSimpleActionParams {
   action: PathsWithMethod<paths, 'post'>
   refetch: () => void
   queueAction: (action: Queue) => void
+}
+
+enum Status {
+  Ready = 'ready', // Ready to do the next action
+  Waiting = 'waiting', // Waiting for API response
+  Cooldown = 'cooldown', // Currently in cooldown
 }
 
 const useSimpleAction = ({ name, label, action, refetch, queueAction }: UseSimpleActionParams) => {
@@ -38,35 +44,39 @@ const useCharacter = (name: string | null) => {
   const [lastAction, setLastAction] = useState<string | null>(null)
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
   const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
-  const ready = useMemo(() => timeUntilReady === null, [timeUntilReady])
+  const [status, setStatus] = useState<Status>(Status.Waiting)
 
   useEffect(() => {
     if (character) {
-      if (character.cooldown_expiration) setCooldown(Temporal.Instant.from(character.cooldown_expiration))
+      if (character.cooldown_expiration) {
+        setStatus(Status.Cooldown)
+        setCooldown(Temporal.Instant.from(character.cooldown_expiration))
+      }
     }
   }, [character])
 
   const onTick = () => {
-    const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
-    if (ready) {
-      setTimeUntilReady(null)
+    if (status !== Status.Waiting) {
+      const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
+      if (ready) {
+        setTimeUntilReady(null)
+        setStatus(Status.Ready)
+      }
+      if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
     }
-    if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
   }
   useInterval(onTick, 100)
 
   useEffect(() => {
-    if (ready) {
+    if (status === Status.Ready) {
       const queuedAction = popLeft()
       if (queuedAction) {
-        const tempCooldown = Temporal.Now.instant().add(Temporal.Duration.from('PT10S'))
-        setCooldown(tempCooldown)
-        setTimeUntilReady(Temporal.Now.instant().until(tempCooldown))
+        setStatus(Status.Waiting)
         queuedAction.action()
         setLastAction(queuedAction.label)
       }
     }
-  }, [ready, popLeft])
+  }, [status, popLeft])
 
   const refetch = useCallback(() => {
     if (name)
@@ -85,11 +95,10 @@ const useCharacter = (name: string | null) => {
   // Defined Actions
 
   const queueAction = (queue: Queue) => {
-    if (actionQueue.length === 0 && ready) {
+    if (actionQueue.length === 0 && status === Status.Ready) {
       queue.action()
+      setStatus(Status.Waiting)
       setLastAction(queue.label)
-      setCooldown(Temporal.Now.instant().add(Temporal.Duration.from('PT10S')))
-      setTimeUntilReady(Temporal.Now.instant().until(cooldown))
     } else {
       pushRight(queue)
     }
@@ -196,8 +205,9 @@ const useCharacter = (name: string | null) => {
     refetch,
     actions: { move, rest, fight, gathering, deposit, withdraw },
     lastAction,
+    status,
     timeUntilReady,
     actionQueue,
   }
 }
-export { useCharacter }
+export { useCharacter, Status }

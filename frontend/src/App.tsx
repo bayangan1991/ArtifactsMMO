@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
 import { Col, Container, Navbar, Row } from 'react-bootstrap'
-import { useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
+import { Status, useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters.ts'
 import { ActionStackCard } from './components/action-stack-card/ActionStackCard.tsx'
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
@@ -16,6 +16,7 @@ function App() {
     character,
     actions: { move, rest, fight, deposit, withdraw },
     lastAction,
+    status,
     timeUntilReady,
     actionQueue,
   } = useCharacter(activeCharacter)
@@ -45,7 +46,7 @@ function App() {
           <Navbar.Text>{lastAction}</Navbar.Text>
           <Navbar.Text>
             {timeUntilReady?.round('second').toLocaleString()}
-            {!timeUntilReady && 'Ready'}
+            {status !== Status.Cooldown && status}
           </Navbar.Text>
         </Container>
       </Navbar>
