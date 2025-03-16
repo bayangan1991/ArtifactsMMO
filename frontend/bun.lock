@@ -7,6 +7,7 @@
         "@js-temporal/polyfill": "^0.4.4",
         "bootstrap": "^5.3.3",
         "guid-typescript": "^1.0.9",
+        "openapi-typescript-helpers": "^0.0.15",
         "react": "^19.0.0",
         "react-bootstrap": "^2.10.9",
         "react-dom": "^19.0.0",

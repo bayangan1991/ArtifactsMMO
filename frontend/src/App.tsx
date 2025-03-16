@@ -1,29 +1,15 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
 import { Temporal } from '@js-temporal/polyfill'
-import { Card, Col, Container, Navbar, Row } from 'react-bootstrap'
+import { Col, Container, Navbar, Row } from 'react-bootstrap'
 import { useCharacter } from './artifactsmmo-client/hooks/use-characters/useCharacter.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters/useCharacters.ts'
+import { ActionStackCard } from './components/action-stack-card/ActionStackCard.tsx'
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
 import { StatsCard } from './components/stats-card/StatsCard.tsx'
 import { useInterval } from './hooks/use-interval.ts'
 import { useStack } from './hooks/use-stack.ts'
 import type { Queue } from './types.ts'
-
-function ActionStackCard(props: { queue: Queue[] }) {
-  return (
-    <Card>
-      <Card.Body>
-        <Card.Title>Action Stack</Card.Title>
-        <ol>
-          {props.queue.map((item) => (
-            <li key={item.guid.toJSON()}>{item.label}</li>
-          ))}
-        </ol>
-      </Card.Body>
-    </Card>
-  )
-}
 
 function App() {
   const characters = useCharacters()
@@ -37,7 +23,7 @@ function App() {
 
   const {
     character,
-    actions: { move, rest },
+    actions: { move, rest, fight },
   } = useCharacter(activeCharacter)
 
   useEffect(() => {
@@ -85,11 +71,17 @@ function App() {
     }
   }
 
+  const simpleActions = [
+    { label: 'Rest', variant: 'success', action: rest },
+    { label: 'Fight', variant: 'danger', action: fight },
+  ]
   return (
     <>
       <Navbar data-bs-theme="dark" bg="dark">
         <Container fluid className="gap-2">
-          <Navbar.Brand>{activeCharacter}</Navbar.Brand>
+          <Navbar.Brand>
+            {activeCharacter} <small className="text-muted">lvl{character?.level}</small>
+          </Navbar.Brand>
           <div className="me-auto d-flex gap-2">
             <Navbar.Text>
               @{character?.x},{character?.y}
@@ -110,7 +102,7 @@ function App() {
             </Row>
             <Row>
               <Col>
-                <StatsCard character={character} doRest={rest} queueAction={queueAction} />
+                <StatsCard character={character} simpleActions={simpleActions} queueAction={queueAction} />
               </Col>
             </Row>
           </Col>

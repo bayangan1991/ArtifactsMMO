@@ -1,7 +1,20 @@
+import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useEffect, useState } from 'react'
 import type { Position } from '../../../types.ts'
 import { client } from '../../client.ts'
-import type { components } from '../../spec'
+import type { components, paths } from '../../spec'
+
+const useSimpleAction = (name: string | null, action: PathsWithMethod<paths, 'post'>, refetch: () => void) => {
+  return useCallback(async (): Promise<null> => {
+    if (name) {
+      const restResult = await client.POST(action, {
+        params: { path: { name } },
+      })
+      if (restResult) refetch()
+    }
+    return null
+  }, [name, action, refetch])
+}
 
 const useCharacter = (name: string | null) => {
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
@@ -39,18 +52,14 @@ const useCharacter = (name: string | null) => {
     [name, refetch]
   )
 
-  const rest = useCallback(async (): Promise<null> => {
-    if (name) {
-      const restResult = await client.POST('/my/{name}/action/rest', { params: { path: { name } } })
-      if (restResult) refetch()
-    }
-    return null
-  }, [name, refetch])
+  const rest = useSimpleAction(name, '/my/{name}/action/rest', refetch)
+  const fight = useSimpleAction(name, '/my/{name}/action/fight', refetch)
+  const gathering = useSimpleAction(name, '/my/{name}/action/gathering', refetch)
 
   return {
     character,
     refetch,
-    actions: { move, rest },
+    actions: { move, rest, fight, gathering },
   }
 }
 export { useCharacter }
