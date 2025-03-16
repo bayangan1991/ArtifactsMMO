@@ -1,8 +1,8 @@
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useEffect, useState } from 'react'
-import type { Position } from '../../../types.ts'
-import { client } from '../../client.ts'
-import type { components, paths } from '../../spec'
+import type { Position } from '../../types.ts'
+import { client } from '../client.ts'
+import type { components, paths } from '../spec'
 
 const useSimpleAction = (name: string | null, action: PathsWithMethod<paths, 'post'>, refetch: () => void) => {
   return useCallback(async (): Promise<null> => {
@@ -43,11 +43,47 @@ const useCharacter = (name: string | null) => {
             },
           })
           if (moveResult) refetch()
-          return null
         } catch {
           return null
         }
-      return new Promise(() => null)
+      return null
+    },
+    [name, refetch]
+  )
+
+  const deposit = useCallback(
+    async (code: string, quantity: number) => {
+      if (name)
+        try {
+          const { data: depositResult } = await client.POST('/my/{name}/action/bank/deposit', {
+            body: { code, quantity },
+            params: {
+              path: { name },
+            },
+          })
+          if (depositResult) refetch()
+        } catch {
+          return null
+        }
+      return null
+    },
+    [name, refetch]
+  )
+  const widthdraw = useCallback(
+    async (code: string, quantity: number) => {
+      if (name)
+        try {
+          const { data: depositResult } = await client.POST('/my/{name}/action/bank/withdraw', {
+            body: { code, quantity },
+            params: {
+              path: { name },
+            },
+          })
+          if (depositResult) refetch()
+        } catch {
+          return null
+        }
+      return null
     },
     [name, refetch]
   )
@@ -59,7 +95,7 @@ const useCharacter = (name: string | null) => {
   return {
     character,
     refetch,
-    actions: { move, rest, fight, gathering },
+    actions: { move, rest, fight, gathering, deposit, widthdraw },
   }
 }
 export { useCharacter }

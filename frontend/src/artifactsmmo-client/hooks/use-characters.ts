@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { client } from '../../client.ts'
+import { client } from '../client.ts'
 
 const useCharacters = () => {
   const [characters, setCharacters] = useState<string[]>([])
