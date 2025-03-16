@@ -14,7 +14,7 @@ function App() {
 
   const {
     character,
-    actions: { move, rest, fight, deposit, withdraw },
+    actions: { move, rest, fight, deposit, withdraw, gathering },
     lastAction,
     status,
     timeUntilReady,
@@ -30,6 +30,7 @@ function App() {
   const simpleActions = [
     { label: 'Rest', variant: 'success', action: rest },
     { label: 'Fight', variant: 'danger', action: fight },
+    { label: 'Gathering', variant: 'warning', action: gathering },
   ]
   return (
     <>
