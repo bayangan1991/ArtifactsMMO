@@ -32,7 +32,7 @@ function App() {
   ]
   return (
     <>
-      <Navbar data-bs-theme="dark" bg="dark">
+      <Navbar data-bs-theme="dark" bg="dark" fixed="top">
         <Container fluid className="gap-2">
           <Navbar.Brand>
             {activeCharacter} <small className="text-muted">lvl{character?.level}</small>

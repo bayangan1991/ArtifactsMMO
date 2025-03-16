@@ -1,2 +1,7 @@
-/* The following line can be included in a src/App.scss */
 @use '../node_modules/bootstrap/scss/bootstrap.scss';
+
+body {
+  margin-top: 80px;
+}
+
+

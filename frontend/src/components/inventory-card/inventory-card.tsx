@@ -96,15 +96,18 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
           </Card.Footer>
         )}
         {activeTab === 'bank' && (
-          <Card.Footer className="d-flex justify-content-end align-items-center gap-2">
-            <span className="w-100 text-end">Page:</span>
-            <Form.Control
-              type="number"
-              value={bankItems?.page || 1}
-              max={bankItems?.pages || 1}
-              min={1}
-              onChange={(e) => setPage(Number(e.target.value))}
-            />
+          <Card.Footer className="d-flex align-items-center gap-2">
+            <span className="ms-auto">Page:</span>
+            <InputGroup style={{ maxWidth: '150px' }}>
+              <Form.Control
+                type="number"
+                value={bankItems?.page || 1}
+                max={bankItems?.pages || 1}
+                min={1}
+                onChange={(e) => setPage(Number(e.target.value))}
+              />
+              <InputGroup.Text>of {bankItems?.pages || '?'}</InputGroup.Text>
+            </InputGroup>
           </Card.Footer>
         )}
       </Card>
