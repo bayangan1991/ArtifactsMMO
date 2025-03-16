@@ -1,23 +1,13 @@
-import { Guid } from 'guid-typescript'
 import { useState } from 'react'
 import { Button, Card, FloatingLabel, Form, InputGroup } from 'react-bootstrap'
-import type { Position, Queue } from '../../../types.ts'
+import type { Position } from '../../../types.ts'
 
 interface Props {
   doMove: (pos: Position) => void
-  queueAction(f: Queue): void
 }
 
-const ActionMoveCard = ({ doMove, queueAction }: Props) => {
+const ActionMoveCard = ({ doMove }: Props) => {
   const [targetPos, setTargetPos] = useState<Position>({ x: 0, y: 0 })
-
-  const handleMove = (): void => {
-    queueAction({
-      guid: Guid.create(),
-      label: `Move to ${targetPos.x},${targetPos.y}`,
-      action: () => doMove(targetPos),
-    })
-  }
 
   return (
     <Card>
@@ -44,7 +34,7 @@ const ActionMoveCard = ({ doMove, queueAction }: Props) => {
           </InputGroup>
         </Card.Body>
         <Card.Footer>
-          <Button type="button" onClick={handleMove}>
+          <Button type="button" onClick={() => doMove(targetPos)}>
             Move
           </Button>
         </Card.Footer>

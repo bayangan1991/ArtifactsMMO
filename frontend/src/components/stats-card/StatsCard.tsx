@@ -1,21 +1,18 @@
-import { Guid } from 'guid-typescript'
 import { Button, Card, ProgressBar } from 'react-bootstrap'
 import type { components } from '../../artifactsmmo-client/spec'
-import type { Queue } from '../../types.ts'
 
 interface SimpleAction {
   label: string
   variant: string
-  action: () => Promise<null>
+  action: () => void
 }
 
 interface Props {
   character: components['schemas']['CharacterSchema'] | null
   simpleActions?: SimpleAction[]
-  queueAction(f: Queue): void
 }
 
-const StatsCard = ({ character, simpleActions = [], queueAction }: Props) => (
+const StatsCard = ({ character, simpleActions = [] }: Props) => (
   <Card>
     <Card.Body className="d-flex flex-column gap-2">
       <Card.Title>Stats</Card.Title>
@@ -44,11 +41,7 @@ const StatsCard = ({ character, simpleActions = [], queueAction }: Props) => (
     </Card.Body>
     <Card.Footer className="d-flex gap-2">
       {simpleActions.map((action) => (
-        <Button
-          key={action.label}
-          variant={action.variant}
-          onClick={() => queueAction({ guid: Guid.create(), label: action.label, action: action.action })}
-        >
+        <Button key={action.label} variant={action.variant} onClick={action.action}>
           {action.label}
         </Button>
       ))}

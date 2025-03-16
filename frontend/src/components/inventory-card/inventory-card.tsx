@@ -1,9 +1,7 @@
-import { Guid } from 'guid-typescript'
 import { useState } from 'react'
 import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import type { Queue } from '../../types.ts'
 
 interface DepositButtonGroupProps {
   action(code: string, quantity: number): void
@@ -36,29 +34,12 @@ interface Props {
   character: components['schemas']['CharacterSchema']
   depositItem(code: string, quantity: number): void
   withdrawItem(code: string, quantity: number): void
-  queueAction(f: Queue): void
 }
 
-const InventoryCard = ({ character, depositItem, withdrawItem, queueAction }: Props) => {
+const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
   const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('bank')
   const { bankItems, setPage, refetch } = useBankItems()
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
-
-  const handleDepositItem = (code: string, quantity: number): void => {
-    queueAction({
-      guid: Guid.create(),
-      label: `Deposit ${quantity} x ${code}`,
-      action: () => depositItem(code, quantity),
-    })
-  }
-
-  const handleWithdrawItem = (code: string, quantity: number): void => {
-    queueAction({
-      guid: Guid.create(),
-      label: `Withdraw ${quantity} x ${code}`,
-      action: () => withdrawItem(code, quantity),
-    })
-  }
 
   return (
     <>
@@ -89,7 +70,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem, queueAction }: Pr
                   {usedSlots.map((item) => (
                     <ListGroup.Item key={item.slot}>
                       <div className="d-flex align-items-center gap-2">
-                        <ItemActionGroup code={item.code} quantity={item.quantity} action={handleDepositItem} />
+                        <ItemActionGroup code={item.code} quantity={item.quantity} action={depositItem} />
                       </div>
                     </ListGroup.Item>
                   ))}
@@ -102,7 +83,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem, queueAction }: Pr
               {bankItems.data.map((item) => (
                 <ListGroup.Item key={item.code}>
                   <div className="d-flex align-items-center gap-2">
-                    <ItemActionGroup code={item.code} quantity={item.quantity} action={handleWithdrawItem} />
+                    <ItemActionGroup code={item.code} quantity={item.quantity} action={withdrawItem} />
                   </div>
                 </ListGroup.Item>
               ))}
