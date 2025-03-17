@@ -53,6 +53,22 @@ const useCharacter = (name: string | null) => {
   const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
   const [status, setStatus] = useState<Status>(Status.Ready)
 
+  // Character Data
+
+  const refetch = useCallback(() => {
+    if (name)
+      client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
+        if (result) {
+          setCharacter(result.data)
+        }
+      })
+  }, [name])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Only want the update to happen when name changes
+  useEffect(() => {
+    if (name) refetch()
+  }, [name])
+
   // Clock
 
   useEffect(() => {
@@ -97,26 +113,11 @@ const useCharacter = (name: string | null) => {
   // Run action when set
   useEffect(() => {
     if (doNextAction && status === Status.Waiting) {
+      refetch()
       actionQueue.pop()?.action()
       setDoNextAction(false)
     }
-  }, [doNextAction, status])
-
-  // Character Data
-
-  const refetch = useCallback(() => {
-    if (name)
-      client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
-        if (result) {
-          setCharacter(result.data)
-        }
-      })
-  }, [name])
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only want the update to happen when name changes
-  useEffect(() => {
-    if (name) refetch()
-  }, [name])
+  }, [doNextAction, status, refetch, actionQueue.pop])
 
   // Defined Actions
 
