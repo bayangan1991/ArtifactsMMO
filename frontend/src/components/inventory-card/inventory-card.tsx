@@ -51,6 +51,9 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
   const { bankItems, setPage, refetch } = useBankItems()
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
+  const inventorySize = 100 + 2 * character.level
+  const usedInventorySize = usedSlots.map((t) => t.quantity).reduce((v, acc) => v + acc, 0)
+
   return (
     <>
       <Card>
@@ -111,8 +114,13 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
           )}
         </Card.Body>
         {activeTab === 'inventory' && (
-          <Card.Footer>
-            {usedSlots.length || 0} / {character.inventory?.length || 0}
+          <Card.Footer className="d-flex justify-content-between">
+            <span>
+              {usedSlots.length || 0} / {character.inventory?.length || 0}
+            </span>
+            <span>
+              {usedInventorySize} / {inventorySize}
+            </span>
           </Card.Footer>
         )}
         {activeTab === 'bank' && (
