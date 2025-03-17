@@ -35,22 +35,9 @@ class Stack<T> implements IStack<T> {
 }
 
 const useStack = <T>() => {
-  const [stack, setStack] = useState<Stack<T>>(new Stack())
+  const [stack] = useState<Stack<T>>(new Stack())
 
-  const pushRight = (item: T) => {
-    const newStack = Stack.clone(stack.data())
-    newStack.push(item)
-    setStack(newStack)
-  }
-
-  const popLeft = () => {
-    const newStack = Stack.clone(stack.data())
-    const poppedItem = newStack.pop() || null
-    setStack(newStack)
-    return poppedItem
-  }
-
-  return { stack, pushRight, popLeft }
+  return stack
 }
 
 export { useStack }

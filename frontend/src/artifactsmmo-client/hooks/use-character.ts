@@ -26,8 +26,6 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
-const UPDATE_DELAY = 100 as const
-
 const useSimpleAction = ({ name, label, action, callback, queueAction }: UseSimpleActionParams<HasCooldown>) => {
   const doAction = useCallback(async (): Promise<null> => {
     if (name) {
@@ -48,42 +46,63 @@ const useSimpleAction = ({ name, label, action, callback, queueAction }: UseSimp
 
 const useCharacter = (name: string | null) => {
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
-  const { stack: actionQueue, pushRight, popLeft } = useStack<Queue>()
+  const actionQueue = useStack<Queue>()
+  const [doNextAction, setDoNextAction] = useState<boolean>(false)
   const [lastAction, setLastAction] = useState<string | null>(null)
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
   const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
-  const [status, setStatus] = useState<Status>(Status.Waiting)
+  const [status, setStatus] = useState<Status>(Status.Ready)
+
+  // Clock
 
   useEffect(() => {
-    if (character) {
-      if (character.cooldown_expiration) {
-        setStatus(Status.Cooldown)
-        setCooldown(Temporal.Instant.from(character.cooldown_expiration))
-      }
+    if (character?.cooldown_expiration) {
+      setCooldown(Temporal.Instant.from(character.cooldown_expiration))
     }
-  }, [character])
+  }, [character?.cooldown_expiration])
 
+  // Update timeUntilReady
   const onTick = useCallback(() => {
-    setStatus((currentStatus) => {
-      if (currentStatus !== Status.Waiting) {
-        const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
+    const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
+    if (ready) {
+      setTimeUntilReady(null)
+    } else {
+      setTimeUntilReady(Temporal.Now.instant().until(cooldown))
+      setStatus(Status.Cooldown)
+    }
+  }, [cooldown])
+  useInterval(onTick, 100 as const)
 
-        if (ready) {
-          setTimeUntilReady(null)
-          const nextAction = popLeft()
-          if (nextAction) {
-            nextAction.action()
+  // Reset status if no cooldown
+  useEffect(() => {
+    if (!timeUntilReady) setStatus(Status.Ready)
+  }, [timeUntilReady])
+
+  // Log the next action to be run
+  const pollQueue = useCallback(
+    () =>
+      setStatus((currentStatus) => {
+        if (currentStatus === Status.Ready) {
+          if (actionQueue.size() > 0) {
+            setDoNextAction(true)
             return Status.Waiting
           }
-          return Status.Ready
         }
-        setTimeUntilReady(Temporal.Now.instant().until(cooldown))
-      }
-      return currentStatus
-    })
-  }, [cooldown, popLeft])
+        return currentStatus
+      }),
+    [actionQueue]
+  )
+  useInterval(pollQueue, 1000 as const)
 
-  useInterval(onTick, UPDATE_DELAY)
+  // Run action when set
+  useEffect(() => {
+    if (doNextAction && status === Status.Waiting) {
+      actionQueue.pop()?.action()
+      setDoNextAction(false)
+    }
+  }, [doNextAction, status])
+
+  // Character Data
 
   const refetch = useCallback(() => {
     if (name)
@@ -108,10 +127,10 @@ const useCharacter = (name: string | null) => {
         setStatus(Status.Waiting)
         setLastAction(queue.label)
       } else {
-        pushRight(queue)
+        actionQueue.push(queue)
       }
     },
-    [actionQueue.size, status, pushRight]
+    [actionQueue, status]
   )
 
   const doMove = useCallback(
