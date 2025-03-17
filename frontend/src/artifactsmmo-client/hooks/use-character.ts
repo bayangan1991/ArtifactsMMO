@@ -22,7 +22,7 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
-const UPDATE_DELAY = 1000 as const
+const UPDATE_DELAY = 100 as const
 
 const useSimpleAction = ({ name, label, action, refetch, queueAction }: UseSimpleActionParams) => {
   const doAction = useCallback(async (): Promise<null> => {
@@ -57,20 +57,6 @@ const useCharacter = (name: string | null) => {
     }
   }, [character])
 
-  /*  const onTick = useCallback(() => {
-    setStatus((currentStatus) => {
-      if (currentStatus !== Status.Waiting) {
-        const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
-        if (ready) {
-          setTimeUntilReady(null)
-          return Status.Ready
-        }
-        if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
-        return currentStatus
-      }
-    })
-  }, [])*/
-
   const onTick = useCallback(() => {
     setStatus((currentStatus) => {
       if (currentStatus !== Status.Waiting) {
@@ -88,19 +74,21 @@ const useCharacter = (name: string | null) => {
 
   useInterval(onTick, UPDATE_DELAY)
 
-  useEffect(() => {
-    setStatus((currentStatus) => {
-      if (currentStatus === Status.Ready) {
-        const queuedAction = popLeft()
-        if (queuedAction) {
-          queuedAction.action()
-          setLastAction(queuedAction.label)
-          return Status.Waiting
+  const pollQueue = useCallback(
+    () =>
+      setStatus((currentStatus) => {
+        if (currentStatus === Status.Ready) {
+          const nextAction = popLeft()
+          if (nextAction) {
+            nextAction.action()
+            return Status.Waiting
+          }
         }
-      }
-      return currentStatus
-    })
-  }, [popLeft])
+        return currentStatus
+      }),
+    [popLeft]
+  )
+  useInterval(pollQueue, 5000)
 
   const refetch = useCallback(() => {
     if (name)
@@ -182,7 +170,7 @@ const useCharacter = (name: string | null) => {
     })
   }
 
-  const doWidthdraw = useCallback(
+  const doWithdraw = useCallback(
     async (code: string, quantity: number) => {
       if (name)
         try {
@@ -205,10 +193,10 @@ const useCharacter = (name: string | null) => {
       queueAction({
         label: `Withdraw to ${quantity} x ${code}`,
         guid: Guid.create(),
-        action: () => doWidthdraw(code, quantity),
+        action: () => doWithdraw(code, quantity),
       })
     },
-    [doWidthdraw, queueAction]
+    [doWithdraw, queueAction]
   )
 
   const rest = useSimpleAction({

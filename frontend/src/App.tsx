@@ -5,8 +5,8 @@ import { useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters.ts'
 import { ActionStackCard } from './components/action-stack-card/ActionStackCard.tsx'
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
+import { CharacterCard } from './components/character-card/CharacterCard.tsx'
 import { InventoryCard } from './components/inventory-card/inventory-card.tsx'
-import { StatsCard } from './components/stats-card/StatsCard.tsx'
 
 function App() {
   const characters = useCharacters()
@@ -42,7 +42,7 @@ function App() {
       <Container fluid className="mt-3">
         <Row className="g-4">
           <Col lg={3} className="d-flex gap-2 flex-column">
-            <StatsCard
+            <CharacterCard
               character={character}
               simpleActions={simpleActions}
               status={status}

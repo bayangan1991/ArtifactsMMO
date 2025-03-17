@@ -19,7 +19,7 @@ interface Props {
   timeUntilReady: Temporal.Duration | null
 }
 
-const StatsCard = ({ character, simpleActions = [], status, lastAction, timeUntilReady }: Props) => {
+const CharacterCard = ({ character, simpleActions = [], status, lastAction, timeUntilReady }: Props) => {
   const map = useMap(
     useMemo(() => {
       return {
@@ -41,7 +41,9 @@ const StatsCard = ({ character, simpleActions = [], status, lastAction, timeUnti
             {character?.name} <small className="text-muted">lvl{character?.level}</small>
           </div>
           <div>
-            @{character?.x},{character?.y}
+            <small className="text-muted">
+              {map?.data.name}@{character?.x},{character?.y}
+            </small>
           </div>
         </Card.Title>
         {!character && (
@@ -62,6 +64,8 @@ const StatsCard = ({ character, simpleActions = [], status, lastAction, timeUnti
                 <Card.Img
                   style={{ maxWidth: 80 }}
                   src={`https://www.artifactsmmo.com/images/maps/${map?.data.skin}.png`}
+                  alt={map?.data.content?.code}
+                  title={map?.data.content?.code}
                 />
               </Col>
               <Col>
@@ -100,4 +104,4 @@ const StatsCard = ({ character, simpleActions = [], status, lastAction, timeUnti
   )
 }
 
-export { StatsCard }
+export { CharacterCard }
