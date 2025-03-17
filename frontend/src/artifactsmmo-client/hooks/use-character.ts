@@ -67,7 +67,7 @@ const useCharacter = (name: string | null) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: Only want the update to happen when name changes
   useEffect(() => {
     if (name) refetch()
-  }, [name])
+  }, [name, cooldown])
 
   // Clock
 
@@ -113,11 +113,10 @@ const useCharacter = (name: string | null) => {
   // Run action when set
   useEffect(() => {
     if (doNextAction && status === Status.Waiting) {
-      refetch()
       actionQueue.pop()?.action()
       setDoNextAction(false)
     }
-  }, [doNextAction, status, refetch, actionQueue.pop])
+  }, [doNextAction, status, actionQueue.pop])
 
   // Defined Actions
 
