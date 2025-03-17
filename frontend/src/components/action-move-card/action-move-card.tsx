@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, Card, FloatingLabel, Form, InputGroup } from 'react-bootstrap'
-import type { Position } from '../../../types.ts'
+import type { Position } from '../../types.ts'
 
 interface Props {
   doMove: (pos: Position) => void
