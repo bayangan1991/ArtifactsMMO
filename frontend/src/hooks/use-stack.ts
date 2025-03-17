@@ -1,37 +1,56 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
+
+interface IStack<T> {
+  push(item: T): void
+  pop(): T | undefined
+  size(): number
+  data(): T[]
+}
+
+class Stack<T> implements IStack<T> {
+  private _data: T[] = []
+
+  push(item: T): void {
+    this._data.push(item)
+  }
+
+  pop(): T | undefined {
+    return this._data.shift()
+  }
+
+  size(): number {
+    return this._data.length
+  }
+
+  data(): T[] {
+    return this._data
+  }
+
+  static clone = <T>(data: T[]): Stack<T> => {
+    const stack = new Stack<T>()
+    data.forEach((item) => stack.push(item))
+
+    return stack
+  }
+}
 
 const useStack = <T>() => {
-  const [stack, setStack] = useState<T[]>([])
+  const [stack, setStack] = useState<Stack<T>>(new Stack())
 
-  const stackRef = useRef(stack)
+  const pushRight = (item: T) => {
+    const newStack = Stack.clone(stack.data())
+    newStack.push(item)
+    setStack(newStack)
+  }
 
-  const pushLeft = useCallback((item: T) => {
-    setStack((s) => [item, ...s])
-  }, [])
+  const popLeft = () => {
+    const newStack = Stack.clone(stack.data())
+    const poppedItem = newStack.pop() || null
+    setStack(newStack)
+    return poppedItem
+  }
 
-  const pushRight = useCallback((item: T) => {
-    setStack((s) => {
-      return [...s, item]
-    })
-  }, [])
-
-  const popLeft = useCallback(() => {
-    const item = stack[0] || null
-    setStack((s) => {
-      return [...s.slice(1)]
-    })
-    return item
-  }, [stack])
-
-  const popRight = useCallback(() => {
-    const item = stack[stackRef.current.length - 1]
-    setStack((s) => {
-      return [...s.slice(0, -1)]
-    })
-    return item
-  }, [stack])
-
-  return { stack, pushLeft, pushRight, popLeft, popRight }
+  return { stack, pushRight, popLeft }
 }
 
 export { useStack }

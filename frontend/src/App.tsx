@@ -50,7 +50,7 @@ function App() {
               timeUntilReady={timeUntilReady}
             />
             <ActionMoveCard doMove={move} />
-            {actionQueue.length > 0 && <ActionStackCard queue={actionQueue} />}
+            {actionQueue.size() > 0 && <ActionStackCard queue={actionQueue.data()} />}
           </Col>
           <Col lg={9} className="d-flex gap-2 flex-column">
             {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}

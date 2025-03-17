@@ -47,7 +47,7 @@ interface Props {
 }
 
 const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
-  const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('bank')
+  const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('inventory')
   const { bankItems, setPage, refetch } = useBankItems()
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
