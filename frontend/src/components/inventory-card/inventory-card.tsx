@@ -8,9 +8,10 @@ interface ItemActionGroupProps {
   action(code: string, quantity: number): void
   code: string
   quantity: number
+  max?: number
 }
 
-const ItemActionGroup = ({ label, action, code, quantity }: ItemActionGroupProps) => {
+const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroupProps) => {
   const [selectedQuantity, setSelectedQuantity] = useState(quantity)
 
   useEffect(() => {
@@ -28,8 +29,9 @@ const ItemActionGroup = ({ label, action, code, quantity }: ItemActionGroupProps
         <InputGroup.Text>{label}</InputGroup.Text>
         <Form.Control
           type="number"
-          value={selectedQuantity}
+          value={Math.min(selectedQuantity, max ?? Number.POSITIVE_INFINITY)}
           onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+          max={max}
         />
         <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
         <Button variant="danger" onClick={() => action(code, quantity)}>
@@ -51,8 +53,9 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
   const { bankItems, setPage, refetch } = useBankItems()
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
-  const inventorySize = 100 + 2 * character.level
+  const inventorySize = 100 + 2 * (character.level - 1)
   const usedInventorySize = usedSlots.map((t) => t.quantity).reduce((v, acc) => v + acc, 0)
+  const maxWithdraw = inventorySize - usedInventorySize
 
   return (
     <>
@@ -88,6 +91,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                           quantity={item.quantity}
                           action={depositItem}
                           label="Deposit:"
+                          max={item.quantity}
                         />
                       </div>
                     </ListGroup.Item>
@@ -106,6 +110,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                       quantity={item.quantity}
                       action={withdrawItem}
                       label="Withdraw:"
+                      max={maxWithdraw}
                     />
                   </div>
                 </ListGroup.Item>
