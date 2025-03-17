@@ -8,11 +8,15 @@ import type { Position, Queue } from '../../types.ts'
 import { client } from '../client.ts'
 import type { components, paths } from '../spec'
 
-interface UseSimpleActionParams {
+interface HasCooldown {
+  data: { cooldown: { expiration: string } }
+}
+
+interface UseSimpleActionParams<T extends HasCooldown> {
   name: string | null
   label: string
   action: PathsWithMethod<paths, 'post'>
-  refetch: () => void
+  callback: (data: T) => void
   queueAction: (action: Queue) => void
 }
 
@@ -24,16 +28,18 @@ enum Status {
 
 const UPDATE_DELAY = 100 as const
 
-const useSimpleAction = ({ name, label, action, refetch, queueAction }: UseSimpleActionParams) => {
+const useSimpleAction = ({ name, label, action, callback, queueAction }: UseSimpleActionParams<HasCooldown>) => {
   const doAction = useCallback(async (): Promise<null> => {
     if (name) {
-      const restResult = await client.POST(action, {
+      const result = await client.POST(action, {
         params: { path: { name } },
       })
-      if (restResult) refetch()
+      if (result?.data) {
+        callback(result.data as unknown as HasCooldown)
+      }
     }
     return null
-  }, [name, action, refetch])
+  }, [name, action, callback])
 
   return useCallback(() => {
     queueAction({ label, guid: Guid.create(), action: doAction })
@@ -64,31 +70,20 @@ const useCharacter = (name: string | null) => {
 
         if (ready) {
           setTimeUntilReady(null)
+          const nextAction = popLeft()
+          if (nextAction) {
+            nextAction.action()
+            return Status.Waiting
+          }
           return Status.Ready
         }
         setTimeUntilReady(Temporal.Now.instant().until(cooldown))
       }
       return currentStatus
     })
-  }, [cooldown])
+  }, [cooldown, popLeft])
 
   useInterval(onTick, UPDATE_DELAY)
-
-  const pollQueue = useCallback(
-    () =>
-      setStatus((currentStatus) => {
-        if (currentStatus === Status.Ready) {
-          const nextAction = popLeft()
-          if (nextAction) {
-            nextAction.action()
-            return Status.Waiting
-          }
-        }
-        return currentStatus
-      }),
-    [popLeft]
-  )
-  useInterval(pollQueue, 5000)
 
   const refetch = useCallback(() => {
     if (name)
@@ -108,7 +103,7 @@ const useCharacter = (name: string | null) => {
 
   const queueAction = useCallback(
     (queue: Queue) => {
-      if (actionQueue.length === 0 && status === Status.Ready) {
+      if (actionQueue.size() === 0 && status === Status.Ready) {
         queue.action()
         setStatus(Status.Waiting)
         setLastAction(queue.label)
@@ -116,7 +111,7 @@ const useCharacter = (name: string | null) => {
         pushRight(queue)
       }
     },
-    [actionQueue.length, status, pushRight]
+    [actionQueue.size, status, pushRight]
   )
 
   const doMove = useCallback(
@@ -129,13 +124,16 @@ const useCharacter = (name: string | null) => {
               path: { name },
             },
           })
-          if (moveResult) refetch()
+          if (moveResult) {
+            setStatus(Status.Cooldown)
+            setCooldown(Temporal.Instant.from(moveResult.data.cooldown.expiration))
+          }
         } catch {
           return null
         }
       return null
     },
-    [name, refetch]
+    [name]
   )
   const move = useCallback(
     (pos: Position) => {
@@ -154,17 +152,20 @@ const useCharacter = (name: string | null) => {
               path: { name },
             },
           })
-          if (depositResult) refetch()
+          if (depositResult) {
+            setStatus(Status.Cooldown)
+            setCooldown(Temporal.Instant.from(depositResult.data.cooldown.expiration))
+          }
         } catch {
           return null
         }
       return null
     },
-    [name, refetch]
+    [name]
   )
   const deposit = (code: string, quantity: number) => {
     queueAction({
-      label: `Deposit to ${quantity} x ${code}`,
+      label: `Deposit ${quantity} x ${code}`,
       guid: Guid.create(),
       action: () => doDeposit(code, quantity),
     })
@@ -174,24 +175,27 @@ const useCharacter = (name: string | null) => {
     async (code: string, quantity: number) => {
       if (name)
         try {
-          const { data: depositResult } = await client.POST('/my/{name}/action/bank/withdraw', {
+          const { data: withdrawResult } = await client.POST('/my/{name}/action/bank/withdraw', {
             body: { code, quantity },
             params: {
               path: { name },
             },
           })
-          if (depositResult) refetch()
+          if (withdrawResult) {
+            setStatus(Status.Cooldown)
+            setCooldown(Temporal.Instant.from(withdrawResult.data.cooldown.expiration))
+          }
         } catch {
           return null
         }
       return null
     },
-    [name, refetch]
+    [name]
   )
   const withdraw = useCallback(
     (code: string, quantity: number) => {
       queueAction({
-        label: `Withdraw to ${quantity} x ${code}`,
+        label: `Withdraw ${quantity} x ${code}`,
         guid: Guid.create(),
         action: () => doWithdraw(code, quantity),
       })
@@ -199,25 +203,30 @@ const useCharacter = (name: string | null) => {
     [doWithdraw, queueAction]
   )
 
+  const updateCooldown = (data: HasCooldown) => {
+    setStatus(Status.Cooldown)
+    setCooldown(Temporal.Instant.from(data.data.cooldown.expiration))
+  }
+
   const rest = useSimpleAction({
     name,
     label: 'Rest',
     action: '/my/{name}/action/rest',
-    refetch: refetch,
+    callback: updateCooldown,
     queueAction: queueAction,
   })
   const fight = useSimpleAction({
     name,
     label: 'Fight',
     action: '/my/{name}/action/fight',
-    refetch: refetch,
+    callback: updateCooldown,
     queueAction: queueAction,
   })
   const gathering = useSimpleAction({
     name: name,
     label: 'Gathering',
     action: '/my/{name}/action/gathering',
-    refetch: refetch,
+    callback: updateCooldown,
     queueAction: queueAction,
   })
 
