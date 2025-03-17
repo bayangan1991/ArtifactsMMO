@@ -22,6 +22,8 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
+const UPDATE_DELAY = 1000 as const
+
 const useSimpleAction = ({ name, label, action, refetch, queueAction }: UseSimpleActionParams) => {
   const doAction = useCallback(async (): Promise<null> => {
     if (name) {
@@ -33,9 +35,9 @@ const useSimpleAction = ({ name, label, action, refetch, queueAction }: UseSimpl
     return null
   }, [name, action, refetch])
 
-  return () => {
+  return useCallback(() => {
     queueAction({ label, guid: Guid.create(), action: doAction })
-  }
+  }, [doAction, label, queueAction])
 }
 
 const useCharacter = (name: string | null) => {
@@ -55,28 +57,50 @@ const useCharacter = (name: string | null) => {
     }
   }, [character])
 
-  const onTick = () => {
-    if (status !== Status.Waiting) {
-      const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
-      if (ready) {
-        setTimeUntilReady(null)
-        setStatus(Status.Ready)
+  /*  const onTick = useCallback(() => {
+    setStatus((currentStatus) => {
+      if (currentStatus !== Status.Waiting) {
+        const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
+        if (ready) {
+          setTimeUntilReady(null)
+          return Status.Ready
+        }
+        if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
+        return currentStatus
       }
-      if (!ready) setTimeUntilReady(Temporal.Now.instant().until(cooldown))
-    }
-  }
-  useInterval(onTick, 100)
+    })
+  }, [])*/
+
+  const onTick = useCallback(() => {
+    setStatus((currentStatus) => {
+      if (currentStatus !== Status.Waiting) {
+        const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
+
+        if (ready) {
+          setTimeUntilReady(null)
+          return Status.Ready
+        }
+        setTimeUntilReady(Temporal.Now.instant().until(cooldown))
+      }
+      return currentStatus
+    })
+  }, [cooldown])
+
+  useInterval(onTick, UPDATE_DELAY)
 
   useEffect(() => {
-    if (status === Status.Ready) {
-      const queuedAction = popLeft()
-      if (queuedAction) {
-        setStatus(Status.Waiting)
-        queuedAction.action()
-        setLastAction(queuedAction.label)
+    setStatus((currentStatus) => {
+      if (currentStatus === Status.Ready) {
+        const queuedAction = popLeft()
+        if (queuedAction) {
+          queuedAction.action()
+          setLastAction(queuedAction.label)
+          return Status.Waiting
+        }
       }
-    }
-  }, [status, popLeft])
+      return currentStatus
+    })
+  }, [popLeft])
 
   const refetch = useCallback(() => {
     if (name)
@@ -94,15 +118,18 @@ const useCharacter = (name: string | null) => {
 
   // Defined Actions
 
-  const queueAction = (queue: Queue) => {
-    if (actionQueue.length === 0 && status === Status.Ready) {
-      queue.action()
-      setStatus(Status.Waiting)
-      setLastAction(queue.label)
-    } else {
-      pushRight(queue)
-    }
-  }
+  const queueAction = useCallback(
+    (queue: Queue) => {
+      if (actionQueue.length === 0 && status === Status.Ready) {
+        queue.action()
+        setStatus(Status.Waiting)
+        setLastAction(queue.label)
+      } else {
+        pushRight(queue)
+      }
+    },
+    [actionQueue.length, status, pushRight]
+  )
 
   const doMove = useCallback(
     async ({ x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
@@ -122,9 +149,12 @@ const useCharacter = (name: string | null) => {
     },
     [name, refetch]
   )
-  const move = (pos: Position) => {
-    queueAction({ label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(pos) })
-  }
+  const move = useCallback(
+    (pos: Position) => {
+      queueAction({ label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(pos) })
+    },
+    [doMove, queueAction]
+  )
 
   const doDeposit = useCallback(
     async (code: string, quantity: number) => {
@@ -170,13 +200,16 @@ const useCharacter = (name: string | null) => {
     },
     [name, refetch]
   )
-  const withdraw = (code: string, quantity: number) => {
-    queueAction({
-      label: `Withdraw to ${quantity} x ${code}`,
-      guid: Guid.create(),
-      action: () => doWidthdraw(code, quantity),
-    })
-  }
+  const withdraw = useCallback(
+    (code: string, quantity: number) => {
+      queueAction({
+        label: `Withdraw to ${quantity} x ${code}`,
+        guid: Guid.create(),
+        action: () => doWidthdraw(code, quantity),
+      })
+    },
+    [doWidthdraw, queueAction]
+  )
 
   const rest = useSimpleAction({
     name,

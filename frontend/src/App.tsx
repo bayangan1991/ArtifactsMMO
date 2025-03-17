@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
 import { Col, Container, Navbar, Row } from 'react-bootstrap'
-import { Status, useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
+import { useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters.ts'
 import { ActionStackCard } from './components/action-stack-card/ActionStackCard.tsx'
 import { ActionMoveCard } from './components/actions/action-move-card/ActionMoveCard.tsx'
@@ -22,7 +22,7 @@ function App() {
   } = useCharacter(activeCharacter)
 
   useEffect(() => {
-    if (characters.length) {
+    if (characters.length > 0) {
       setActiveCharacter(characters[0])
     }
   }, [characters])
@@ -36,25 +36,19 @@ function App() {
     <>
       <Navbar data-bs-theme="dark" bg="dark" fixed="top">
         <Container fluid className="gap-2">
-          <Navbar.Brand>
-            {activeCharacter} <small className="text-muted">lvl{character?.level}</small>
-          </Navbar.Brand>
-          <div className="me-auto d-flex gap-2">
-            <Navbar.Text>
-              @{character?.x},{character?.y}
-            </Navbar.Text>
-          </div>
-          <Navbar.Text>{lastAction}</Navbar.Text>
-          <Navbar.Text>
-            {timeUntilReady?.round('second').toLocaleString()}
-            {status !== Status.Cooldown && status}
-          </Navbar.Text>
+          <Navbar.Brand>Artifacts MMO Client</Navbar.Brand>
         </Container>
       </Navbar>
       <Container fluid className="mt-3">
         <Row className="g-4">
           <Col lg={3} className="d-flex gap-2 flex-column">
-            <StatsCard character={character} simpleActions={simpleActions} />
+            <StatsCard
+              character={character}
+              simpleActions={simpleActions}
+              status={status}
+              lastAction={lastAction}
+              timeUntilReady={timeUntilReady}
+            />
             <ActionMoveCard doMove={move} />
             {actionQueue.length > 0 && <ActionStackCard queue={actionQueue} />}
           </Col>
