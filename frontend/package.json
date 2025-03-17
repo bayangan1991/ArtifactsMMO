@@ -11,6 +11,9 @@
     "generate-client": "openapi-typescript https://api.artifactsmmo.com/openapi.json -o ./src/artifactsmmo-client/spec.d.ts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@js-temporal/polyfill": "^0.4.4",
     "bootstrap": "^5.3.3",
     "guid-typescript": "^1.0.9",

@@ -1,4 +1,5 @@
 import type { Temporal } from '@js-temporal/polyfill'
+import type React from 'react'
 import { useMemo } from 'react'
 import { Button, Card, Col, Container, ProgressBar, Row } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
@@ -6,7 +7,8 @@ import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 
 interface SimpleAction {
-  label: string
+  key: string
+  label: React.ReactNode
   variant: string
   action: () => void
 }
@@ -32,7 +34,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
   return (
     <Card>
       <Card.Body className="d-flex flex-column gap-2">
-        <Card.Title className="d-flex align-items-center justify-content-between">
+        <Card.Title className="d-flex justify-content-between flex-column">
           <div>
             <Card.Img
               style={{ maxWidth: 20 }}
@@ -42,7 +44,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
           </div>
           <div>
             <small className="text-muted">
-              {map?.data.name}@{character?.x},{character?.y}
+              {map && `${map.data.name}[${map.data.content?.code}]`}@{character?.x},{character?.y}
             </small>
           </div>
         </Card.Title>
@@ -95,7 +97,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
       </Card.Body>
       <Card.Footer className="d-flex gap-2">
         {simpleActions.map((action) => (
-          <Button key={action.label} variant={action.variant} onClick={action.action}>
+          <Button key={action.key} variant={action.variant} onClick={action.action}>
             {action.label}
           </Button>
         ))}

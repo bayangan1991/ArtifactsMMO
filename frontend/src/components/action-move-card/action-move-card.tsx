@@ -1,3 +1,5 @@
+import { faPersonHiking } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
 import { Button, Card, FloatingLabel, Form, InputGroup } from 'react-bootstrap'
 import type { Position } from '../../types.ts'
@@ -35,7 +37,7 @@ const ActionMoveCard = ({ doMove }: Props) => {
         </Card.Body>
         <Card.Footer>
           <Button type="button" onClick={() => doMove(targetPos)}>
-            Move
+            <Icon icon={faPersonHiking} /> Move
           </Button>
         </Card.Footer>
       </Form>

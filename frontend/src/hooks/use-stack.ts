@@ -28,6 +28,7 @@ class Stack<T> implements IStack<T> {
 
   static clone = <T>(data: T[]): Stack<T> => {
     const stack = new Stack<T>()
+    // biome-ignore lint/complexity/noForEach: I don't want to rewrite it
     data.forEach((item) => stack.push(item))
 
     return stack

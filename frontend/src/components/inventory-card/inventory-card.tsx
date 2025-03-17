@@ -1,3 +1,5 @@
+import { faBank, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
@@ -64,7 +66,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
           <Nav variant="underline" className="mb-2">
             <Nav.Item>
               <Nav.Link active={activeTab === 'inventory'} onClick={() => setActiveTab('inventory')}>
-                Inventory
+                <Icon icon={faBoxArchive} /> Inventory
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
@@ -74,7 +76,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                   refetch().then(() => setActiveTab('bank'))
                 }}
               >
-                Bank
+                <Icon icon={faBank} /> Bank
               </Nav.Link>
             </Nav.Item>
           </Nav>

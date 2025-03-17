@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
+import { faHandFist, faMoon, faTrowel } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { Col, Container, Navbar, Row } from 'react-bootstrap'
 import { useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters.ts'
@@ -28,9 +30,36 @@ function App() {
   }, [characters])
 
   const simpleActions = [
-    { label: 'Rest', variant: 'success', action: rest },
-    { label: 'Fight', variant: 'danger', action: fight },
-    { label: 'Gathering', variant: 'warning', action: gathering },
+    {
+      key: 'rest',
+      label: (
+        <>
+          <Icon icon={faMoon} /> Rest
+        </>
+      ),
+      variant: 'success',
+      action: rest,
+    },
+    {
+      key: 'fight',
+      label: (
+        <>
+          <Icon icon={faHandFist} /> Fight
+        </>
+      ),
+      variant: 'danger',
+      action: fight,
+    },
+    {
+      key: 'gather',
+      label: (
+        <>
+          <Icon icon={faTrowel} /> Gather
+        </>
+      ),
+      variant: 'warning',
+      action: gathering,
+    },
   ]
   return (
     <>
