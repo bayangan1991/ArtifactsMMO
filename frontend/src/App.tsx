@@ -78,7 +78,10 @@ function App() {
               lastAction={lastAction}
               timeUntilReady={timeUntilReady}
             />
-            <ActionMoveCard doMove={move} />
+            <ActionMoveCard
+              doMove={move}
+              currentPosition={character ? { x: character.x, y: character.y } : undefined}
+            />
             {actionQueue.size() > 0 && <ActionStackCard queue={actionQueue.data()} />}
           </Col>
           <Col lg={9} className="d-flex gap-2 flex-column">
