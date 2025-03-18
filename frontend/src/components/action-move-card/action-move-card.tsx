@@ -32,7 +32,8 @@ const ActionMoveCard = ({ doMove, currentPosition }: Props) => {
     if (maps.data && maps.data.length > 0) setTargetMap(maps.data[0])
   }, [maps?.data])
 
-  if (currentPosition && targetMap) console.log(euclideanDistance({ x: targetMap.x, y: targetMap.y }, currentPosition))
+  const distance =
+    targetMap && currentPosition ? euclideanDistance({ x: targetMap.x, y: targetMap.y }, currentPosition) : 0
 
   return (
     <Card>
@@ -57,8 +58,8 @@ const ActionMoveCard = ({ doMove, currentPosition }: Props) => {
                   const key = `${item.x},${item.y}`
                   return (
                     <option key={key} value={key}>
-                      {item.name}@{item.x},{item.y}
-                      {item.content && `[${item.content.code}]`}
+                      {item.name}
+                      {item.content && `[${item.content.code}]`} @ {item.x},{item.y}
                     </option>
                   )
                 })}
@@ -67,8 +68,12 @@ const ActionMoveCard = ({ doMove, currentPosition }: Props) => {
           </InputGroup>
         </Card.Body>
         <Card.Footer>
-          <Button type="button" onClick={() => doMove({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
-            <Icon icon={faPersonHiking} /> Move to {targetMap?.name}
+          <Button
+            disabled={distance === 0}
+            type="button"
+            onClick={() => doMove({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}
+          >
+            <Icon icon={faPersonHiking} /> Move to {targetMap?.name} {distance > 0 && `(${distance * 5}s)`}
           </Button>
         </Card.Footer>
       </Form>

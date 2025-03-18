@@ -31,6 +31,8 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
     }, [character?.x, character?.y])
   )
 
+  const locationString = map && map.data.name + (map.data.content ? `[${map.data.content?.code}]` : '')
+
   return (
     <Card>
       <Card.Body className="d-flex flex-column gap-2">
@@ -44,7 +46,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
           </div>
           <div>
             <small className="text-muted">
-              {map && `${map.data.name}[${map.data.content?.code}]`}@{character?.x},{character?.y}
+              {character?.x},{character?.y}@{locationString}
             </small>
           </div>
         </Card.Title>

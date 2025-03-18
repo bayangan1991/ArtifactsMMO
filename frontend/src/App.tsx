@@ -70,7 +70,7 @@ function App() {
       </Navbar>
       <Container fluid className="mt-3">
         <Row className="g-4">
-          <Col lg={3} className="d-flex gap-2 flex-column">
+          <Col lg={4} className="d-flex gap-2 flex-column">
             <CharacterCard
               character={character}
               simpleActions={simpleActions}
@@ -84,7 +84,7 @@ function App() {
             />
             {actionQueue.size() > 0 && <ActionStackCard queue={actionQueue.data()} />}
           </Col>
-          <Col lg={9} className="d-flex gap-2 flex-column">
+          <Col lg={8} className="d-flex gap-2 flex-column">
             {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}
           </Col>
         </Row>
