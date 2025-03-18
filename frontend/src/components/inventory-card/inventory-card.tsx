@@ -33,7 +33,8 @@ const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroup
           type="number"
           value={Math.min(selectedQuantity, max ?? Number.POSITIVE_INFINITY)}
           onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-          max={max}
+          max={max ?? quantity}
+          min={1}
         />
         <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
         <Button variant="danger" onClick={() => action(code, quantity)}>
@@ -112,7 +113,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                       quantity={item.quantity}
                       action={withdrawItem}
                       label="Withdraw:"
-                      max={maxWithdraw}
+                      max={Math.min(item.quantity, maxWithdraw)}
                     />
                   </div>
                 </ListGroup.Item>
@@ -138,7 +139,6 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                 type="number"
                 value={bankItems?.page || 1}
                 max={bankItems?.pages || 1}
-                min={1}
                 onChange={(e) => setPage(Number(e.target.value))}
               />
               <InputGroup.Text>of {bankItems?.pages || '?'}</InputGroup.Text>
