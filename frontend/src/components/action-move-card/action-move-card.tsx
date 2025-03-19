@@ -1,5 +1,6 @@
 import { faPersonHiking } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
