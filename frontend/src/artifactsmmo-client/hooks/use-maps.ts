@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
+import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { client } from '../client.ts'
 import type { components } from '../spec'
-import { euclideanDistance } from '../utils/euclidean-distance.ts'
 
 interface Params {
   currentPosition?: Position

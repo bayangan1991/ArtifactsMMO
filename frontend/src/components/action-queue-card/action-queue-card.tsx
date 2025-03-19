@@ -5,10 +5,10 @@ interface Props {
   queue: Queue[]
 }
 
-const ActionStackCard = ({ queue }: Props) => (
+const ActionQueueCard = ({ queue }: Props) => (
   <Card>
     <Card.Body>
-      <Card.Title>Action Stack</Card.Title>
+      <Card.Title>Action Queue</Card.Title>
       <ol>
         {queue.map((item) => {
           return <li key={item.guid.toString()}>{item.label}</li>
@@ -18,4 +18,4 @@ const ActionStackCard = ({ queue }: Props) => (
   </Card>
 )
 
-export { ActionStackCard }
+export { ActionQueueCard }

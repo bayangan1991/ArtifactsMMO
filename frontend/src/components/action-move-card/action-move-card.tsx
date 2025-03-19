@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { euclideanDistance } from '../../artifactsmmo-client/utils/euclidean-distance.ts'
 import { RESOURCE_TYPES } from '../../constants.ts'
 import type { Position } from '../../types.ts'
+import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 
 interface Props {
   currentPosition?: Position

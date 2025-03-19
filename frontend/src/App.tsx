@@ -6,8 +6,8 @@ import { Col, Container, Navbar, Row } from 'react-bootstrap'
 import { useCharacter } from './artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from './artifactsmmo-client/hooks/use-characters.ts'
 import { ActionMoveCard } from './components/action-move-card/action-move-card.tsx'
-import { ActionStackCard } from './components/action-stack-card/ActionStackCard.tsx'
-import { CharacterCard } from './components/character-card/CharacterCard.tsx'
+import { ActionQueueCard } from './components/action-queue-card/action-queue-card.tsx'
+import { CharacterCard } from './components/character-card/character-card.tsx'
 import { InventoryCard } from './components/inventory-card/inventory-card.tsx'
 
 function App() {
@@ -82,7 +82,7 @@ function App() {
               doMove={move}
               currentPosition={character ? { x: character.x, y: character.y } : undefined}
             />
-            {actionQueue.size() > 0 && <ActionStackCard queue={actionQueue.data()} />}
+            {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} />}
           </Col>
           <Col lg={8} className="d-flex gap-2 flex-column">
             {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}
