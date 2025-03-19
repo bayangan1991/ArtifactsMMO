@@ -53,7 +53,7 @@ const ActionMoveCard = ({ doMove, currentPosition }: Props) => {
               ))}
             </Form.Select>
             {maps.data && (
-              <Form.Select onChange={handleSelect}>
+              <Form.Select onChange={handleSelect} style={{ width: '50%' }}>
                 {maps.data.map((item) => {
                   const key = `${item.x},${item.y}`
                   return (
