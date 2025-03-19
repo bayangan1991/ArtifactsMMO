@@ -62,6 +62,7 @@ function App() {
       action: gathering,
     },
   ]
+
   return (
     <>
       <Navbar data-bs-theme="dark" bg="dark" fixed="top">
@@ -84,7 +85,7 @@ function App() {
               doMove={move}
               currentPosition={character ? { x: character.x, y: character.y } : undefined}
             />
-            {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} />}
+            {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}
           </Col>
           <Col lg={8} className="d-flex gap-2 flex-column">
             {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}

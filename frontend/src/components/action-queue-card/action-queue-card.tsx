@@ -1,19 +1,24 @@
-import { Card } from 'react-bootstrap'
+import { Card, ListGroup } from 'react-bootstrap'
 import type { Queue } from '../../types.ts'
 
 interface Props {
   queue: Queue[]
+  handleRemove: (i: number) => void
 }
 
-const ActionQueueCard = ({ queue }: Props) => (
+const ActionQueueCard = ({ queue, handleRemove }: Props) => (
   <Card>
     <Card.Body>
       <Card.Title>Action Queue</Card.Title>
-      <ol>
-        {queue.map((item) => {
-          return <li key={item.guid.toString()}>{item.label}</li>
+      <ListGroup variant="flush" numbered style={{ maxHeight: 300, overflowY: 'auto' }}>
+        {queue.map((item, i) => {
+          return (
+            <ListGroup.Item action onClick={() => handleRemove(i)} key={item.guid.toString()}>
+              {item.label}
+            </ListGroup.Item>
+          )
         })}
-      </ol>
+      </ListGroup>
     </Card.Body>
   </Card>
 )
