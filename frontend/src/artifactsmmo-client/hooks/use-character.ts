@@ -3,8 +3,8 @@ import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useEffect, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
-import { Stack } from '../../hooks/use-stack.ts'
 import type { Data, Position, Queue } from '../../types.ts'
+import { Stack } from '../../utils/stack.ts'
 import { client } from '../client.ts'
 import type { components, paths } from '../spec'
 
@@ -49,7 +49,7 @@ const useSimpleAction = ({ name, label, action, onSuccess, onError, queueAction 
 
 const useCharacter = (name: string | null) => {
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
-  const [actionQueue, setActionQueue] = useState<Stack<Queue>>(new Stack())
+  const [actionQueue] = useState<Stack<Queue>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
   const [lastAction, setLastAction] = useState<Data | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -269,7 +269,6 @@ const useCharacter = (name: string | null) => {
     status,
     timeUntilReady,
     actionQueue,
-    setActionQueue,
   }
 }
 export { useCharacter, Status }

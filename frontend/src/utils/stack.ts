@@ -9,13 +9,11 @@ interface IStack<T> {
 class Stack<T> implements IStack<T> {
   private _data: T[] = []
 
-  push(item: T): void {
+  push = (item: T): void => {
     this._data.push(item)
   }
 
-  pop(): T | undefined {
-    return this._data.shift()
-  }
+  pop = (): T | undefined => this._data.shift()
 
   remove = (i: number): void => {
     const left = this._data.slice(0, i)
@@ -23,13 +21,9 @@ class Stack<T> implements IStack<T> {
     this._data = [...left, ...right]
   }
 
-  size(): number {
-    return this._data.length
-  }
+  size = (): number => this._data.length
 
-  data(): T[] {
-    return this._data
-  }
+  data = (): T[] => this._data
 
   static clone = <T>(data: T[]): Stack<T> => {
     const stack = new Stack<T>()
