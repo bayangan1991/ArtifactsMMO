@@ -18,6 +18,7 @@ function App() {
     character,
     actions: { move, rest, fight, deposit, withdraw, gathering },
     lastAction,
+    error,
     status,
     timeUntilReady,
     actionQueue,
@@ -75,7 +76,8 @@ function App() {
               character={character}
               simpleActions={simpleActions}
               status={status}
-              lastAction={lastAction}
+              lastAction={lastAction?.cooldown.reason ?? null}
+              error={error ?? null}
               timeUntilReady={timeUntilReady}
             />
             <ActionMoveCard

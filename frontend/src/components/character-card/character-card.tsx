@@ -17,11 +17,12 @@ interface Props {
   character: components['schemas']['CharacterSchema'] | null
   simpleActions?: SimpleAction[]
   lastAction: string | null
+  error: string | null
   status: Status
   timeUntilReady: Temporal.Duration | null
 }
 
-const CharacterCard = ({ character, simpleActions = [], status, lastAction, timeUntilReady }: Props) => {
+const CharacterCard = ({ character, simpleActions = [], status, lastAction, timeUntilReady, error }: Props) => {
   const map = useMap(
     useMemo(() => {
       return {
@@ -87,7 +88,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
                     label={`${character?.xp} / ${character?.max_xp}`}
                   />
                   <div className="d-flex justify-content-between">
-                    <span>{lastAction}</span>
+                    <span>{lastAction || error}</span>
                     {status !== Status.Cooldown && status}
                     {status === Status.Cooldown && timeUntilReady?.round('second').toLocaleString()}
                   </div>
