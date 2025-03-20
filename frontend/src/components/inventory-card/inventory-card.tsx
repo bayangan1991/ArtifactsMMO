@@ -4,25 +4,26 @@ import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
+import { ItemImg } from '../item-img/item-img.tsx'
 
 interface ItemActionGroupProps {
   label: string
   action(code: string, quantity: number): void
   code: string
   quantity: number
-  max?: number
+  max: number
 }
 
 const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroupProps) => {
-  const [selectedQuantity, setSelectedQuantity] = useState(quantity)
+  const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
 
   useEffect(() => {
-    setSelectedQuantity(quantity)
-  }, [quantity])
+    setSelectedQuantity(Math.min(quantity, max))
+  }, [quantity, max])
 
   return (
     <>
-      <img src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} height={25} />
+      <ItemImg code={code} height={25} />
       <InputGroup>
         <InputGroup.Text className="w-50">{code}</InputGroup.Text>
         <InputGroup.Text className="w-50">{quantity}</InputGroup.Text>
@@ -31,9 +32,9 @@ const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroup
         <InputGroup.Text>{label}</InputGroup.Text>
         <Form.Control
           type="number"
-          value={Math.min(selectedQuantity, max ?? Number.POSITIVE_INFINITY)}
+          value={selectedQuantity}
           onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-          max={max ?? quantity}
+          max={max}
           min={1}
         />
         <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
@@ -58,7 +59,6 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
 
   const inventorySize = 100 + 2 * (character.level - 1)
   const usedInventorySize = usedSlots.map((t) => t.quantity).reduce((v, acc) => v + acc, 0)
-  const maxWithdraw = inventorySize - usedInventorySize
 
   return (
     <>
@@ -113,7 +113,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                       quantity={item.quantity}
                       action={withdrawItem}
                       label="Withdraw:"
-                      max={Math.min(item.quantity, maxWithdraw)}
+                      max={Math.min(item.quantity, inventorySize)}
                     />
                   </div>
                 </ListGroup.Item>
