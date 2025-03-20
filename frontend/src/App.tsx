@@ -16,7 +16,7 @@ function App() {
 
   const {
     character,
-    actions: { move, rest, fight, deposit, withdraw, gathering },
+    actions: { move, rest, repeatRest, fight, repeatFight, deposit, withdraw, gathering, repeatGathering },
     lastAction,
     error,
     status,
@@ -40,6 +40,7 @@ function App() {
       ),
       variant: 'success',
       action: rest,
+      repeat: repeatRest,
     },
     {
       key: 'fight',
@@ -50,6 +51,7 @@ function App() {
       ),
       variant: 'danger',
       action: fight,
+      repeat: repeatFight,
     },
     {
       key: 'gather',
@@ -60,6 +62,7 @@ function App() {
       ),
       variant: 'warning',
       action: gathering,
+      repeat: repeatGathering,
     },
   ]
 

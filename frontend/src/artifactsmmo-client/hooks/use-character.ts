@@ -3,18 +3,18 @@ import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useEffect, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
-import type { Data, Position, Queue } from '../../types.ts'
+import type { ActionData, Position, Queue } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
 import { client } from '../client.ts'
 import type { components, paths } from '../spec'
 
-interface UseSimpleActionParams {
+interface UseSimpleActionParams<T> {
   name: string | null
   label: string
   action: PathsWithMethod<paths, 'post'>
-  onSuccess: (data: Data) => void
+  onSuccess: (data: ActionData) => void
   onError: (error: string) => void
-  queueAction: (action: Queue) => void
+  queueAction: (action: Queue<T>, force?: boolean) => void
 }
 
 enum Status {
@@ -23,8 +23,15 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
-const useSimpleAction = ({ name, label, action, onSuccess, onError, queueAction }: UseSimpleActionParams) => {
-  const doAction = useCallback(async (): Promise<null> => {
+const useSimpleAction = <T extends ActionData>({
+  name,
+  label,
+  action,
+  onSuccess,
+  onError,
+  queueAction,
+}: UseSimpleActionParams<T>) => {
+  const doAction = useCallback(async (): Promise<T | null> => {
     if (name) {
       try {
         const result = await client.POST(action, {
@@ -32,26 +39,44 @@ const useSimpleAction = ({ name, label, action, onSuccess, onError, queueAction 
         })
         if (result?.data) {
           // @ts-ignore
-          onSuccess(result.data.data as unknown as Data)
-        } else {
+          onSuccess(result.data.data as unknown as T)
           // @ts-ignore
-          onError(result.error.error.message)
+          return result.data.data as unknown as T
         }
+        // @ts-ignore
+        onError(result.error.error.message)
       } catch {}
     }
     return null
   }, [name, action, onSuccess, onError])
 
-  return useCallback(() => {
-    queueAction({ label, guid: Guid.create(), action: doAction })
-  }, [doAction, label, queueAction])
+  const repeat = async () => {
+    const guid = Guid.create()
+    const requeueIfSuccess = async () => {
+      const result = await doAction()
+      if (result) {
+        queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
+      }
+      return result
+    }
+
+    return queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess })
+  }
+
+  return [
+    useCallback(
+      async () => queueAction({ label, guid: Guid.create(), action: doAction }),
+      [doAction, label, queueAction]
+    ),
+    repeat,
+  ]
 }
 
 const useCharacter = (name: string | null) => {
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
-  const [actionQueue] = useState<Stack<Queue>>(new Stack())
+  const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
-  const [lastAction, setLastAction] = useState<Data | null>(null)
+  const [lastAction, setLastAction] = useState<ActionData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
   const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
@@ -121,8 +146,8 @@ const useCharacter = (name: string | null) => {
   // Defined Actions
 
   const queueAction = useCallback(
-    (queue: Queue) => {
-      if (actionQueue.size() === 0 && status === Status.Ready) {
+    (queue: Queue<ActionData>, force = false) => {
+      if (!force && actionQueue.size() === 0 && status === Status.Ready) {
         queue.action()
         setStatus(Status.Waiting)
       } else {
@@ -132,7 +157,7 @@ const useCharacter = (name: string | null) => {
     [actionQueue, status]
   )
 
-  const onSuccess = useCallback((data: Data) => {
+  const onSuccess = useCallback((data: ActionData) => {
     setStatus(Status.Cooldown)
     setCooldown(Temporal.Instant.from(data.cooldown.expiration))
     setLastAction(data)
@@ -158,10 +183,10 @@ const useCharacter = (name: string | null) => {
           })
           if (data?.data) {
             onSuccess(data.data)
-          } else {
-            // @ts-ignore
-            onError(error?.error.message)
+            return data.data
           }
+          // @ts-ignore
+          onError(error?.error.message)
         } catch {}
       return null
     },
@@ -186,10 +211,10 @@ const useCharacter = (name: string | null) => {
           })
           if (data?.data) {
             onSuccess(data.data)
-          } else {
-            // @ts-ignore
-            onError(error?.error.message)
+            return data.data
           }
+          // @ts-ignore
+          onError(error?.error.message)
         } catch {}
       return null
     },
@@ -215,10 +240,10 @@ const useCharacter = (name: string | null) => {
           })
           if (data?.data) {
             onSuccess(data.data)
-          } else {
-            // @ts-ignore
-            onError(error?.error.message)
+            return data.data
           }
+          // @ts-ignore
+          onError(error?.error.message)
         } catch {}
       return null
     },
@@ -235,7 +260,7 @@ const useCharacter = (name: string | null) => {
     [doWithdraw, queueAction]
   )
 
-  const rest = useSimpleAction({
+  const [rest, repeatRest] = useSimpleAction({
     name,
     label: 'Rest',
     action: '/my/{name}/action/rest',
@@ -243,7 +268,7 @@ const useCharacter = (name: string | null) => {
     onError,
     queueAction,
   })
-  const fight = useSimpleAction({
+  const [fight, repeatFight] = useSimpleAction({
     name,
     label: 'Fight',
     action: '/my/{name}/action/fight',
@@ -251,7 +276,7 @@ const useCharacter = (name: string | null) => {
     onError,
     queueAction,
   })
-  const gathering = useSimpleAction({
+  const [gathering, repeatGathering] = useSimpleAction({
     name: name,
     label: 'Gathering',
     action: '/my/{name}/action/gathering',
@@ -263,7 +288,7 @@ const useCharacter = (name: string | null) => {
   return {
     character,
     refetch,
-    actions: { move, rest, fight, gathering, deposit, withdraw },
+    actions: { move, rest, repeatRest, fight, repeatFight, gathering, repeatGathering, deposit, withdraw },
     lastAction,
     error,
     status,

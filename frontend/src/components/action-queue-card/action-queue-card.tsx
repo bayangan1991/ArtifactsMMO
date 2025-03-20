@@ -1,8 +1,8 @@
 import { Card, ListGroup } from 'react-bootstrap'
-import type { Queue } from '../../types.ts'
+import type { ActionData, Queue } from '../../types.ts'
 
 interface Props {
-  queue: Queue[]
+  queue: Queue<ActionData>[]
   handleRemove: (i: number) => void
 }
 

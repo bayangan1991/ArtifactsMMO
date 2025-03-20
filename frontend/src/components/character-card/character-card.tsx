@@ -1,7 +1,9 @@
+import { faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import type { Temporal } from '@js-temporal/polyfill'
 import type React from 'react'
 import { useMemo } from 'react'
-import { Button, Card, Col, Container, ProgressBar, Row } from 'react-bootstrap'
+import { Button, ButtonGroup, Card, Col, Container, ProgressBar, Row } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
 import type { components } from '../../artifactsmmo-client/spec'
@@ -11,6 +13,7 @@ interface SimpleAction {
   label: React.ReactNode
   variant: string
   action: () => void
+  repeat?: () => void
 }
 
 interface Props {
@@ -100,9 +103,16 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
       </Card.Body>
       <Card.Footer className="d-flex gap-2">
         {simpleActions.map((action) => (
-          <Button key={action.key} variant={action.variant} onClick={action.action}>
-            {action.label}
-          </Button>
+          <ButtonGroup key={action.key}>
+            <Button variant={action.variant} onClick={action.action}>
+              {action.label}
+            </Button>
+            {action.repeat && (
+              <Button variant={action.variant} onClick={action.repeat}>
+                <Icon icon={faRepeat} />
+              </Button>
+            )}
+          </ButtonGroup>
         ))}
       </Card.Footer>
     </Card>
