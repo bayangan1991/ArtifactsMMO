@@ -17,7 +17,7 @@ function App() {
 
   const {
     character,
-    actions: { move, rest, repeatRest, fight, repeatFight, deposit, withdraw, gathering, repeatGathering },
+    actions: { move, rest, repeatRest, fight, repeatFight, deposit, withdraw, gathering, repeatGathering, craft },
     lastAction,
     error,
     status,
@@ -104,7 +104,11 @@ function App() {
               error={error ?? null}
               timeUntilReady={timeUntilReady}
             />
-            <ActionCard doMove={move} currentPosition={character ? { x: character.x, y: character.y } : undefined} />
+            <ActionCard
+              move={move}
+              craft={craft}
+              currentPosition={character ? { x: character.x, y: character.y } : undefined}
+            />
             {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}
           </Col>
           <Col lg={8} className="d-flex gap-2 flex-column">

@@ -115,7 +115,7 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const { doMove, doDeposit, doWithdraw } = useActions({ onSuccess, onError })
+  const { doMove, doDeposit, doWithdraw, doCraft } = useActions({ onSuccess, onError })
 
   const move = useCallback(
     (pos: Position) => {
@@ -149,6 +149,18 @@ const useCharacter = (name: string | null) => {
     [name, doWithdraw, queueAction]
   )
 
+  const craft = useCallback(
+    (code: string, quantity: number) => {
+      if (name)
+        queueAction({
+          label: `Craft ${quantity} x ${code}`,
+          guid: Guid.create(),
+          action: () => doCraft(name, code, quantity),
+        })
+    },
+    [name, doCraft, queueAction]
+  )
+
   const [rest, repeatRest] = useSimpleAction({
     name,
     label: 'Rest',
@@ -177,7 +189,7 @@ const useCharacter = (name: string | null) => {
   return {
     character,
     refetch,
-    actions: { move, rest, repeatRest, fight, repeatFight, gathering, repeatGathering, deposit, withdraw },
+    actions: { move, rest, repeatRest, fight, repeatFight, gathering, repeatGathering, deposit, withdraw, craft },
     lastAction,
     error,
     status,

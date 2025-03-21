@@ -1,4 +1,4 @@
-import { faPersonHiking } from '@fortawesome/free-solid-svg-icons'
+import { faHammer, faPersonHiking } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { useEffect, useState } from 'react'
@@ -14,10 +14,24 @@ import { Pagination } from '../pagination/pagination.tsx'
 
 interface Props {
   currentPosition?: Position
-  doMove: (pos: Position) => void
+  move: (pos: Position) => void
+  craft: (code: string, quantity: number) => void
 }
 
-const ActionCard = ({ doMove, currentPosition }: Props) => {
+const CraftControl = ({ code, craft }: { code: string; craft: (code: string, quantity: number) => void }) => {
+  const [quantity, setQuantity] = useState(1)
+
+  return (
+    <InputGroup size="sm" style={{ width: 120 }}>
+      <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+      <Button onClick={() => craft(code, quantity)}>
+        <Icon icon={faHammer} />
+      </Button>
+    </InputGroup>
+  )
+}
+
+const ActionCard = ({ move, craft, currentPosition }: Props) => {
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
 
   const [contentType, setContentType] = useState<components['schemas']['MapContentType'] | undefined>(undefined)
@@ -48,7 +62,7 @@ const ActionCard = ({ doMove, currentPosition }: Props) => {
     <Card>
       <Form>
         <Card.Body>
-          <Card.Title>Move</Card.Title>
+          <Card.Title>Actions</Card.Title>
           <InputGroup>
             <Form.Select
               value={contentType}
@@ -62,7 +76,7 @@ const ActionCard = ({ doMove, currentPosition }: Props) => {
               ))}
             </Form.Select>
             {maps.data && (
-              <Form.Select onChange={handleSelect} style={{ width: '50%' }}>
+              <Form.Select onChange={handleSelect} style={{ width: '30%' }}>
                 {maps.data.map((item) => {
                   const key = `${item.x},${item.y}`
                   return (
@@ -74,19 +88,25 @@ const ActionCard = ({ doMove, currentPosition }: Props) => {
                 })}
               </Form.Select>
             )}
+            <Button type="button" onClick={() => move({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
+              <Icon icon={faPersonHiking} /> Move {distance > 0 && `(${distance * 5}s)`}
+            </Button>
           </InputGroup>
           {items && (
             <Accordion className="mt-2">
               <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  Crafting <span className="ms-start">({items.total})</span>
+                <Accordion.Header as="h4">
+                  Crafting <span className="ms-start"> ({items.total})</span>
                 </Accordion.Header>
                 <Accordion.Body>
                   <ListGroup variant="flush">
                     {items.data.map((item) => (
-                      <ListGroup.Item key={item.code}>
-                        <ItemImg code={item.code} height={20} className="me-2" />
-                        {item.name}
+                      <ListGroup.Item key={item.code} className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <ItemImg code={item.code} height={20} className="me-2" />
+                          {item.name}
+                        </div>
+                        <CraftControl code={item.code} craft={craft} />
                       </ListGroup.Item>
                     ))}
                   </ListGroup>
@@ -96,11 +116,6 @@ const ActionCard = ({ doMove, currentPosition }: Props) => {
             </Accordion>
           )}
         </Card.Body>
-        <Card.Footer>
-          <Button type="button" onClick={() => doMove({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
-            <Icon icon={faPersonHiking} /> Move to {targetMap?.name} {distance > 0 && `(${distance * 5}s)`}
-          </Button>
-        </Card.Footer>
       </Form>
     </Card>
   )
