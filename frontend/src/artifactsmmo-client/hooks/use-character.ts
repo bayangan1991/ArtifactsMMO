@@ -1,75 +1,18 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
-import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useEffect, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
 import type { ActionData, Position, Queue } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
 import { client } from '../client.ts'
-import type { components, paths } from '../spec'
-
-interface UseSimpleActionParams<T> {
-  name: string | null
-  label: string
-  action: PathsWithMethod<paths, 'post'>
-  onSuccess: (data: ActionData) => void
-  onError: (error: string) => void
-  queueAction: (action: Queue<T>, force?: boolean) => void
-}
+import type { components } from '../spec'
+import { useActions } from './use-actions.ts'
+import { useSimpleAction } from './use-simple-action.ts'
 
 enum Status {
   Ready = 'ready', // Ready to do the next action
   Waiting = 'waiting', // Waiting for API response
   Cooldown = 'cooldown', // Currently in cooldown
-}
-
-const useSimpleAction = <T extends ActionData>({
-  name,
-  label,
-  action,
-  onSuccess,
-  onError,
-  queueAction,
-}: UseSimpleActionParams<T>) => {
-  const doAction = useCallback(async (): Promise<T | null> => {
-    if (name) {
-      try {
-        const result = await client.POST(action, {
-          params: { path: { name } },
-        })
-        if (result?.data) {
-          // @ts-ignore
-          onSuccess(result.data.data as unknown as T)
-          // @ts-ignore
-          return result.data.data as unknown as T
-        }
-        // @ts-ignore
-        onError(result.error.error.message)
-      } catch {}
-    }
-    return null
-  }, [name, action, onSuccess, onError])
-
-  const repeat = async () => {
-    const guid = Guid.create()
-    const requeueIfSuccess = async () => {
-      const result = await doAction()
-      if (result) {
-        queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
-      }
-      return result
-    }
-
-    return queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess })
-  }
-
-  return [
-    useCallback(
-      async () => queueAction({ label, guid: Guid.create(), action: doAction }),
-      [doAction, label, queueAction]
-    ),
-    repeat,
-  ]
 }
 
 const useCharacter = (name: string | null) => {
@@ -107,17 +50,13 @@ const useCharacter = (name: string | null) => {
     const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
     if (ready) {
       setTimeUntilReady(null)
+      setStatus(Status.Ready)
     } else {
       setTimeUntilReady(Temporal.Now.instant().until(cooldown))
       setStatus(Status.Cooldown)
     }
   }, [cooldown])
   useInterval(onTick, 100 as const)
-
-  // Reset status if no cooldown
-  useEffect(() => {
-    if (!timeUntilReady) setStatus(Status.Ready)
-  }, [timeUntilReady])
 
   // Log the next action to be run
   const pollQueue = useCallback(
@@ -171,93 +110,38 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const doMove = useCallback(
-    async ({ x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
-      if (name)
-        try {
-          const { data, error } = await client.POST('/my/{name}/action/move', {
-            body: { x, y },
-            params: {
-              path: { name },
-            },
-          })
-          if (data?.data) {
-            onSuccess(data.data)
-            return data.data
-          }
-          // @ts-ignore
-          onError(error?.error.message)
-        } catch {}
-      return null
-    },
-    [name, onSuccess, onError]
-  )
+  const { doMove, doDeposit, doWithdraw } = useActions({ onSuccess, onError })
+
   const move = useCallback(
     (pos: Position) => {
-      queueAction({ label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(pos) })
+      if (name)
+        queueAction({ label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(name, pos) })
     },
-    [doMove, queueAction]
+    [name, doMove, queueAction]
   )
 
-  const doDeposit = useCallback(
-    async (code: string, quantity: number) => {
+  const deposit = useCallback(
+    (code: string, quantity: number) => {
       if (name)
-        try {
-          const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
-            body: { code, quantity },
-            params: {
-              path: { name },
-            },
-          })
-          if (data?.data) {
-            onSuccess(data.data)
-            return data.data
-          }
-          // @ts-ignore
-          onError(error?.error.message)
-        } catch {}
-      return null
+        queueAction({
+          label: `Deposit ${quantity} x ${code}`,
+          guid: Guid.create(),
+          action: () => doDeposit(name, code, quantity),
+        })
     },
-    [name, onSuccess, onError]
+    [name, doDeposit, queueAction]
   )
-  const deposit = (code: string, quantity: number) => {
-    queueAction({
-      label: `Deposit ${quantity} x ${code}`,
-      guid: Guid.create(),
-      action: () => doDeposit(code, quantity),
-    })
-  }
 
-  const doWithdraw = useCallback(
-    async (code: string, quantity: number) => {
-      if (name)
-        try {
-          const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
-            body: { code, quantity },
-            params: {
-              path: { name },
-            },
-          })
-          if (data?.data) {
-            onSuccess(data.data)
-            return data.data
-          }
-          // @ts-ignore
-          onError(error?.error.message)
-        } catch {}
-      return null
-    },
-    [name, onSuccess, onError]
-  )
   const withdraw = useCallback(
     (code: string, quantity: number) => {
-      queueAction({
-        label: `Withdraw ${quantity} x ${code}`,
-        guid: Guid.create(),
-        action: () => doWithdraw(code, quantity),
-      })
+      if (name)
+        queueAction({
+          label: `Withdraw ${quantity} x ${code}`,
+          guid: Guid.create(),
+          action: () => doWithdraw(name, code, quantity),
+        })
     },
-    [doWithdraw, queueAction]
+    [name, doWithdraw, queueAction]
   )
 
   const [rest, repeatRest] = useSimpleAction({

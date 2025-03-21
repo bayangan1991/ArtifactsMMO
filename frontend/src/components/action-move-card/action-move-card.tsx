@@ -69,11 +69,7 @@ const ActionMoveCard = ({ doMove, currentPosition }: Props) => {
           </InputGroup>
         </Card.Body>
         <Card.Footer>
-          <Button
-            disabled={distance === 0}
-            type="button"
-            onClick={() => doMove({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}
-          >
+          <Button type="button" onClick={() => doMove({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
             <Icon icon={faPersonHiking} /> Move to {targetMap?.name} {distance > 0 && `(${distance * 5}s)`}
           </Button>
         </Card.Footer>
