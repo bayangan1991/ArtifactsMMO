@@ -12,7 +12,7 @@ const renderTooltip = ({ item, ...tooltipProps }: ItemTooltipProps) => {
   return (
     <Popover {...tooltipProps}>
       <Popover.Header>{item?.name}</Popover.Header>
-      <Popover.Body>{item?.description}</Popover.Body>
+      <Popover.Body>{JSON.stringify(item)}</Popover.Body>
     </Popover>
   )
 }
