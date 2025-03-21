@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.scss'
 import { faHandFist, faMoon, faTrowel } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
@@ -9,6 +9,7 @@ import { ActionMoveCard } from './components/action-move-card/action-move-card.t
 import { ActionQueueCard } from './components/action-queue-card/action-queue-card.tsx'
 import { CharacterCard } from './components/character-card/character-card.tsx'
 import { InventoryCard } from './components/inventory-card/inventory-card.tsx'
+import { type FightData, type MovementData, type RestData, type SkillData, isActionType } from './types.ts'
 
 function App() {
   const characters = useCharacters()
@@ -29,6 +30,25 @@ function App() {
       setActiveCharacter(characters[0])
     }
   }, [characters])
+
+  const lastActionResult: string = useMemo(() => {
+    if (!lastAction) return ''
+    if (isActionType<FightData>(lastAction, 'fight')) {
+      const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
+      return `${lastAction.fight.result} fight` + (loot ? `, found: ${loot}` : '')
+    }
+    if (isActionType<MovementData>(lastAction, 'movement')) {
+      return `Moving to ${lastAction.destination.name}`
+    }
+    if (isActionType<SkillData>(lastAction, 'gathering')) {
+      return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
+    }
+    if (isActionType<RestData>(lastAction, 'rest')) {
+      return `Restored ${lastAction.hp_restored}hp`
+    }
+
+    return lastAction.cooldown.reason
+  }, [lastAction])
 
   const simpleActions = [
     {
@@ -80,7 +100,7 @@ function App() {
               character={character}
               simpleActions={simpleActions}
               status={status}
-              lastAction={lastAction?.cooldown.reason ?? null}
+              lastAction={lastActionResult}
               error={error ?? null}
               timeUntilReady={timeUntilReady}
             />

@@ -17,8 +17,10 @@ type RestData = components['schemas']['CharacterRestDataSchema']
 
 type ActionData = MovementData | FightData | SkillData | BankTransactionData | RestData
 
-const isType = <T extends ActionData>(response: T, reason: components['schemas']['ActionType']): boolean =>
-  response.cooldown.reason === reason
+const isActionType = <T extends ActionData>(
+  response: ActionData,
+  reason: components['schemas']['ActionType']
+): response is T => response.cooldown.reason === reason
 
 export type { MovementData, FightData, SkillData, BankTransactionData, RestData, ActionData, Queue, Position }
-export { isType }
+export { isActionType }
