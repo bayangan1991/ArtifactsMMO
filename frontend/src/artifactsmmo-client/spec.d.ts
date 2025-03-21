@@ -653,7 +653,7 @@ export interface paths {
     }
     /**
      * Get My Characters
-     * @description List of your characters.
+     * @description List of your characters. This endpoint is deprecated and will be removed in a future version. Please use accounts/{account}/characters.
      */
     get: operations['get_my_characters_my_characters_get']
     put?: never
@@ -693,6 +693,26 @@ export interface paths {
      * @description Retrieve the achievements of a account.
      */
     get: operations['get_account_achievements_accounts__account__achievements_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/accounts/{account}/characters': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Account Characters
+     * @description Account character lists.
+     */
+    get: operations['get_account_characters_accounts__account__characters_get']
     put?: never
     post?: never
     delete?: never
@@ -1867,6 +1887,8 @@ export interface components {
        * @description Account name.
        */
       account: string
+      /** @description Member status. */
+      status: components['schemas']['AccountStatus']
       /**
        * Skin
        * @description Character skin code.
@@ -2417,6 +2439,14 @@ export interface components {
      * @enum {string}
      */
     CharacterSkin: 'men1' | 'men2' | 'men3' | 'women1' | 'women2' | 'women3'
+    /** CharactersListSchema */
+    CharactersListSchema: {
+      /**
+       * Data
+       * @description List of your characters.
+       */
+      data: components['schemas']['CharacterSchema'][]
+    }
     /** CooldownSchema */
     CooldownSchema: {
       /**
@@ -2894,11 +2924,8 @@ export interface components {
     }
     /** EventContentSchema */
     EventContentSchema: {
-      /**
-       * Type
-       * @description Type of the event.
-       */
-      type: string
+      /** @description Type of the event. */
+      type: components['schemas']['MapContentType']
       /**
        * Code
        * @description Code content.
@@ -2930,6 +2957,8 @@ export interface components {
        * @description Code of the event.
        */
       code: string
+      /** @description Content of the event. */
+      content: components['schemas']['EventContentSchema']
       /**
        * Maps
        * @description Map list of the event.
@@ -2950,8 +2979,6 @@ export interface components {
        * @description Rate spawn of the event. (1/rate every minute)
        */
       rate: number
-      /** @description Content of the event. */
-      content: components['schemas']['EventContentSchema']
     }
     /**
      * FightResult
@@ -3405,11 +3432,8 @@ export interface components {
       | 'achievement'
     /** MapContentSchema */
     MapContentSchema: {
-      /**
-       * Type
-       * @description Type of the content.
-       */
-      type: string
+      /** @description Type of the content. */
+      type: components['schemas']['MapContentType']
       /**
        * Code
        * @description Code of the content.
@@ -6211,6 +6235,29 @@ export interface operations {
       }
     }
   }
+  get_account_characters_accounts__account__characters_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description The character name. */
+        account: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successfully fetched characters. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CharactersListSchema']
+        }
+      }
+    }
+  }
   get_account_accounts__account__get: {
     parameters: {
       query?: never
@@ -6535,6 +6582,8 @@ export interface operations {
   get_all_events_events_get: {
     parameters: {
       query?: {
+        /** @description Type of event. */
+        type?: components['schemas']['MapContentType_a-zA-Z0-9_-_____']
         /** @description Page number */
         page?: number
         /** @description Page size */
@@ -6727,6 +6776,8 @@ export interface operations {
       query?: {
         /** @description Default sort by combat total XP. */
         sort?: components['schemas']['CharacterLeaderboardType_a-zA-Z0-9_-_____']
+        /** @description Find a character by name. */
+        name?: string
         /** @description Page number */
         page?: number
         /** @description Page size */
@@ -6754,6 +6805,8 @@ export interface operations {
       query?: {
         /** @description Default sort by achievements points. */
         sort?: components['schemas']['AccountLeaderboardType_a-zA-Z0-9_-_____']
+        /** @description Find a account by name. */
+        name?: string
         /** @description Page number */
         page?: number
         /** @description Page size */
