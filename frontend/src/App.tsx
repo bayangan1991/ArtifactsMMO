@@ -12,7 +12,7 @@ import { InventoryCard } from './components/inventory-card/inventory-card.tsx'
 import { type FightData, type MovementData, type RestData, type SkillData, isActionType } from './types.ts'
 
 function App() {
-  const characters = useCharacters()
+  const characters = useCharacters('Bayangan')
   const [activeCharacter, setActiveCharacter] = useState<string | null>(null)
 
   const {
@@ -35,7 +35,7 @@ function App() {
     if (!lastAction) return ''
     if (isActionType<FightData>(lastAction, 'fight')) {
       const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
-      return `${lastAction.fight.result} fight` + (loot ? `, found: ${loot}` : '')
+      return `${lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
     }
     if (isActionType<MovementData>(lastAction, 'movement')) {
       return `Moving to ${lastAction.destination.name}`
