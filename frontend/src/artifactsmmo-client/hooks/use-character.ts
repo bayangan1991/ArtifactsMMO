@@ -50,13 +50,18 @@ const useCharacter = (name: string | null) => {
     const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
     if (ready) {
       setTimeUntilReady(null)
-      setStatus(Status.Ready)
     } else {
       setTimeUntilReady(Temporal.Now.instant().until(cooldown))
       setStatus(Status.Cooldown)
     }
   }, [cooldown])
   useInterval(onTick, 100 as const)
+
+  // Set status to ready
+  // We don't do this above as we want to guarantee state
+  useEffect(() => {
+    if (timeUntilReady === null) setStatus(Status.Ready)
+  }, [timeUntilReady])
 
   // Log the next action to be run
   const pollQueue = useCallback(
