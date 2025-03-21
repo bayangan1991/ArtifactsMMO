@@ -5,6 +5,7 @@ import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { ItemImg } from '../item-img/item-img.tsx'
+import { Pagination } from '../pagination/pagination.tsx'
 
 interface ItemActionGroupProps {
   label: string
@@ -134,15 +135,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
         {activeTab === 'bank' && (
           <Card.Footer className="d-flex align-items-center gap-2">
             <span className="ms-auto">Page:</span>
-            <InputGroup style={{ maxWidth: '150px' }}>
-              <Form.Control
-                type="number"
-                value={bankItems?.page || 1}
-                max={bankItems?.pages || 1}
-                onChange={(e) => setPage(Number(e.target.value))}
-              />
-              <InputGroup.Text>of {bankItems?.pages || '?'}</InputGroup.Text>
-            </InputGroup>
+            <Pagination page={bankItems?.page} pages={bankItems?.pages} setPage={setPage} />
           </Card.Footer>
         )}
       </Card>
