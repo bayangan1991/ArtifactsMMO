@@ -46,6 +46,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
             <Card.Img
               style={{ maxWidth: 20 }}
               src={`https://www.artifactsmmo.com/images/characters/${character?.skin}.png`}
+              className="me-1"
             />
             {character?.name} <small className="text-muted">lvl{character?.level}</small>
           </div>

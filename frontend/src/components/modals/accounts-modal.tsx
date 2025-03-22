@@ -14,10 +14,10 @@ interface Props {
 
 const AccountsModal = ({ show, handleClose }: Props) => {
   const navigate = useNavigate()
-  const { accounts, save, findAccount } = useContext(AccountContext)
+  const { accounts, save } = useContext(AccountContext)
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
   const { accountName } = useParams()
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(findAccount(accountName))
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(accountName || null)
 
   const { handleSubmit, register } = useForm<Account>()
 
@@ -42,7 +42,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   const handleSave = () => {
     save(currentAccounts)
     handleClose()
-    if (selectedAccount) navigate(`/${selectedAccount.name}/`)
+    if (selectedAccount) navigate(`/${selectedAccount}/`)
   }
 
   return (
@@ -73,8 +73,9 @@ const AccountsModal = ({ show, handleClose }: Props) => {
                   <InputGroup key={account.name}>
                     <InputGroup.Text className="flex-fill">{account.name}</InputGroup.Text>
                     <InputGroup.Radio
-                      defaultChecked={selectedAccount?.name === account.name}
-                      onClick={() => setSelectedAccount(account)}
+                      name="active-account"
+                      defaultChecked={selectedAccount === account.name}
+                      onClick={() => setSelectedAccount(account.name)}
                     />
                     <Button variant="outline-danger" onClick={() => removeAccount(account.name)}>
                       <FontAwesomeIcon icon={faTrash} />

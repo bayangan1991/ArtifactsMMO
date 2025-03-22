@@ -8,6 +8,7 @@ import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 import { useActions } from './use-actions.ts'
 import { useSimpleAction } from './use-simple-action.ts'
+import { useStatus } from './use-status.ts'
 
 enum Status {
   Ready = 'ready', // Ready to do the next action
@@ -17,13 +18,14 @@ enum Status {
 
 const useCharacter = (name: string | null) => {
   const { client } = useContext(ApiClientContext)
+  const timeDiff = useStatus()
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
   const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
   const [lastAction, setLastAction] = useState<ActionData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
-  const [timeUntilReady, setTimeUntilReady] = useState<Temporal.Duration | null>(null)
+  const [cooldownExpiration, setCooldownExpiration] = useState<Temporal.Duration | null>(null)
   const [status, setStatus] = useState<Status>(Status.Ready)
 
   // Character Data
@@ -50,9 +52,9 @@ const useCharacter = (name: string | null) => {
   const onTick = useCallback(() => {
     const ready = Temporal.Instant.compare(Temporal.Now.instant(), cooldown) > -1
     if (ready) {
-      setTimeUntilReady(null)
+      setCooldownExpiration(null)
     } else {
-      setTimeUntilReady(Temporal.Now.instant().until(cooldown))
+      setCooldownExpiration(Temporal.Now.instant().until(cooldown))
       setStatus(Status.Cooldown)
     }
   }, [cooldown])
@@ -61,8 +63,9 @@ const useCharacter = (name: string | null) => {
   // Set status to ready
   // We don't do this above as we want to guarantee state
   useEffect(() => {
-    if (timeUntilReady === null) setTimeout(() => setStatus(Status.Ready), 3000)
-  }, [timeUntilReady])
+    console.log(timeDiff.toLocaleString())
+    if (cooldownExpiration === null) setTimeout(() => setStatus(Status.Ready), timeDiff.total('milliseconds') * 2)
+  }, [cooldownExpiration, timeDiff])
 
   // Log the next action to be run
   const pollQueue = useCallback(
@@ -194,7 +197,7 @@ const useCharacter = (name: string | null) => {
     lastAction,
     error,
     status,
-    timeUntilReady,
+    timeUntilReady: cooldownExpiration,
     actionQueue,
   }
 }

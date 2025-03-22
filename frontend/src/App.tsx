@@ -6,7 +6,7 @@ import { AccountsModal } from './components/modals/accounts-modal.tsx'
 import { AccountContext } from './utils/accounts/context.ts'
 import { useAccounts } from './utils/accounts/hooks.ts'
 
-function App() {
+const App = () => {
   const [showAccountsModal, setShowAccountsModal] = useState<boolean>(false)
   const accountContext = useAccounts()
 
