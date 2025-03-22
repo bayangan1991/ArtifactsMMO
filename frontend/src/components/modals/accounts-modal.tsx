@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useCallback, useContext, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router'
 import { AccountContext } from '../../utils/accounts/context.ts'
 import type { Account } from '../../utils/accounts/types.ts'
 
@@ -12,9 +13,11 @@ interface Props {
 }
 
 const AccountsModal = ({ show, handleClose }: Props) => {
-  const { accounts, save, activeAccount, setActiveAccount } = useContext(AccountContext)
+  const navigate = useNavigate()
+  const { accounts, save, findAccount } = useContext(AccountContext)
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(activeAccount)
+  const { accountName } = useParams()
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(findAccount(accountName))
 
   const { handleSubmit, register } = useForm<Account>()
 
@@ -37,9 +40,9 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   }
 
   const handleSave = () => {
-    setActiveAccount(selectedAccount)
     save(currentAccounts)
     handleClose()
+    if (selectedAccount) navigate(`/${selectedAccount.name}/`)
   }
 
   return (
@@ -69,8 +72,8 @@ const AccountsModal = ({ show, handleClose }: Props) => {
                 {currentAccounts.map((account) => (
                   <InputGroup key={account.name}>
                     <InputGroup.Text className="flex-fill">{account.name}</InputGroup.Text>
-                    <InputGroup.Checkbox
-                      checked={selectedAccount?.name === account.name}
+                    <InputGroup.Radio
+                      defaultChecked={selectedAccount?.name === account.name}
                       onClick={() => setSelectedAccount(account)}
                     />
                     <Button variant="outline-danger" onClick={() => removeAccount(account.name)}>

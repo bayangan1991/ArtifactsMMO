@@ -3,16 +3,14 @@ import type { Account } from './types.ts'
 
 interface AccountContextType {
   accounts: Account[]
-  activeAccount: Account | null
-  setActiveAccount(account: Account | null): void
+  findAccount(name?: string): Account | null
   save(accounts: Account[]): void
   load(): void
 }
 
 const AccountContext = React.createContext<AccountContextType>({
   accounts: [],
-  activeAccount: null,
-  setActiveAccount: () => null,
+  findAccount: () => null,
   save: () => null,
   load: () => null,
 })

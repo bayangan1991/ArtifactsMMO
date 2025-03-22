@@ -5,7 +5,6 @@ const ACCOUNT_KEY = 'storage__accounts'
 
 const useAccounts = () => {
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [activeAccount, setActiveAccount] = useState<Account | null>(null)
 
   const load = useCallback(() => {
     const account_json = localStorage.getItem('storage__accounts')
@@ -20,9 +19,13 @@ const useAccounts = () => {
     [load]
   )
 
+  const findAccount = (name: string) => {
+    return accounts.find((account) => account.name === name) || null
+  }
+
   useEffect(load, [])
 
-  return { save, load, accounts, activeAccount, setActiveAccount }
+  return { save, load, accounts, findAccount }
 }
 
 export { useAccounts }
