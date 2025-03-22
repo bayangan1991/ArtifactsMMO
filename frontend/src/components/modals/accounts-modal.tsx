@@ -1,22 +1,22 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
-import type { Account } from '../../hooks/use-accounts.ts'
+import { AccountContext } from '../../utils/accounts/context.ts'
+import type { Account } from '../../utils/accounts/types.ts'
 
 interface Props {
   show: boolean
-  handleSave(accounts: Account[], active: Account | null): void
   handleClose(): void
-  accounts: Account[]
-  activeAccount?: Account | null
 }
 
-const AccountsModal = ({ accounts, handleClose, handleSave, show, activeAccount = null }: Props) => {
+const AccountsModal = ({ show, handleClose }: Props) => {
+  const { accounts, save, activeAccount, setActiveAccount } = useContext(AccountContext)
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
-  const { handleSubmit, register } = useForm<Account>()
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(activeAccount)
+
+  const { handleSubmit, register } = useForm<Account>()
 
   const addAccount = useCallback(
     (account: Account) => {
@@ -34,6 +34,12 @@ const AccountsModal = ({ accounts, handleClose, handleSave, show, activeAccount 
 
   const removeAccount = (name: string) => {
     setCurrentAccounts((prevState) => prevState.filter((item) => item.name !== name))
+  }
+
+  const handleSave = () => {
+    setActiveAccount(selectedAccount)
+    save(currentAccounts)
+    handleClose()
   }
 
   return (
@@ -81,7 +87,7 @@ const AccountsModal = ({ accounts, handleClose, handleSave, show, activeAccount 
         <Button variant="danger" className="me-auto" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="success" onClick={() => handleSave(currentAccounts, selectedAccount)}>
+        <Button variant="success" onClick={handleSave}>
           Save
         </Button>
       </Modal.Footer>

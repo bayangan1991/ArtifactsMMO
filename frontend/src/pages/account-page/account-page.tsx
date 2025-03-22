@@ -1,6 +1,6 @@
 import { faHandFist, faMoon, faTrowel } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { useCharacter } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
@@ -8,15 +8,13 @@ import { ActionCard } from '../../components/action-card/action-card.tsx'
 import { ActionQueueCard } from '../../components/action-queue-card/action-queue-card.tsx'
 import { CharacterCard } from '../../components/character-card/character-card.tsx'
 import { InventoryCard } from '../../components/inventory-card/inventory-card.tsx'
-import type { Account } from '../../hooks/use-accounts.ts'
-import { type FightData, type MovementData, type RestData, type SkillData, isActionType } from '../../types.ts'
+import type { FightData, MovementData, RestData, SkillData } from '../../types.ts'
+import { AccountContext } from '../../utils/accounts/context.ts'
+import { isActionType } from '../../utils/is-action-type.ts'
 
-interface Props {
-  account: Account
-}
-
-const AccountPage = ({ account }: Props) => {
-  const characters = useCharacters(account.name)
+const AccountPage = () => {
+  const { activeAccount: account } = useContext(AccountContext)
+  const characters = useCharacters(account?.name)
   const [activeCharacter, setActiveCharacter] = useState<string | null>(null)
 
   const {

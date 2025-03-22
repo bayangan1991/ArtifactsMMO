@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import type { Account } from './types.ts'
 
 const ACCOUNT_KEY = 'storage__accounts'
 
-interface Account {
-  name: string
-  apiKey: string
-}
-
 const useAccounts = () => {
   const [accounts, setAccounts] = useState<Account[]>([])
+  const [activeAccount, setActiveAccount] = useState<Account | null>(null)
 
   const load = useCallback(() => {
     const account_json = localStorage.getItem('storage__accounts')
@@ -25,7 +22,7 @@ const useAccounts = () => {
 
   useEffect(load, [])
 
-  return { save, load, accounts }
+  return { save, load, accounts, activeAccount, setActiveAccount }
 }
 
-export { useAccounts, type Account }
+export { useAccounts }
