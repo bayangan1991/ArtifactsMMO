@@ -11,6 +11,7 @@
     "generate-client": "openapi-typescript https://api.artifactsmmo.com/openapi.json -o ./src/artifactsmmo-client/spec.d.ts && biome check --fix ./src/artifactsmmo-client/spec.d.ts"
   },
   "dependencies": {
+    "@formatjs/intl-durationformat": "^0.7.3",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",

@@ -7,6 +7,7 @@ import { Button, ButtonGroup, Card, Col, Container, ProgressBar, Row } from 'rea
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
 import type { components } from '../../artifactsmmo-client/spec'
+import '@formatjs/intl-durationformat/polyfill'
 
 interface SimpleAction {
   key: string
@@ -93,7 +94,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
                   <div className="d-flex justify-content-between">
                     <span>{lastAction || error}</span>
                     {status !== Status.Cooldown && status}
-                    {status === Status.Cooldown && timeUntilReady?.round('second').toLocaleString()}
+                    {status === Status.Cooldown && timeUntilReady?.round('seconds').toLocaleString()}
                   </div>
                 </div>
               </Col>
