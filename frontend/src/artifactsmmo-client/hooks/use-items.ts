@@ -10,7 +10,13 @@ interface Params {
 
 const useItems = ({ skill, skip = false, size = 10 }: Params) => {
   const [items, setItems] = useState<components['schemas']['DataPage_ItemSchema_'] | null>(null)
+
   const [page, setPage] = useState(1)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the page when the skill changes
+  useEffect(() => {
+    setPage(1)
+  }, [skill])
 
   const handleSetPage = useCallback(
     (page: number) => setPage(Math.max(1, Math.min(page, items?.pages || 1))),

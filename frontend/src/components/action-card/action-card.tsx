@@ -95,9 +95,7 @@ const ActionCard = ({ move, craft, currentPosition }: Props) => {
           {items && (
             <Accordion className="mt-2">
               <Accordion.Item eventKey="0">
-                <Accordion.Header as="h4">
-                  Crafting <span className="ms-start"> ({items.total})</span>
-                </Accordion.Header>
+                <Accordion.Header as="h4">Crafting ({items.total})</Accordion.Header>
                 <Accordion.Body>
                   <ListGroup variant="flush">
                     {items.data.map((item) => (
