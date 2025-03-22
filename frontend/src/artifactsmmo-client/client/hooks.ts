@@ -9,7 +9,6 @@ const useClient = (apiKey: string) => {
   useEffect(() => {
     setAuthMiddleware({
       async onRequest({ request }) {
-        console.log(request)
         request.headers.set('Authorization', `Bearer ${apiKey}`)
         return request
       },

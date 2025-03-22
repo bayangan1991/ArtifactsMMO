@@ -61,7 +61,7 @@ const useCharacter = (name: string | null) => {
   // Set status to ready
   // We don't do this above as we want to guarantee state
   useEffect(() => {
-    if (timeUntilReady === null) setTimeout(() => setStatus(Status.Ready), 1000)
+    if (timeUntilReady === null) setTimeout(() => setStatus(Status.Ready), 2000)
   }, [timeUntilReady])
 
   // Log the next action to be run
