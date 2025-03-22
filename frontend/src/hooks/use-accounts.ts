@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const ACCOUNT_KEY = 'storage__accounts'
 
@@ -10,14 +10,18 @@ interface Account {
 const useAccounts = () => {
   const [accounts, setAccounts] = useState<Account[]>([])
 
-  const save = () => {
-    localStorage.setItem(ACCOUNT_KEY, JSON.stringify(accounts))
-  }
-
-  const load = () => {
+  const load = useCallback(() => {
     const account_json = localStorage.getItem('storage__accounts')
     if (account_json) setAccounts(JSON.parse(account_json))
-  }
+  }, [])
+
+  const save = useCallback(
+    (newAccounts: Account[]) => {
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(newAccounts))
+      load()
+    },
+    [load]
+  )
 
   useEffect(load, [])
 

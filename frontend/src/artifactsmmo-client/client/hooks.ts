@@ -2,7 +2,7 @@ import createClient, { type Middleware } from 'openapi-fetch'
 import { useEffect, useState } from 'react'
 import type { paths } from '../spec'
 
-const useClient = (apiKey: string) => {
+const useClient = (apiKey?: string) => {
   const [client] = useState(createClient<paths>({ baseUrl: 'https://api.artifactsmmo.com/' }))
   const [authMiddleware, setAuthMiddleware] = useState<Middleware | null>(null)
 

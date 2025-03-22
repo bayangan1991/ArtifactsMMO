@@ -21,7 +21,8 @@
     "openapi-typescript-helpers": "^0.0.15",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
