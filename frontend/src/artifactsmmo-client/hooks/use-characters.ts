@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { client } from '../client.ts'
+import { useContext, useEffect, useState } from 'react'
+import { ApiClientContext } from '../client/context.ts'
 
 const useCharacters = (account: string) => {
+  const { client } = useContext(ApiClientContext)
   const [characters, setCharacters] = useState<string[]>([])
 
   useEffect(() => {
@@ -12,7 +13,7 @@ const useCharacters = (account: string) => {
           setCharacters(result.data.map((char) => char.name))
         }
       })
-  }, [account])
+  }, [client, account])
 
   return characters
 }

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { client } from '../client.ts'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 interface Params {
@@ -12,6 +12,7 @@ interface Params {
 }
 
 const useMaps = ({ page, currentPosition, contentType, contentCode }: Params) => {
+  const { client } = useContext(ApiClientContext)
   const [maps, setMaps] = useState<components['schemas']['DataPage_MapSchema_'] | null>(null)
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const useMaps = ({ page, currentPosition, contentType, contentCode }: Params) =>
         if (result.data) setMaps(result.data)
       })
       .catch(() => setMaps(null))
-  }, [page, contentCode, contentType])
+  }, [client, page, contentCode, contentType])
 
   const { data, ...rest } = maps || {}
 

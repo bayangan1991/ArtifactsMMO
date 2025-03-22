@@ -1,6 +1,6 @@
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import type { ActionData, Position } from '../../types.ts'
-import { client } from '../client.ts'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 interface Params {
@@ -9,6 +9,8 @@ interface Params {
 }
 
 const useActions = ({ onSuccess, onError }: Params) => {
+  const { client } = useContext(ApiClientContext)
+
   const doDeposit = useCallback(
     async (name: string, code: string, quantity: number) => {
       try {
@@ -27,7 +29,7 @@ const useActions = ({ onSuccess, onError }: Params) => {
       } catch {}
       return null
     },
-    [onSuccess, onError]
+    [client, onSuccess, onError]
   )
 
   const doMove = useCallback(
@@ -48,7 +50,7 @@ const useActions = ({ onSuccess, onError }: Params) => {
       } catch {}
       return null
     },
-    [onSuccess, onError]
+    [client, onSuccess, onError]
   )
 
   const doWithdraw = useCallback(
@@ -69,7 +71,7 @@ const useActions = ({ onSuccess, onError }: Params) => {
       } catch {}
       return null
     },
-    [onSuccess, onError]
+    [client, onSuccess, onError]
   )
 
   const doCraft = useCallback(
@@ -90,7 +92,7 @@ const useActions = ({ onSuccess, onError }: Params) => {
       } catch {}
       return null
     },
-    [onSuccess, onError]
+    [client, onSuccess, onError]
   )
 
   return { doMove, doDeposit, doWithdraw, doCraft }

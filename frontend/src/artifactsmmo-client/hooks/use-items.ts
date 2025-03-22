@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { client } from '../client'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 interface Params {
@@ -9,6 +9,7 @@ interface Params {
 }
 
 const useItems = ({ skill, skip = false, size = 10 }: Params) => {
+  const { client } = useContext(ApiClientContext)
   const [items, setItems] = useState<components['schemas']['DataPage_ItemSchema_'] | null>(null)
 
   const [page, setPage] = useState(1)
@@ -32,7 +33,7 @@ const useItems = ({ skill, skip = false, size = 10 }: Params) => {
       })
     }
     if (skip) setItems(null)
-  }, [skill, page, skip, size])
+  }, [client, skill, page, skip, size])
 
   return { items, setPage: handleSetPage }
 }

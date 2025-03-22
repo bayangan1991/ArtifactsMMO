@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
-import { client } from '../client.ts'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 const useMap = (pos: Position) => {
+  const { client } = useContext(ApiClientContext)
   const [map, setMap] = useState<components['schemas']['MapResponseSchema'] | null>(null)
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const useMap = (pos: Position) => {
         if (result.data) setMap(result.data)
       })
       .catch(() => setMap(null))
-  }, [pos])
+  }, [client, pos])
 
   return map
 }

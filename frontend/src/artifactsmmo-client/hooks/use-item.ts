@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { client } from '../client.ts'
+import { useContext, useEffect, useState } from 'react'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 const useItem = (code: string) => {
+  const { client } = useContext(ApiClientContext)
   const [item, setItem] = useState<components['schemas']['ItemSchema'] | null>(null)
 
   useEffect(() => {
@@ -16,7 +17,7 @@ const useItem = (code: string) => {
         }
       })
       .catch(() => setItem(null))
-  }, [code])
+  }, [client, code])
 
   return item
 }

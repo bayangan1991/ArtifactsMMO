@@ -1,10 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
 import type { ActionData, Position, Queue } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
-import { client } from '../client.ts'
+import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 import { useActions } from './use-actions.ts'
 import { useSimpleAction } from './use-simple-action.ts'
@@ -16,6 +16,7 @@ enum Status {
 }
 
 const useCharacter = (name: string | null) => {
+  const { client } = useContext(ApiClientContext)
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
   const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
@@ -37,7 +38,7 @@ const useCharacter = (name: string | null) => {
           }
         }
       })
-  }, [name])
+  }, [client, name])
 
   useEffect(() => {
     if (name) refetch()
