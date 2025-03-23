@@ -2,7 +2,7 @@ import { faHammer, faPersonHiking } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { Accordion, Button, Card, Form, InputGroup, ListGroup } from 'react-bootstrap'
+import { Accordion, Button, Card, Form, InputGroup, ListGroup, Stack } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
@@ -16,6 +16,7 @@ interface Props {
   currentPosition?: Position
   move: (pos: Position) => void
   craft: (code: string, quantity: number) => void
+  depositAll(pos: Position, requeue?: boolean): void
 }
 
 const CraftControl = ({ code, craft }: { code: string; craft: (code: string, quantity: number) => void }) => {
@@ -31,7 +32,7 @@ const CraftControl = ({ code, craft }: { code: string; craft: (code: string, qua
   )
 }
 
-const ActionCard = ({ move, craft, currentPosition }: Props) => {
+const ActionCard = ({ move, craft, currentPosition, depositAll }: Props) => {
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
 
   const [contentType, setContentType] = useState<components['schemas']['MapContentType'] | undefined>(undefined)
@@ -92,8 +93,8 @@ const ActionCard = ({ move, craft, currentPosition }: Props) => {
               <Icon icon={faPersonHiking} /> Move {distance > 0 && `(${distance * 5}s)`}
             </Button>
           </InputGroup>
-          {items && (
-            <Accordion className="mt-2">
+          <Accordion className="mt-2">
+            {items && (
               <Accordion.Item eventKey="0">
                 <Accordion.Header as="h4">Crafting ({items.total})</Accordion.Header>
                 <Accordion.Body>
@@ -111,8 +112,24 @@ const ActionCard = ({ move, craft, currentPosition }: Props) => {
                   <Pagination className="mt-2 ms-auto" setPage={setPage} page={items.page} pages={items.pages} />
                 </Accordion.Body>
               </Accordion.Item>
-            </Accordion>
-          )}
+            )}
+
+            {targetMap?.content?.type === 'bank' && (
+              <Accordion.Item eventKey="1">
+                <Accordion.Header as="h4">Bank Actions</Accordion.Header>
+                <Accordion.Body>
+                  <Stack gap={2} direction="horizontal">
+                    <Button onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
+                      Deposit All
+                    </Button>
+                    <Button onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true)}>
+                      Deposit all repeatedly
+                    </Button>
+                  </Stack>
+                </Accordion.Body>
+              </Accordion.Item>
+            )}
+          </Accordion>
         </Card.Body>
       </Form>
     </Card>

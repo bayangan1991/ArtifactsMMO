@@ -16,7 +16,19 @@ const CharacterPage = () => {
 
   const {
     character,
-    actions: { move, rest, repeatRest, fight, repeatFight, deposit, withdraw, gathering, repeatGathering, craft },
+    actions: {
+      move,
+      rest,
+      repeatRest,
+      fight,
+      repeatFight,
+      deposit,
+      depositAll,
+      withdraw,
+      gathering,
+      repeatGathering,
+      craft,
+    },
     lastAction,
     error,
     status,
@@ -94,6 +106,7 @@ const CharacterPage = () => {
           <ActionCard
             move={move}
             craft={craft}
+            depositAll={depositAll}
             currentPosition={character ? { x: character.x, y: character.y } : undefined}
           />
           {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}

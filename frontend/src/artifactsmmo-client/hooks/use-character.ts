@@ -32,7 +32,7 @@ const useCharacter = (name: string | null) => {
 
   const refetch = useCallback(() => {
     if (name)
-      client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
+      return client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
         if (result) {
           setCharacter(result.data)
           if (result.data?.cooldown_expiration) {
@@ -42,6 +42,7 @@ const useCharacter = (name: string | null) => {
             setStatus(ready ? Status.Ready : Status.Cooldown)
           }
         }
+        return result
       })
   }, [client, name, timeDiff])
 
@@ -131,21 +132,29 @@ const useCharacter = (name: string | null) => {
   const { doMove, doDeposit, doWithdraw, doCraft } = useActions({ onSuccess, onError })
 
   const move = useCallback(
-    (pos: Position) => {
+    (pos: Position, queueIndex?: number) => {
       if (name)
-        queueAction({ label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(name, pos) })
+        queueAction(
+          { label: `Move to ${pos.x},${pos.y}`, guid: Guid.create(), action: () => doMove(name, pos) },
+          false,
+          queueIndex
+        )
     },
     [name, doMove, queueAction]
   )
 
   const deposit = useCallback(
-    (code: string, quantity: number) => {
+    (code: string, quantity: number, queueIndex?: number) => {
       if (name)
-        queueAction({
-          label: `Deposit ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action: () => doDeposit(name, code, quantity),
-        })
+        queueAction(
+          {
+            label: `Deposit ${quantity} x ${code}`,
+            guid: Guid.create(),
+            action: () => doDeposit(name, code, quantity),
+          },
+          false,
+          queueIndex
+        )
     },
     [name, doDeposit, queueAction]
   )
@@ -174,11 +183,31 @@ const useCharacter = (name: string | null) => {
     [name, doCraft, queueAction]
   )
 
-  const depositAll = useCallback(() => {
-    for (const slot of character?.inventory || []) {
-      deposit(slot.code, slot.quantity)
-    }
-  }, [character?.inventory, deposit])
+  const depositAll = useCallback(
+    (pos: Position, requeue?: boolean) => {
+      const handleDepositAll = async () => {
+        const data = await refetch()
+        move(pos, 0)
+        move({ x: data?.data.x || 0, y: data?.data.y || 0 }, 1)
+        for (const slot of data?.data.inventory || []) {
+          if (slot.code) deposit(slot.code, slot.quantity, 1)
+        }
+
+        if (requeue) {
+          depositAll(pos, requeue)
+        }
+
+        return null
+      }
+
+      queueAction({
+        label: `${requeue ? 'Repeat d' : 'D'}eposit all to ${pos.x},${pos.y} and return`,
+        guid: Guid.create(),
+        action: handleDepositAll,
+      })
+    },
+    [refetch, deposit, move, queueAction]
+  )
 
   const [rest, repeatRest] = useSimpleAction({
     name,
