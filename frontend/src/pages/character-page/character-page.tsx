@@ -34,6 +34,7 @@ const CharacterPage = () => {
     status,
     timeUntilReady,
     actionQueue,
+    togglePause,
   } = useCharacter(characterName || null)
 
   const lastActionResult: string = useMemo(() => {
@@ -102,6 +103,7 @@ const CharacterPage = () => {
             lastAction={lastActionResult}
             error={error ?? null}
             timeUntilReady={timeUntilReady}
+            togglePause={togglePause}
           />
           <ActionCard
             move={move}

@@ -12,6 +12,7 @@ import { useStatus } from './use-status.ts'
 
 enum Status {
   Ready = 'ready', // Ready to do the next action
+  Paused = 'paused', // Allow use to queue up actions and resume
   Waiting = 'waiting', // Waiting for API response
   Cooldown = 'cooldown', // Currently in cooldown
 }
@@ -39,7 +40,13 @@ const useCharacter = (name: string | null) => {
             const newCooldown = Temporal.Instant.from(result.data.cooldown_expiration).add(timeDiff)
             setCooldown(newCooldown)
             const ready = Temporal.Instant.compare(Temporal.Now.instant(), newCooldown) > -1
-            setStatus(ready ? Status.Ready : Status.Cooldown)
+            setStatus((currentStatus) => {
+              if (ready) {
+                if (currentStatus === Status.Paused) return Status.Paused
+                return Status.Ready
+              }
+              return Status.Cooldown
+            })
           }
         }
         return result
@@ -50,7 +57,7 @@ const useCharacter = (name: string | null) => {
     if (name) refetch()
   }, [name, refetch])
 
-  // Clock
+  // State management
 
   // Update timeUntilReady
   const onTick = useCallback(() => {
@@ -64,6 +71,15 @@ const useCharacter = (name: string | null) => {
   }, [cooldown])
   useInterval(onTick, 100 as const)
 
+  const togglePause = useCallback(
+    () =>
+      setStatus((currentStatus) => {
+        if (currentStatus === Status.Ready) return Status.Paused
+        if (currentStatus === Status.Paused) return Status.Ready
+        return currentStatus
+      }),
+    []
+  )
   // Set status to ready
   // We don't do this above as we want to guarantee state
   const pollCooldown = useCallback(() => {
@@ -281,6 +297,7 @@ const useCharacter = (name: string | null) => {
     status,
     timeUntilReady: cooldownExpiration,
     actionQueue,
+    togglePause,
   }
 }
 export { useCharacter, Status }

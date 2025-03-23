@@ -25,9 +25,18 @@ interface Props {
   error: string | null
   status: Status
   timeUntilReady: Temporal.Duration | null
+  togglePause: () => void
 }
 
-const CharacterCard = ({ character, simpleActions = [], status, lastAction, timeUntilReady, error }: Props) => {
+const CharacterCard = ({
+  character,
+  simpleActions = [],
+  status,
+  lastAction,
+  timeUntilReady,
+  error,
+  togglePause,
+}: Props) => {
   const map = useMap(
     useMemo(() => {
       return {
@@ -52,7 +61,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
               />
               {character?.name} <small className="text-muted">lvl{character?.level}</small>
             </div>
-            <Badge style={{ textTransform: 'capitalize' }} bg={StatusColour[status]}>
+            <Badge style={{ textTransform: 'capitalize' }} bg={StatusColour[status]} onClick={togglePause}>
               {status !== Status.Cooldown && status}
               {status === Status.Cooldown && timeUntilReady?.round('seconds').toLocaleString()}
               {status === Status.Cooldown && !timeUntilReady && status}
