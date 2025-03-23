@@ -11,7 +11,7 @@ interface UseSimpleActionParams<T> {
   action: PathsWithMethod<paths, 'post'>
   onSuccess: (data: ActionData) => void
   onError: (error: string) => void
-  queueAction: (action: Queue<T>, force?: boolean) => void
+  queueAction: (action: Queue<T>, force?: boolean, index?: number) => void
 }
 
 export const useSimpleAction = <T extends ActionData>({
@@ -46,8 +46,17 @@ export const useSimpleAction = <T extends ActionData>({
     const guid = Guid.create()
     const requeueIfSuccess = async () => {
       const result = await doAction()
-      if (result) {
-        queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
+
+      if (action === '/my/{name}/action/gathering') {
+        if (result) {
+          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true, 0)
+        } else {
+          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
+        }
+      } else {
+        if (result) {
+          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
+        }
       }
       return result
     }

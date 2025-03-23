@@ -99,12 +99,16 @@ const useCharacter = (name: string | null) => {
   // Defined Actions
 
   const queueAction = useCallback(
-    (queue: Queue<ActionData>, force = false) => {
+    (queue: Queue<ActionData>, force = false, index?: number) => {
       if (!force && actionQueue.size() === 0 && status === Status.Ready) {
         queue.action()
         setStatus(Status.Waiting)
       } else {
-        actionQueue.push(queue)
+        if (index !== undefined) {
+          actionQueue.insert(queue, index)
+        } else {
+          actionQueue.push(queue)
+        }
       }
     },
     [actionQueue, status]
@@ -170,6 +174,12 @@ const useCharacter = (name: string | null) => {
     [name, doCraft, queueAction]
   )
 
+  const depositAll = useCallback(() => {
+    for (const slot of character?.inventory || []) {
+      deposit(slot.code, slot.quantity)
+    }
+  }, [character?.inventory, deposit])
+
   const [rest, repeatRest] = useSimpleAction({
     name,
     label: 'Rest',
@@ -198,7 +208,19 @@ const useCharacter = (name: string | null) => {
   return {
     character,
     refetch,
-    actions: { move, rest, repeatRest, fight, repeatFight, gathering, repeatGathering, deposit, withdraw, craft },
+    actions: {
+      move,
+      rest,
+      repeatRest,
+      fight,
+      repeatFight,
+      gathering,
+      repeatGathering,
+      deposit,
+      depositAll,
+      withdraw,
+      craft,
+    },
     lastAction,
     error,
     status,
