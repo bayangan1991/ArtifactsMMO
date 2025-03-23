@@ -82,7 +82,7 @@ const CharacterPage = () => {
   return (
     <Container fluid>
       <Row className="g-4">
-        <Col style={{ width: 600 }} className="d-flex gap-2 flex-column">
+        <Col md={6} lg={4} className="d-flex gap-2 flex-column">
           <CharacterCard
             character={character}
             simpleActions={simpleActions}
