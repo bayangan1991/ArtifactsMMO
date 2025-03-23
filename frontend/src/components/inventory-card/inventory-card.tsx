@@ -85,12 +85,15 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                   <th>Deposit</th>
                 </tr>
               </thead>
-              {usedSlots.length === 0 && (
-                <tr>
-                  <td colSpan={100}>Empty!</td>
-                </tr>
-              )}
+
               <tbody>
+                {usedSlots.length === 0 && (
+                  <tr>
+                    <td colSpan={100} className="text-muted text-center">
+                      Nothing in your inventory
+                    </td>
+                  </tr>
+                )}
                 {usedSlots.map((item) => (
                   <tr key={item.slot}>
                     <td>
