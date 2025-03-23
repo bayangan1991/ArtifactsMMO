@@ -1,21 +1,20 @@
 import { faBank, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
-import { Button, Card, Form, InputGroup, ListGroup, Nav } from 'react-bootstrap'
+import { Button, Card, Form, InputGroup, Nav, Table } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { ItemImg } from '../item-img/item-img.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface ItemActionGroupProps {
-  label: string
   action(code: string, quantity: number): void
   code: string
   quantity: number
   max: number
 }
 
-const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroupProps) => {
+const ItemActionGroup = ({ action, code, quantity, max }: ItemActionGroupProps) => {
   const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
 
   useEffect(() => {
@@ -23,27 +22,19 @@ const ItemActionGroup = ({ label, action, code, quantity, max }: ItemActionGroup
   }, [quantity, max])
 
   return (
-    <>
-      <ItemImg code={code} height={25} />
-      <InputGroup>
-        <InputGroup.Text className="w-50">{code}</InputGroup.Text>
-        <InputGroup.Text className="w-50">{quantity}</InputGroup.Text>
-      </InputGroup>
-      <InputGroup>
-        <InputGroup.Text>{label}</InputGroup.Text>
-        <Form.Control
-          type="number"
-          value={selectedQuantity}
-          onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-          max={max}
-          min={1}
-        />
-        <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
-        <Button variant="danger" onClick={() => action(code, quantity)}>
-          All
-        </Button>
-      </InputGroup>
-    </>
+    <InputGroup size="sm">
+      <Form.Control
+        type="number"
+        value={selectedQuantity}
+        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+        max={max}
+        min={1}
+      />
+      <Button onClick={() => action(code, selectedQuantity)}>Some</Button>
+      <Button variant="danger" onClick={() => action(code, quantity)}>
+        All
+      </Button>
+    </InputGroup>
   )
 }
 
@@ -83,43 +74,69 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
             </Nav.Item>
           </Nav>
           {activeTab === 'inventory' && (
-            <>
-              {usedSlots.length === 0 && 'Empty!'}
-              {usedSlots.length > 0 && (
-                <ListGroup variant="flush">
-                  {usedSlots.map((item) => (
-                    <ListGroup.Item key={item.slot}>
-                      <div className="d-flex align-items-center gap-2">
-                        <ItemActionGroup
-                          code={item.code}
-                          quantity={item.quantity}
-                          action={depositItem}
-                          label="Deposit:"
-                          max={item.quantity}
-                        />
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+            <Table>
+              <thead>
+                <tr>
+                  <th colSpan={2}>Item</th>
+                  <th>Qty</th>
+                  <th>Deposit</th>
+                </tr>
+              </thead>
+              {usedSlots.length === 0 && (
+                <tr>
+                  <td colSpan={100}>Empty!</td>
+                </tr>
               )}
-            </>
+              <tbody>
+                {usedSlots.map((item) => (
+                  <tr key={item.slot}>
+                    <td>
+                      <ItemImg code={item.code} />
+                    </td>
+                    <td>{item.code}</td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      <ItemActionGroup
+                        code={item.code}
+                        quantity={item.quantity}
+                        action={depositItem}
+                        max={item.quantity}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           )}
           {activeTab === 'bank' && bankItems && (
-            <ListGroup variant="flush">
-              {bankItems.data.map((item) => (
-                <ListGroup.Item key={item.code}>
-                  <div className="d-flex align-items-center gap-2">
-                    <ItemActionGroup
-                      code={item.code}
-                      quantity={item.quantity}
-                      action={withdrawItem}
-                      label="Withdraw:"
-                      max={Math.min(item.quantity, inventorySize)}
-                    />
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+            <Table>
+              <thead>
+                <tr>
+                  <th colSpan={2}>Item</th>
+                  <th>Qty</th>
+                  <th>Withdraw</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bankItems.data.map((item) => (
+                  <tr key={item.code}>
+                    <td>
+                      <ItemImg code={item.code} />
+                    </td>
+                    <td>{item.code}</td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      <ItemActionGroup
+                        code={item.code}
+                        quantity={item.quantity}
+                        action={withdrawItem}
+                        max={Math.min(item.quantity, inventorySize)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           )}
         </Card.Body>
         {activeTab === 'inventory' && (

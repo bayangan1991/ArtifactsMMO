@@ -23,7 +23,7 @@ interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   code: string
 }
 
-const ItemImg = ({ code, ...imgProps }: Props) => {
+const ItemImg = ({ code, height = 25, ...imgProps }: Props) => {
   const item = useItem(code)
 
   return (
@@ -34,7 +34,7 @@ const ItemImg = ({ code, ...imgProps }: Props) => {
         return renderTooltip({ item, ...props })
       }}
     >
-      <img {...imgProps} src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} />
+      <img {...imgProps} src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} height={height} />
     </OverlayTrigger>
   )
 }
