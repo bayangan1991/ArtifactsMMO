@@ -1,4 +1,4 @@
-import { faBank, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
+import { faBank, faBoxArchive, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, Nav, Table } from 'react-bootstrap'
@@ -8,7 +8,7 @@ import { ItemImg } from '../item-img/item-img.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface ItemActionGroupProps {
-  action(code: string, quantity: number): void
+  action(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
   code: string
   quantity: number
   max: number
@@ -34,6 +34,9 @@ const ItemActionGroup = ({ action, code, quantity, max }: ItemActionGroupProps) 
       <Button variant="danger" onClick={() => action(code, quantity)}>
         All
       </Button>
+      <Button onClick={() => action(code, selectedQuantity, undefined, true)}>
+        <Icon icon={faRepeat} />
+      </Button>
     </InputGroup>
   )
 }
@@ -41,7 +44,7 @@ const ItemActionGroup = ({ action, code, quantity, max }: ItemActionGroupProps) 
 interface Props {
   character: components['schemas']['CharacterSchema']
   depositItem(code: string, quantity: number): void
-  withdrawItem(code: string, quantity: number): void
+  withdrawItem(code: string, quantity: number, index?: number, requeue?: boolean): void
 }
 
 const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
