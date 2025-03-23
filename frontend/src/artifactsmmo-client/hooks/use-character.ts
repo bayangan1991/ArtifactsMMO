@@ -36,11 +36,14 @@ const useCharacter = (name: string | null) => {
         if (result) {
           setCharacter(result.data)
           if (result.data?.cooldown_expiration) {
-            setCooldown(Temporal.Instant.from(result.data.cooldown_expiration))
+            const newCooldown = Temporal.Instant.from(result.data.cooldown_expiration).add(timeDiff)
+            setCooldown(newCooldown)
+            const ready = Temporal.Instant.compare(Temporal.Now.instant(), newCooldown) > -1
+            setStatus(ready ? Status.Ready : Status.Cooldown)
           }
         }
       })
-  }, [client, name])
+  }, [client, name, timeDiff])
 
   useEffect(() => {
     if (name) refetch()
@@ -62,10 +65,12 @@ const useCharacter = (name: string | null) => {
 
   // Set status to ready
   // We don't do this above as we want to guarantee state
-  useEffect(() => {
-    console.log(timeDiff.toLocaleString())
-    if (cooldownExpiration === null) setTimeout(() => setStatus(Status.Ready), timeDiff.total('milliseconds') * 2)
-  }, [cooldownExpiration, timeDiff])
+  const pollCooldown = useCallback(() => {
+    if (cooldownExpiration === null && status === Status.Cooldown) {
+      refetch()
+    }
+  }, [cooldownExpiration, refetch, status])
+  useInterval(pollCooldown, 5000)
 
   // Log the next action to be run
   const pollQueue = useCallback(

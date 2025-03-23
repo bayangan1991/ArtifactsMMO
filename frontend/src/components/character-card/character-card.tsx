@@ -3,11 +3,12 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import type { Temporal } from '@js-temporal/polyfill'
 import type React from 'react'
 import { useMemo } from 'react'
-import { Button, ButtonGroup, Card, Col, Container, ProgressBar, Row } from 'react-bootstrap'
+import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import '@formatjs/intl-durationformat/polyfill'
+import { StatusColour } from '../../constants.ts'
 
 interface SimpleAction {
   key: string
@@ -42,13 +43,20 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
     <Card>
       <Card.Body className="d-flex flex-column gap-2">
         <Card.Title className="d-flex justify-content-between flex-column">
-          <div>
-            <Card.Img
-              style={{ maxWidth: 20 }}
-              src={`https://www.artifactsmmo.com/images/characters/${character?.skin}.png`}
-              className="me-1"
-            />
-            {character?.name} <small className="text-muted">lvl{character?.level}</small>
+          <div className="d-flex justify-content-between align-items-between">
+            <div>
+              <Card.Img
+                style={{ maxWidth: 20 }}
+                src={`https://www.artifactsmmo.com/images/characters/${character?.skin}.png`}
+                className="me-1"
+              />
+              {character?.name} <small className="text-muted">lvl{character?.level}</small>
+            </div>
+            <Badge style={{ textTransform: 'capitalize' }} bg={StatusColour[status]}>
+              {status !== Status.Cooldown && status}
+              {status === Status.Cooldown && timeUntilReady?.round('seconds').toLocaleString()}
+              {status === Status.Cooldown && !timeUntilReady && status}
+            </Badge>
           </div>
           <div>
             <small className="text-muted">
@@ -70,7 +78,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
         {character && (
           <Container>
             <Row>
-              <Col xxl={3}>
+              <Col xs={3}>
                 <Card.Img
                   style={{ maxWidth: 80 }}
                   src={`https://www.artifactsmmo.com/images/maps/${map?.data.skin}.png`}
@@ -79,7 +87,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
                 />
               </Col>
               <Col>
-                <div className="d-flex flex-column gap-2">
+                <Stack gap={2}>
                   <ProgressBar
                     variant="danger"
                     max={character?.max_hp}
@@ -92,12 +100,10 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
                     now={character?.xp}
                     label={`${character?.xp} / ${character?.max_xp}`}
                   />
-                  <div className="d-flex justify-content-between">
+                  <Stack gap={1} direction="horizontal">
                     <span>{lastAction || error}</span>
-                    {status !== Status.Cooldown && status}
-                    {status === Status.Cooldown && timeUntilReady?.round('seconds').toLocaleString()}
-                  </div>
-                </div>
+                  </Stack>
+                </Stack>
               </Col>
             </Row>
           </Container>
@@ -105,7 +111,7 @@ const CharacterCard = ({ character, simpleActions = [], status, lastAction, time
       </Card.Body>
       <Card.Footer className="d-flex gap-2">
         {simpleActions.map((action) => (
-          <ButtonGroup key={action.key}>
+          <ButtonGroup key={action.key} size="sm">
             <Button variant={action.variant} onClick={action.action}>
               {action.label}
             </Button>

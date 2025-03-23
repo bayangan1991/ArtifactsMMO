@@ -82,7 +82,7 @@ const CharacterPage = () => {
   return (
     <Container fluid>
       <Row className="g-4">
-        <Col lg={4} className="d-flex gap-2 flex-column">
+        <Col style={{ width: 600 }} className="d-flex gap-2 flex-column">
           <CharacterCard
             character={character}
             simpleActions={simpleActions}
@@ -98,7 +98,7 @@ const CharacterPage = () => {
           />
           {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}
         </Col>
-        <Col lg={8} className="d-flex gap-2 flex-column">
+        <Col className="d-flex gap-2 flex-column">
           {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}
         </Col>
       </Row>

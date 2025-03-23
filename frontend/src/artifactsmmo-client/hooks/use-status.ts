@@ -12,11 +12,12 @@ const useStatus = () => {
         const serverTime = Temporal.Instant.from(response.data.data.server_time)
         const now = Temporal.Now.instant()
         setTimeDiff(serverTime.until(now))
+        console.log('get status')
       }
     })
   }, [client])
 
-  useInterval(getTime, 15_000)
+  useInterval(getTime, 30_000)
 
   return timeDiff
 }
