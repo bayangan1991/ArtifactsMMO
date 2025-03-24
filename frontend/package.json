@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --base=/ArtifactsMMOClient/",
+    "publish": "cd dist/ && git add . && git commit -m \"build: update pages\" && git push",
     "lint": "biome lint --fix",
     "preview": "vite preview",
     "generate-client": "openapi-typescript https://api.artifactsmmo.com/openapi.json -o ./src/artifactsmmo-client/spec.d.ts && biome check --fix ./src/artifactsmmo-client/spec.d.ts"
