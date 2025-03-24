@@ -74,7 +74,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
                     <InputGroup.Text className="flex-fill">{account.name}</InputGroup.Text>
                     <InputGroup.Radio
                       name="active-account"
-                      defaultChecked={selectedAccount === account.name}
+                      defaultChecked={selectedAccount === account.name || currentAccounts.length === 1}
                       onClick={() => setSelectedAccount(account.name)}
                     />
                     <Button variant="outline-danger" onClick={() => removeAccount(account.name)}>
