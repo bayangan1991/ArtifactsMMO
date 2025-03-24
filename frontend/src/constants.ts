@@ -6,4 +6,5 @@ export const StatusColour: { [key in Status]: string } = {
   [Status.Cooldown]: 'warning',
   [Status.Waiting]: 'danger',
   [Status.Ready]: 'success',
+  [Status.Paused]: 'secondary',
 }
