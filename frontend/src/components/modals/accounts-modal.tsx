@@ -31,6 +31,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
         clone.push(account)
         return clone
       })
+      setSelectedAccount((current) => (!current ? account.name : current))
     },
     [currentAccounts]
   )
