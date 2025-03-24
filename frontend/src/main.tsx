@@ -1,15 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { HashRouter, Route, Routes } from 'react-router'
 import { AppRoutes } from './routes.tsx'
 
 // biome-ignore lint/style/noNonNullAssertion: It's the root!
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename={'/ArtifactsMMOClient'}>
+    <HashRouter>
       <Routes>
         <Route path="/*" element={<AppRoutes />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
 )
