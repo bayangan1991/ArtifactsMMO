@@ -18,7 +18,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   const { accounts, save } = useContext(AccountContext)
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
   const { accountName } = useParams()
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(accountName || null)
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(accountName || accounts[0]?.name || null)
 
   const { handleSubmit, register } = useForm<Account>()
 
@@ -76,7 +76,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
                     <InputGroup.Text className="flex-fill">{account.name}</InputGroup.Text>
                     <InputGroup.Radio
                       name="active-account"
-                      defaultChecked={selectedAccount === account.name || currentAccounts.length === 1}
+                      defaultChecked={selectedAccount === account.name}
                       onClick={() => setSelectedAccount(account.name)}
                     />
                     <Button variant="outline-danger" onClick={() => removeAccount(account.name)}>
@@ -90,8 +90,8 @@ const AccountsModal = ({ show, handleClose }: Props) => {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <div>{BUILD_TIME}</div>
-        <Button variant="danger" className="me-auto" onClick={handleClose}>
+        <span className="small text-muted">{BUILD_TIME}</span>
+        <Button variant="danger" className="ms-auto" onClick={handleClose}>
           Close
         </Button>
         <Button variant="success" onClick={handleSave}>
