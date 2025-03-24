@@ -4,6 +4,7 @@ import { useCallback, useContext, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
+import { BUILD_TIME } from '../../build-time.ts'
 import { AccountContext } from '../../utils/accounts/context.ts'
 import type { Account } from '../../utils/accounts/types.ts'
 
@@ -89,6 +90,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
         )}
       </Modal.Body>
       <Modal.Footer>
+        <div>{BUILD_TIME}</div>
         <Button variant="danger" className="me-auto" onClick={handleClose}>
           Close
         </Button>

@@ -6,7 +6,7 @@ import { AppRoutes } from './routes.tsx'
 // biome-ignore lint/style/noNonNullAssertion: It's the root!
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={'/ArtifactsMMOClient'}>
       <Routes>
         <Route path="/*" element={<AppRoutes />} />
       </Routes>

@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://bayangan1991.github.io/ArtifactsMMOClient/",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --base=/ArtifactsMMOClient/",
+    "build": "echo \"export const BUILD_TIME = '$(date)'\" > src/build-time.ts && tsc -b && vite build --base=/ArtifactsMMOClient/",
     "publish": "cd dist/ && git add . && git commit -m \"build: update pages\" && git push",
     "lint": "biome lint --fix",
     "generate-client": "openapi-typescript https://api.artifactsmmo.com/openapi.json -o ./src/artifactsmmo-client/spec.d.ts && biome check --fix ./src/artifactsmmo-client/spec.d.ts"
