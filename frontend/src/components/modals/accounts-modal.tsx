@@ -1,5 +1,6 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Temporal } from '@js-temporal/polyfill'
 import { useCallback, useContext, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
@@ -90,7 +91,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <span className="small text-muted">{BUILD_TIME}</span>
+        <span className="small text-muted">{Temporal.Instant.from(BUILD_TIME).toLocaleString()}</span>
         <Button variant="danger" className="ms-auto" onClick={handleClose}>
           Close
         </Button>
