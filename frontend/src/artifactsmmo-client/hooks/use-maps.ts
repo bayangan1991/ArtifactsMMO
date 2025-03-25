@@ -17,7 +17,7 @@ const useMaps = ({ page, currentPosition, contentType, contentCode }: Params) =>
 
   useEffect(() => {
     client
-      .GET('/maps', { params: { query: { page, content_type: contentType, content_code: contentCode } } })
+      .GET('/maps', { params: { query: { page, content_type: contentType, content_code: contentCode, size: 100 } } })
       .then((result) => {
         if (result.data) setMaps(result.data)
       })
