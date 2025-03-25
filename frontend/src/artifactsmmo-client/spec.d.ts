@@ -475,7 +475,7 @@ export interface paths {
     put?: never
     /**
      * Action Ge Create Sell Order
-     * @description Create a sell order at the Grand Exchange on the character's map. Please note that a 5% sales tax is charged.
+     * @description Create a sell order at the Grand Exchange on the character's map. Please note there is a 3% listing tax, charged at the time of posting, on the total price.
      */
     post: operations['action_ge_create_sell_order_my__name__action_grandexchange_sell_post']
     delete?: never
@@ -3079,7 +3079,7 @@ export interface components {
       total_price: number
       /**
        * Tax
-       * @description Order creation tax (3%, minimum 1)
+       * @description Listing tax (3%, minimum 1)
        */
       tax: number
     }
@@ -4478,7 +4478,7 @@ export interface operations {
       }
     }
     responses: {
-      /** @description The item has been successfully unequipped and added in his inventory. */
+      /** @description The item has been successfully unequipped and added in their inventory. */
       200: {
         headers: {
           [name: string]: unknown
