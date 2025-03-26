@@ -20,7 +20,7 @@ const App = () => {
           }}
         />
       )}
-      <Navbar data-bs-theme="dark" bg="dark" fixed="top">
+      <Navbar bg="black" fixed="top">
         <Container fluid className="gap-2">
           <Navbar.Brand>Artifacts MMO Client</Navbar.Brand>
           <Button variant="warning" onClick={() => setShowAccountsModal(true)}>
