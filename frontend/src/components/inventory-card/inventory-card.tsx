@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, Nav, Table } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { ItemImg } from '../item-img/item-img.tsx'
+import { Item } from '../item-img/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface ItemActionGroupProps {
@@ -80,7 +80,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
             <Table>
               <thead>
                 <tr>
-                  <th colSpan={2}>Item</th>
+                  <th>Item</th>
                   <th>Qty</th>
                   <th>Deposit</th>
                 </tr>
@@ -97,9 +97,8 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                 {usedSlots.map((item) => (
                   <tr key={item.slot}>
                     <td>
-                      <ItemImg code={item.code} />
+                      <Item code={item.code} />
                     </td>
-                    <td>{item.code}</td>
                     <td>{item.quantity}</td>
                     <td>
                       <ItemActionGroup
@@ -118,7 +117,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
             <Table>
               <thead>
                 <tr>
-                  <th colSpan={2}>Item</th>
+                  <th>Item</th>
                   <th>Qty</th>
                   <th>Withdraw</th>
                 </tr>
@@ -127,9 +126,8 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
                 {bankItems.data.map((item) => (
                   <tr key={item.code}>
                     <td>
-                      <ItemImg code={item.code} />
+                      <Item code={item.code} />
                     </td>
-                    <td>{item.code}</td>
                     <td>{item.quantity}</td>
                     <td>
                       <ItemActionGroup

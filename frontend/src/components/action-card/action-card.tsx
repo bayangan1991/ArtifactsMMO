@@ -9,7 +9,7 @@ import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { ItemImg } from '../item-img/item-img.tsx'
+import { Item } from '../item-img/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface Props {
@@ -111,10 +111,7 @@ const ActionCard = ({ move, craft, currentPosition, depositAll }: Props) => {
                   <ListGroup variant="flush">
                     {items.data.map((item) => (
                       <ListGroup.Item key={item.code} className="d-flex justify-content-between align-items-center">
-                        <div>
-                          <ItemImg code={item.code} height={20} className="me-2" />
-                          {item.name}
-                        </div>
+                        <Item code={item.code} imgProps={{ height: 20 }} />
                         <CraftControl code={item.code} craft={craft} />
                       </ListGroup.Item>
                     ))}

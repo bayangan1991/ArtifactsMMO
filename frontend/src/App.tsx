@@ -20,6 +20,7 @@ const App = () => {
           }}
         />
       )}
+
       <Navbar bg="black" fixed="top">
         <Container fluid className="gap-2">
           <Navbar.Brand>Artifacts MMO Client</Navbar.Brand>
@@ -28,6 +29,7 @@ const App = () => {
           </Button>
         </Container>
       </Navbar>
+
       <Container fluid className="px-0 pt-3">
         <Outlet />
       </Container>
