@@ -14,6 +14,7 @@ const useItems = ({ skill, craftMaterial, skip = false, size = 10 }: Params) => 
   const [items, setItems] = useState<components['schemas']['DataPage_ItemSchema_'] | null>(null)
 
   const [page, setPage] = useState(1)
+  const [pages, setPages] = useState<number | null>(null)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the page when the skill changes
   useEffect(() => {
@@ -32,13 +33,14 @@ const useItems = ({ skill, craftMaterial, skip = false, size = 10 }: Params) => 
         .then((response) => {
           if (response.data) {
             setItems(response.data)
+            setPages(response.data.pages || null)
           } else setItems(null)
         })
     }
     if (skip) setItems(null)
   }, [client, craftMaterial, skill, page, skip, size])
 
-  return { items, setPage: handleSetPage }
+  return { items, pagination: { setPage: handleSetPage, page, pages } }
 }
 
 export { useItems }

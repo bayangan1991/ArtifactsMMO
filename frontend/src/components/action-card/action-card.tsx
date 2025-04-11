@@ -48,7 +48,7 @@ const ActionCard = ({ move, craft, currentPosition, depositAll }: Props) => {
     maps.data ? maps.data.map((item) => [`${item.x},${item.y}`, item]) : []
   )
 
-  const { items, setPage } = useItems({
+  const { items, pagination } = useItems({
     skill: targetMap?.content?.code as components['schemas']['CraftSkill'],
     skip: targetMap?.content?.type !== 'workshop',
   })
@@ -116,7 +116,7 @@ const ActionCard = ({ move, craft, currentPosition, depositAll }: Props) => {
                       </ListGroup.Item>
                     ))}
                   </ListGroup>
-                  <Pagination className="mt-2 ms-auto" setPage={setPage} page={items.page} pages={items.pages} />
+                  <Pagination className="mt-2 ms-auto" {...pagination} />
                 </Accordion.Body>
               </Accordion.Item>
             )}

@@ -21,7 +21,7 @@ const FormFieldRow = ({ label, value }: { label: string; value: string | number 
 )
 
 const ItemModal = ({ show, item, handleClose }: Props) => {
-  const { items: craftableItems } = useItems({ craftMaterial: item.code })
+  const { items: craftableItems, pagination } = useItems({ craftMaterial: item.code })
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -80,6 +80,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
                   </ListGroup.Item>
                 ))}
               </ListGroup>
+              <Pagination {...pagination} />
             </>
           )}
         </Form>

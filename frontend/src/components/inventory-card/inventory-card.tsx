@@ -49,7 +49,7 @@ interface Props {
 
 const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
   const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('inventory')
-  const { bankItems, setPage, refetch } = useBankItems()
+  const { bankItems, pagination, refetch } = useBankItems()
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
   const inventorySize = 100 + 2 * (character.level - 1)
@@ -156,7 +156,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
         {activeTab === 'bank' && (
           <Card.Footer className="d-flex align-items-center gap-2">
             <span className="ms-auto">Page:</span>
-            <Pagination page={bankItems?.page} pages={bankItems?.pages} setPage={setPage} />
+            <Pagination {...pagination} />
           </Card.Footer>
         )}
       </Card>
