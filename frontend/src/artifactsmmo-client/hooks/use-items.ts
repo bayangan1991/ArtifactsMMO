@@ -4,11 +4,12 @@ import type { components } from '../spec'
 
 interface Params {
   skill?: components['schemas']['CraftSkill']
+  craftMaterial?: string
   size?: number
   skip?: boolean
 }
 
-const useItems = ({ skill, skip = false, size = 10 }: Params) => {
+const useItems = ({ skill, craftMaterial, skip = false, size = 10 }: Params) => {
   const { client } = useContext(ApiClientContext)
   const [items, setItems] = useState<components['schemas']['DataPage_ItemSchema_'] | null>(null)
 
@@ -26,14 +27,16 @@ const useItems = ({ skill, skip = false, size = 10 }: Params) => {
 
   useEffect(() => {
     if (!skip) {
-      client.GET('/items', { params: { query: { craft_skill: skill, page, size } } }).then((response) => {
-        if (response.data) {
-          setItems(response.data)
-        } else setItems(null)
-      })
+      client
+        .GET('/items', { params: { query: { craft_skill: skill, craft_material: craftMaterial, page, size } } })
+        .then((response) => {
+          if (response.data) {
+            setItems(response.data)
+          } else setItems(null)
+        })
     }
     if (skip) setItems(null)
-  }, [client, skill, page, skip, size])
+  }, [client, craftMaterial, skill, page, skip, size])
 
   return { items, setPage: handleSetPage }
 }
