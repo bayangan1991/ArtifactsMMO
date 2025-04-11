@@ -1,7 +1,10 @@
+import React from 'react'
 import { Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
+import { CharacterEffect } from '../character-effect/character-effect.tsx'
 import { Item } from '../item/item.tsx'
+import { Pagination } from '../pagination/pagination.tsx'
 
 interface Props {
   show?: boolean
@@ -9,8 +12,8 @@ interface Props {
   handleClose(): void
 }
 
-const FormFieldRow = ({ label, value }: { label: string; value: string | number }) => (
-  <Form.Group as={Row}>
+const FormFieldRow = ({ label, value }: { label: React.ReactNode; value: string | number }) => (
+  <Form.Group as={Row} className="align-items-baseline">
     <Form.Label column sm={5}>
       {label}
     </Form.Label>
@@ -42,14 +45,20 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
           {item.subtype && <FormFieldRow label="Subtype" value={item.subtype} />}
           {item.effects && item.effects.length > 0 && (
             <>
+              <hr />
               <h5 className="mt-3">Effects</h5>
               {item.effects?.map((effect) => (
-                <FormFieldRow key={effect.code} label={effect.code} value={effect.value} />
+                <FormFieldRow
+                  key={effect.code}
+                  label={<CharacterEffect code={effect.code} imgProps={{ height: 20 }} />}
+                  value={effect.value}
+                />
               ))}
             </>
           )}
           {item.craft && (
             <>
+              <hr />
               <h5 className="mt-3">Crafting</h5>
               {item.craft.quantity && <FormFieldRow label="Quantity" value={item.craft.quantity} />}
               {item.craft.skill && <FormFieldRow label="Skill" value={item.craft.skill} />}
@@ -69,8 +78,9 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
           )}
           {!!craftableItems?.total && (
             <>
+              <hr />
               <h5 className="mt-3">Used in</h5>
-              <ListGroup>
+              <ListGroup className="mb-2">
                 {craftableItems.data.map((craftItem) => (
                   <ListGroup.Item key={craftItem.code} className="d-flex justify-content-between">
                     <Item code={craftItem.code} />{' '}
