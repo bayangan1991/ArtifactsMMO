@@ -7,9 +7,10 @@ import { ItemModalContext } from '../../utils/modal/context.ts'
 interface Props {
   code: string
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>
+  useHistory?: boolean
 }
 
-const Item = ({ code, imgProps = { height: 25 } }: Props) => {
+const Item = ({ code, imgProps = { height: 25 }, useHistory = false }: Props) => {
   const item = useItem(code)
   const { handleShow } = useContext(ItemModalContext)
 
@@ -25,7 +26,7 @@ const Item = ({ code, imgProps = { height: 25 } }: Props) => {
       to="#"
       className="text-decoration-none text-light"
       onClick={() => {
-        handleShow(item)
+        handleShow(item, useHistory)
       }}
     >
       <img {...imgProps} src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} />

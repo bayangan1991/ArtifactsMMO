@@ -5,6 +5,7 @@ interface IStack<T> {
   remove(i: number): void
   size(): number
   data(): T[]
+  clear(): void
 }
 
 class Stack<T> implements IStack<T> {
@@ -31,6 +32,10 @@ class Stack<T> implements IStack<T> {
   size = (): number => this._data.length
 
   data = (): T[] => this._data
+
+  clear = () => {
+    this._data = []
+  }
 }
 
 export { Stack }

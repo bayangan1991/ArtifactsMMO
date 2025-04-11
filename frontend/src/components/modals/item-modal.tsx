@@ -1,7 +1,8 @@
-import React from 'react'
-import { Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
+import React, { useContext } from 'react'
+import { Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
+import { ItemModalContext } from '../../utils/modal/context.ts'
 import { CharacterEffect } from '../character-effect/character-effect.tsx'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
@@ -24,11 +25,12 @@ const FormFieldRow = ({ label, value }: { label: React.ReactNode; value: string 
 )
 
 const ItemModal = ({ show, item, handleClose }: Props) => {
+  const { goBack } = useContext(ItemModalContext)
   const { items: craftableItems, pagination } = useItems({ craftMaterial: item.code })
 
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <img
           height="25"
           className="me-1"
@@ -36,6 +38,11 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
           alt={item.code}
         />
         {item.name}
+        {goBack && (
+          <Button size="sm" variant="outline-light" className="ms-auto" onClick={goBack}>
+            Back
+          </Button>
+        )}
       </Modal.Header>
       <Modal.Body>
         {item.description && <p>{item.description}</p>}
@@ -68,7 +75,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
                 <ListGroup>
                   {item.craft.items.map((craftItem) => (
                     <ListGroup.Item key={craftItem.code}>
-                      <Item code={craftItem.code} />
+                      <Item code={craftItem.code} useHistory />
                       <small className="text-muted"> x {craftItem.quantity}</small>
                     </ListGroup.Item>
                   ))}
@@ -83,7 +90,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
               <ListGroup className="mb-2">
                 {craftableItems.data.map((craftItem) => (
                   <ListGroup.Item key={craftItem.code} className="d-flex justify-content-between">
-                    <Item code={craftItem.code} />{' '}
+                    <Item code={craftItem.code} useHistory />{' '}
                     <small className="text-muted">
                       {craftItem.craft?.skill} @ lvl{craftItem.craft?.level}
                     </small>
