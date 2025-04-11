@@ -1,7 +1,7 @@
 import { Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { Item } from '../item-img/item.tsx'
+import { Item } from '../item/item.tsx'
 
 interface Props {
   show?: boolean

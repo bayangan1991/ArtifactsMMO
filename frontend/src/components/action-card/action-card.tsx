@@ -9,7 +9,7 @@ import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { Item } from '../item-img/item.tsx'
+import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface Props {

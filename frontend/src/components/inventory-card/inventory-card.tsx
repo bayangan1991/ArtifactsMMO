@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, Nav, Table } from 'react-bootstrap'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { Item } from '../item-img/item.tsx'
+import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
 interface ItemActionGroupProps {
