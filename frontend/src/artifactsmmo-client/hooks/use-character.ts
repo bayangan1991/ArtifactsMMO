@@ -371,7 +371,6 @@ const useCharacter = (name: string | null) => {
 
   return {
     character,
-    refetch,
     actions: {
       move,
       rest,

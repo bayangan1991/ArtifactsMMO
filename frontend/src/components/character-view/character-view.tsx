@@ -10,6 +10,7 @@ import { CharacterCard } from '../character-card/character-card.tsx'
 import { InventoryCard } from '../inventory-card/inventory-card.tsx'
 
 import type { FightData, MovementData, RestData, SkillData } from '../../types.ts'
+import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { isActionType } from '../../utils/is-action-type.ts'
 
 interface Props {
@@ -17,49 +18,26 @@ interface Props {
 }
 
 const CharacterView = ({ characterName }: Props) => {
-  const {
-    character,
-    actions: {
-      move,
-      rest,
-      repeatRest,
-      fight,
-      repeatFight,
-      deposit,
-      depositAll,
-      withdraw,
-      gathering,
-      repeatGathering,
-      craft,
-      unEquip,
-      equip,
-    },
-    lastAction,
-    error,
-    status,
-    timeUntilReady,
-    actionQueue,
-    togglePause,
-  } = useCharacter(characterName || null)
+  const character = useCharacter(characterName || null)
 
   const lastActionResult: string = useMemo(() => {
-    if (!lastAction) return ''
-    if (isActionType<FightData>(lastAction, 'fight')) {
-      const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
-      return `${lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
+    if (!character.lastAction) return ''
+    if (isActionType<FightData>(character.lastAction, 'fight')) {
+      const loot = character.lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
+      return `${character.lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
     }
-    if (isActionType<MovementData>(lastAction, 'movement')) {
-      return `Moving to ${lastAction.destination.name}`
+    if (isActionType<MovementData>(character.lastAction, 'movement')) {
+      return `Moving to ${character.lastAction.destination.name}`
     }
-    if (isActionType<SkillData>(lastAction, 'gathering')) {
-      return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
+    if (isActionType<SkillData>(character.lastAction, 'gathering')) {
+      return `Gathered ${character.lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
     }
-    if (isActionType<RestData>(lastAction, 'rest')) {
-      return `Restored ${lastAction.hp_restored}hp`
+    if (isActionType<RestData>(character.lastAction, 'rest')) {
+      return `Restored ${character.lastAction.hp_restored}hp`
     }
 
-    return lastAction.cooldown.reason
-  }, [lastAction])
+    return character.lastAction.cooldown.reason
+  }, [character.lastAction])
 
   const simpleActions = [
     {
@@ -70,8 +48,8 @@ const CharacterView = ({ characterName }: Props) => {
         </>
       ),
       variant: 'success',
-      action: rest,
-      repeat: repeatRest,
+      action: character.actions.rest,
+      repeat: character.actions.repeatRest,
     },
     {
       key: 'fight',
@@ -81,8 +59,8 @@ const CharacterView = ({ characterName }: Props) => {
         </>
       ),
       variant: 'danger',
-      action: fight,
-      repeat: repeatFight,
+      action: character.actions.fight,
+      repeat: character.actions.repeatFight,
     },
     {
       key: 'gather',
@@ -92,45 +70,49 @@ const CharacterView = ({ characterName }: Props) => {
         </>
       ),
       variant: 'warning',
-      action: gathering,
-      repeat: repeatGathering,
+      action: character.actions.gathering,
+      repeat: character.actions.repeatGathering,
     },
   ]
 
   return (
-    <Container fluid>
-      <Row className="g-4">
-        <Col md={6} lg={4} className="d-flex gap-2 flex-column">
-          <CharacterCard
-            character={character}
-            simpleActions={simpleActions}
-            status={status}
-            lastAction={lastActionResult}
-            error={error ?? null}
-            timeUntilReady={timeUntilReady}
-            togglePause={togglePause}
-          />
-          <ActionCard
-            move={move}
-            craft={craft}
-            depositAll={depositAll}
-            currentPosition={character ? { x: character.x, y: character.y } : undefined}
-          />
-          {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}
-        </Col>
-        <Col className="d-flex gap-2 flex-column">
-          {character && (
-            <InventoryCard
-              character={character}
-              depositItem={deposit}
-              withdrawItem={withdraw}
-              unEquip={unEquip}
-              equip={equip}
+    <CharacterContext.Provider value={character}>
+      <Container fluid>
+        <Row className="g-4">
+          <Col md={6} lg={4} className="d-flex gap-2 flex-column">
+            <CharacterCard
+              character={character.character}
+              simpleActions={simpleActions}
+              status={character.status}
+              lastAction={lastActionResult}
+              error={character.error ?? null}
+              timeUntilReady={character.timeUntilReady}
+              togglePause={character.togglePause}
             />
-          )}
-        </Col>
-      </Row>
-    </Container>
+            <ActionCard
+              move={character.actions.move}
+              craft={character.actions.craft}
+              depositAll={character.actions.depositAll}
+              currentPosition={character.character ? { x: character.character.x, y: character.character.y } : undefined}
+            />
+            {character.actionQueue.size() > 0 && (
+              <ActionQueueCard queue={character.actionQueue.data()} handleRemove={character.actionQueue.remove} />
+            )}
+          </Col>
+          <Col className="d-flex gap-2 flex-column">
+            {character.character && (
+              <InventoryCard
+                character={character.character}
+                depositItem={character.actions.deposit}
+                withdrawItem={character.actions.withdraw}
+                unEquip={character.actions.unEquip}
+                equip={character.actions.equip}
+              />
+            )}
+          </Col>
+        </Row>
+      </Container>
+    </CharacterContext.Provider>
   )
 }
 
