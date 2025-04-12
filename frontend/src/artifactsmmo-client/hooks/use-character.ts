@@ -116,19 +116,14 @@ const useCharacter = (name: string | null) => {
   // Defined Actions
 
   const queueAction = useCallback(
-    (queue: Queue<ActionData>, force = false, index?: number) => {
-      if (!force && actionQueue.size() === 0 && status === Status.Ready) {
-        queue.action()
-        setStatus(Status.Waiting)
+    (queue: Queue<ActionData>, index?: number) => {
+      if (index !== undefined) {
+        actionQueue.insert(queue, index)
       } else {
-        if (index !== undefined) {
-          actionQueue.insert(queue, index)
-        } else {
-          actionQueue.push(queue)
-        }
+        actionQueue.push(queue)
       }
     },
-    [actionQueue, status]
+    [actionQueue]
   )
 
   const onSuccess = useCallback((data: ActionData) => {
@@ -161,7 +156,6 @@ const useCharacter = (name: string | null) => {
 
         queueAction(
           { label: `${requeue ? 'Repeat m' : 'M'}ove to ${pos.x},${pos.y}`, guid: Guid.create(), action: handleMove },
-          false,
           queueIndex
         )
       }
@@ -184,7 +178,6 @@ const useCharacter = (name: string | null) => {
             guid: Guid.create(),
             action: handleDeposit,
           },
-          false,
           queueIndex
         )
       }
@@ -336,34 +329,34 @@ const useCharacter = (name: string | null) => {
     [name, doWithdrawGold, queueAction]
   )
 
-  const [rest, repeatRest] = useSimpleAction({
+  const rest = useSimpleAction({
     name,
     label: 'Rest',
-    action: '/my/{name}/action/rest',
+    path: '/my/{name}/action/rest',
     onSuccess,
     onError,
     queueAction,
   })
-  const [fight, repeatFight] = useSimpleAction({
+  const fight = useSimpleAction({
     name,
     label: 'Fight',
-    action: '/my/{name}/action/fight',
+    path: '/my/{name}/action/fight',
     onSuccess,
     onError,
     queueAction,
   })
-  const [gathering, repeatGathering] = useSimpleAction({
+  const gathering = useSimpleAction({
     name: name,
     label: 'Gathering',
-    action: '/my/{name}/action/gathering',
+    path: '/my/{name}/action/gathering',
     onSuccess,
     onError,
     queueAction,
   })
-  const [buyExpansion] = useSimpleAction({
+  const buyExpansion = useSimpleAction({
     name: name,
     label: 'Buy bank expansion',
-    action: '/my/{name}/action/bank/buy_expansion',
+    path: '/my/{name}/action/bank/buy_expansion',
     onSuccess,
     onError,
     queueAction,
@@ -374,11 +367,8 @@ const useCharacter = (name: string | null) => {
     actions: {
       move,
       rest,
-      repeatRest,
       fight,
-      repeatFight,
       gathering,
-      repeatGathering,
       deposit,
       depositAll,
       withdraw,

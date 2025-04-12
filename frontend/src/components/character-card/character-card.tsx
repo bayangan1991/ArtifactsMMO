@@ -14,20 +14,21 @@ import { isActionType } from '../../utils/is-action-type.ts'
 const CharacterCard = () => {
   const {
     character,
-    actions: { rest, repeatRest, fight, repeatFight, gathering, repeatGathering },
+    actions: { rest, fight, gathering },
     lastAction,
     timeUntilReady,
     error,
     togglePause,
     status,
   } = useContext(CharacterContext)
+
   const map = useMap(
     useMemo(() => {
       return {
         x: character?.x || 0,
         y: character?.y || 0,
       }
-    }, [character?.x, character?.y])
+    }, [character])
   )
 
   const locationString = map && map.data.name + (map.data.content ? `[${map.data.content?.code}]` : '')
@@ -42,7 +43,6 @@ const CharacterCard = () => {
       ),
       variant: 'success',
       action: rest,
-      repeat: repeatRest,
     },
     {
       key: 'fight',
@@ -53,7 +53,6 @@ const CharacterCard = () => {
       ),
       variant: 'danger',
       action: fight,
-      repeat: repeatFight,
     },
     {
       key: 'gather',
@@ -64,7 +63,6 @@ const CharacterCard = () => {
       ),
       variant: 'warning',
       action: gathering,
-      repeat: repeatGathering,
     },
   ]
 
@@ -160,14 +158,12 @@ const CharacterCard = () => {
       <Card.Footer className="d-flex gap-2">
         {simpleActions.map((action) => (
           <ButtonGroup key={action.key} size="sm">
-            <Button variant={action.variant} onClick={action.action}>
+            <Button variant={action.variant} onClick={() => action.action()}>
               {action.label}
             </Button>
-            {action.repeat && (
-              <Button variant={action.variant} onClick={action.repeat}>
-                <Icon icon={faRepeat} />
-              </Button>
-            )}
+            <Button variant={action.variant} onClick={() => action.action(undefined, true)}>
+              <Icon icon={faRepeat} />
+            </Button>
           </ButtonGroup>
         ))}
       </Card.Footer>

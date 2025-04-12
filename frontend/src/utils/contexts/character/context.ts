@@ -9,15 +9,12 @@ interface CharacterContextType {
   character: components['schemas']['CharacterSchema'] | null
   actions: {
     move(pos: Position, queueIndex?: number, requeue?: boolean): void
-    rest(): void
-    repeatRest(): void
-    fight(): void
-    repeatFight(): void
+    rest(queueIndex?: number, requeue?: boolean): void
+    fight(queueIndex?: number, requeue?: boolean): void
     deposit(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
     depositAll(pos: Position, requeue?: boolean, returnToPos?: boolean): void
     withdraw(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    gathering(): void
-    repeatGathering(): void
+    gathering(queueIndex?: number, requeue?: boolean): void
     craft(code: string, quantity: number, requeue?: boolean): void
     unEquip(slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean): void
     equip(
@@ -45,14 +42,11 @@ const CharacterContext = React.createContext<CharacterContextType>({
   actions: {
     move: notImplemented,
     rest: notImplemented,
-    repeatRest: notImplemented,
     fight: notImplemented,
-    repeatFight: notImplemented,
     deposit: notImplemented,
     depositAll: notImplemented,
     withdraw: notImplemented,
     gathering: notImplemented,
-    repeatGathering: notImplemented,
     craft: notImplemented,
     unEquip: notImplemented,
     equip: notImplemented,

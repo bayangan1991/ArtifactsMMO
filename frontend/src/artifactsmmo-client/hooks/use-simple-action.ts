@@ -8,16 +8,16 @@ import type { paths } from '../spec'
 interface UseSimpleActionParams<T> {
   name: string | null
   label: string
-  action: PathsWithMethod<paths, 'post'>
+  path: PathsWithMethod<paths, 'post'>
   onSuccess: (data: ActionData) => void
   onError: (error: string) => void
-  queueAction: (action: Queue<T>, force?: boolean, index?: number) => void
+  queueAction: (action: Queue<T>, index?: number) => void
 }
 
 export const useSimpleAction = <T extends ActionData>({
   name,
   label,
-  action,
+  path,
   onSuccess,
   onError,
   queueAction,
@@ -26,49 +26,50 @@ export const useSimpleAction = <T extends ActionData>({
   const doAction = useCallback(async (): Promise<T | null> => {
     if (name) {
       try {
-        const result = await client.POST(action, {
+        const { data, error } = await client.POST(path, {
           params: { path: { name } },
         })
-        if (result?.data) {
+        if (data) {
           // @ts-ignore
-          onSuccess(result.data.data as unknown as T)
+          onSuccess(data.data as unknown as T)
           // @ts-ignore
-          return result.data.data as unknown as T
+          return data.data as unknown as T
         }
         // @ts-ignore
-        onError(result.error.error.message)
+        onError(error.error.message)
       } catch {}
     }
     return null
-  }, [client, name, action, onSuccess, onError])
+  }, [client, name, path, onSuccess, onError])
 
-  const repeat = async () => {
-    const guid = Guid.create()
-    const requeueIfSuccess = async () => {
-      const result = await doAction()
+  const action = useCallback(
+    (queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleAction = async () => {
+          const result = await doAction()
+          // Special handling for gathering
+          if (result && requeue) {
+            if (path === '/my/{name}/action/gathering') {
+              action(0, requeue)
+            } else {
+              action(queueIndex, requeue)
+            }
+          }
+          return result
+        }
 
-      if (action === '/my/{name}/action/gathering') {
-        if (result) {
-          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true, 0)
-        } else {
-          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
-        }
-      } else {
-        if (result) {
-          queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess }, true)
-        }
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat ' : ''}${label}`,
+            guid: Guid.create(),
+            action: handleAction,
+          },
+          queueIndex
+        )
       }
-      return result
-    }
+    },
+    [name, doAction, queueAction, label, path]
+  )
 
-    return queueAction({ label: `Repeat ${label}`, guid, action: requeueIfSuccess })
-  }
-
-  return [
-    useCallback(
-      async () => queueAction({ label, guid: Guid.create(), action: doAction }),
-      [doAction, label, queueAction]
-    ),
-    repeat,
-  ]
+  return action
 }
