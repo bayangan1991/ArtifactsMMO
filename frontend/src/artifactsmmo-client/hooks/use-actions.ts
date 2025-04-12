@@ -137,7 +137,49 @@ const useActions = ({ onSuccess, onError }: Params) => {
     [client, onSuccess, onError]
   )
 
-  return { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip }
+  const doWithdrawGold = useCallback(
+    async (name: string, quantity: number) => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/gold', {
+          body: { quantity },
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
+  const doDepositGold = useCallback(
+    async (name: string, quantity: number) => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/bank/deposit/gold', {
+          body: { quantity },
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
+  return { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doWithdrawGold, doDepositGold }
 }
 
 export { useActions }

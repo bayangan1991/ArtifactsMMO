@@ -15,8 +15,16 @@ type SkillData = components['schemas']['SkillDataSchema']
 type BankTransactionData = components['schemas']['BankItemTransactionSchema']
 type RestData = components['schemas']['CharacterRestDataSchema']
 type EquipmentData = components['schemas']['EquipmentResponseSchema']['data']
+type BankGoldTransaction = components['schemas']['BankGoldTransactionSchema']
 
-type ActionData = MovementData | FightData | SkillData | BankTransactionData | RestData | EquipmentData
+type ActionData =
+  | MovementData
+  | FightData
+  | SkillData
+  | BankTransactionData
+  | RestData
+  | EquipmentData
+  | BankGoldTransaction
 
 interface PaginationType {
   page: number
