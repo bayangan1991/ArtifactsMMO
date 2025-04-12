@@ -13,12 +13,17 @@ interface Props {
 }
 
 const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
-  const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('inventory')
+  const [activeTab, setActiveTab] = useState<'character' | 'inventory' | 'bank'>('character')
   const { refetch } = useContext(BankItemsContext)
 
   return (
     <>
       <Nav variant="underline" className="mb-2">
+        <Nav.Item>
+          <Nav.Link active={activeTab === 'character'} onClick={() => setActiveTab('character')}>
+            <Icon icon={faBoxArchive} /> Character
+          </Nav.Link>
+        </Nav.Item>
         <Nav.Item>
           <Nav.Link active={activeTab === 'inventory'} onClick={() => setActiveTab('inventory')}>
             <Icon icon={faBoxArchive} /> Inventory
@@ -35,6 +40,7 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
           </Nav.Link>
         </Nav.Item>
       </Nav>
+      {activeTab === 'character' && <Tabs.Character character={character} />}
       {activeTab === 'inventory' && <Tabs.Inventory character={character} action={depositItem} />}
       {activeTab === 'bank' && <Tabs.Bank inventorySize={character.inventory_max_items} action={withdrawItem} />}
     </>
