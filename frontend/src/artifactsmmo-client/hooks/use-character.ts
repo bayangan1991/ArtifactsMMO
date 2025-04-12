@@ -145,7 +145,7 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const { doMove, doDeposit, doWithdraw, doCraft } = useActions({ onSuccess, onError })
+  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip } = useActions({ onSuccess, onError })
 
   const move = useCallback(
     (pos: Position, queueIndex?: number, requeue?: boolean) => {
@@ -251,6 +251,49 @@ const useCharacter = (name: string | null) => {
     [refetch, deposit, move, queueAction]
   )
 
+  const unEquip = useCallback(
+    (slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleUnEquip = async () => {
+          const result = await doUnEquip(name, slot, quantity)
+          if (result && requeue) unEquip(slot, quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction({
+          label: `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
+          guid: Guid.create(),
+          action: handleUnEquip,
+        })
+      }
+    },
+    [name, doUnEquip, queueAction]
+  )
+  const equip = useCallback(
+    (
+      code: string,
+      slot: components['schemas']['ItemSlot'],
+      quantity: number,
+      queueIndex?: number,
+      requeue?: boolean
+    ) => {
+      if (name) {
+        const handleEquip = async () => {
+          const result = await doEquip(name, code, slot, quantity)
+          if (result && requeue) equip(code, slot, quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction({
+          label: `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
+          guid: Guid.create(),
+          action: handleEquip,
+        })
+      }
+    },
+    [name, doEquip, queueAction]
+  )
+
   const [rest, repeatRest] = useSimpleAction({
     name,
     label: 'Rest',
@@ -291,6 +334,8 @@ const useCharacter = (name: string | null) => {
       depositAll,
       withdraw,
       craft,
+      unEquip,
+      equip,
     },
     lastAction,
     error,

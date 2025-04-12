@@ -10,9 +10,11 @@ interface Props {
   character: components['schemas']['CharacterSchema']
   depositItem(code: string, quantity: number): void
   withdrawItem(code: string, quantity: number, index?: number, requeue?: boolean): void
+  unEquip(slot: components['schemas']['ItemSlot'], quantity?: number): void
+  equip(code: string, slot: components['schemas']['ItemSlot'], quantity?: number): void
 }
 
-const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
+const InventoryCard = ({ character, depositItem, withdrawItem, unEquip, equip }: Props) => {
   const [activeTab, setActiveTab] = useState<'character' | 'inventory' | 'bank'>('character')
   const { refetch } = useContext(BankItemsContext)
 
@@ -40,8 +42,8 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
           </Nav.Link>
         </Nav.Item>
       </Nav>
-      {activeTab === 'character' && <Tabs.Character character={character} />}
-      {activeTab === 'inventory' && <Tabs.Inventory character={character} action={depositItem} />}
+      {activeTab === 'character' && <Tabs.Character character={character} unEquip={unEquip} />}
+      {activeTab === 'inventory' && <Tabs.Inventory character={character} action={depositItem} equip={equip} />}
       {activeTab === 'bank' && <Tabs.Bank inventorySize={character.inventory_max_items} action={withdrawItem} />}
     </>
   )

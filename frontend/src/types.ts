@@ -14,8 +14,9 @@ type FightData = components['schemas']['CharacterFightDataSchema']
 type SkillData = components['schemas']['SkillDataSchema']
 type BankTransactionData = components['schemas']['BankItemTransactionSchema']
 type RestData = components['schemas']['CharacterRestDataSchema']
+type EquipmentData = components['schemas']['EquipmentResponseSchema']['data']
 
-type ActionData = MovementData | FightData | SkillData | BankTransactionData | RestData
+type ActionData = MovementData | FightData | SkillData | BankTransactionData | RestData | EquipmentData
 
 interface PaginationType {
   page: number

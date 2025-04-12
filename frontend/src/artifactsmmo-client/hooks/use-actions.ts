@@ -95,7 +95,49 @@ const useActions = ({ onSuccess, onError }: Params) => {
     [client, onSuccess, onError]
   )
 
-  return { doMove, doDeposit, doWithdraw, doCraft }
+  const doUnEquip = useCallback(
+    async (name: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/unequip', {
+          body: { slot, quantity },
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
+  const doEquip = useCallback(
+    async (name: string, code: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/equip', {
+          body: { slot, quantity, code },
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
+  return { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip }
 }
 
 export { useActions }

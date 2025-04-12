@@ -31,6 +31,8 @@ const CharacterView = ({ characterName }: Props) => {
       gathering,
       repeatGathering,
       craft,
+      unEquip,
+      equip,
     },
     lastAction,
     error,
@@ -117,7 +119,15 @@ const CharacterView = ({ characterName }: Props) => {
           {actionQueue.size() > 0 && <ActionQueueCard queue={actionQueue.data()} handleRemove={actionQueue.remove} />}
         </Col>
         <Col className="d-flex gap-2 flex-column">
-          {character && <InventoryCard character={character} depositItem={deposit} withdrawItem={withdraw} />}
+          {character && (
+            <InventoryCard
+              character={character}
+              depositItem={deposit}
+              withdrawItem={withdraw}
+              unEquip={unEquip}
+              equip={equip}
+            />
+          )}
         </Col>
       </Row>
     </Container>

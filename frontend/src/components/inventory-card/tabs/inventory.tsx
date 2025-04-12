@@ -6,9 +6,10 @@ import { ItemActionGroup } from '../item-action-group.tsx'
 interface Props {
   character: components['schemas']['CharacterSchema']
   action(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
+  equip(code: string, slot: components['schemas']['ItemSlot'], quantity?: number): void
 }
 
-const Inventory = ({ character, action }: Props) => {
+const Inventory = ({ character, action, equip }: Props) => {
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
   const usedInventorySize = usedSlots.map((t) => t.quantity).reduce((v, acc) => v + acc, 0)
@@ -36,7 +37,7 @@ const Inventory = ({ character, action }: Props) => {
             {usedSlots.map((item) => (
               <tr key={item.slot}>
                 <td>
-                  <Item code={item.code} />
+                  <Item code={item.code} equip={equip} />
                 </td>
                 <td>{item.quantity}</td>
                 <td>
