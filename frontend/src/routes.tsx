@@ -6,8 +6,6 @@ import { CharactersPage } from './pages/characters-page/characters-page.tsx'
 import { NoAccountPage } from './pages/no-account-page.tsx'
 
 const AppRoutes = () => {
-  console.log('test')
-
   return (
     <Routes>
       <Route element={<App />}>

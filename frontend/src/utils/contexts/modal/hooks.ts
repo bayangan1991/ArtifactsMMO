@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import type { components } from '../../artifactsmmo-client/spec'
-import { Stack } from '../stack.ts'
+import type { components } from '../../../artifactsmmo-client/spec'
+import { Stack } from '../../stack.ts'
 
 const useItemModal = () => {
   const [show, setShow] = useState(false)

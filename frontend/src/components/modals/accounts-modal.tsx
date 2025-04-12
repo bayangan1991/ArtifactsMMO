@@ -6,8 +6,8 @@ import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstra
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import { BUILD_TIME } from '../../build-time.ts'
-import { AccountContext } from '../../utils/accounts/context.ts'
-import type { Account } from '../../utils/accounts/types.ts'
+import { AccountContext } from '../../utils/contexts/accounts/context.ts'
+import type { Account } from '../../utils/contexts/accounts/types.ts'
 
 interface Props {
   show: boolean

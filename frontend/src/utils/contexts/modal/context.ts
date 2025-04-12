@@ -1,5 +1,5 @@
 import React from 'react'
-import type { components } from '../../artifactsmmo-client/spec'
+import type { components } from '../../../artifactsmmo-client/spec'
 
 interface ItemModalContextType {
   show: boolean

@@ -1,16 +1,19 @@
 import {} from '@fortawesome/free-solid-svg-icons'
 import { Nav } from 'react-bootstrap'
 import { Link, useParams } from 'react-router'
+import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
 import { CharacterView } from '../../components/character-view/character-view.tsx'
 import type {} from '../../types.ts'
+import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 
 const CharacterPage = () => {
   const { accountName, characterName } = useParams<{ accountName: string; characterName: string }>()
   const characters = useCharacters(accountName)
+  const bankItems = useBankItems()
 
   return (
-    <>
+    <BankItemsContext.Provider value={bankItems}>
       <Nav variant="underline" defaultActiveKey={characterName} className="mx-3 mb-3">
         {characters.map((char) => (
           <Nav.Item key={char.name}>
@@ -31,7 +34,7 @@ const CharacterPage = () => {
           <CharacterView characterName={char.name} />
         </div>
       ))}
-    </>
+    </BankItemsContext.Provider>
   )
 }
 

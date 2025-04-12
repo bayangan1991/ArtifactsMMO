@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Placeholder } from 'react-bootstrap'
 import { Link } from 'react-router'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item'
-import { ItemModalContext } from '../../utils/modal/context.ts'
+import { ItemModalContext } from '../../utils/contexts/modal/context.ts'
 
 interface Props {
   code: string

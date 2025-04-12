@@ -1,9 +1,9 @@
 import { faBank, faBoxArchive, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button, Card, Form, InputGroup, Nav, Table } from 'react-bootstrap'
-import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
+import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
@@ -49,7 +49,7 @@ interface Props {
 
 const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
   const [activeTab, setActiveTab] = useState<'inventory' | 'bank'>('inventory')
-  const { bankItems, pagination, refetch } = useBankItems()
+  const { bankItems, pagination, refetch } = useContext(BankItemsContext)
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
   const inventorySize = 100 + 2 * (character.level - 1)

@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { Button, Container, Navbar } from 'react-bootstrap'
 import { Outlet } from 'react-router'
 import { AccountsModal } from './components/modals/accounts-modal.tsx'
-import { AccountContext } from './utils/accounts/context.ts'
-import { useAccounts } from './utils/accounts/hooks.ts'
+import { AccountContext } from './utils/contexts/accounts/context.ts'
+import { useAccounts } from './utils/contexts/accounts/hooks.ts'
 
 const App = () => {
   const [showAccountsModal, setShowAccountsModal] = useState<boolean>(false)

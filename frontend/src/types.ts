@@ -17,4 +17,20 @@ type RestData = components['schemas']['CharacterRestDataSchema']
 
 type ActionData = MovementData | FightData | SkillData | BankTransactionData | RestData
 
-export type { MovementData, FightData, SkillData, BankTransactionData, RestData, ActionData, Queue, Position }
+interface PaginationType {
+  page: number
+  pages?: number | null
+  setPage(page: number): void
+}
+
+export type {
+  PaginationType,
+  MovementData,
+  FightData,
+  SkillData,
+  BankTransactionData,
+  RestData,
+  ActionData,
+  Queue,
+  Position,
+}
