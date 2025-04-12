@@ -48,10 +48,14 @@ export const useSimpleAction = <T extends ActionData>({
         const handleAction = async () => {
           const result = await doAction()
           // Special handling for gathering
-          if (result && requeue) {
+          if (requeue) {
             if (path === '/my/{name}/action/gathering') {
-              action(0, requeue)
-            } else {
+              if (result) {
+                action(0, requeue)
+              } else {
+                action(undefined, requeue)
+              }
+            } else if (result) {
               action(queueIndex, requeue)
             }
           }
