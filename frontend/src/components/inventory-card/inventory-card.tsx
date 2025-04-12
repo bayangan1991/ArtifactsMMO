@@ -1,4 +1,4 @@
-import { faBank, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
+import { faBank, faHatWizard, faSackDollar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext, useState } from 'react'
 import { Nav } from 'react-bootstrap'
@@ -21,12 +21,12 @@ const InventoryCard = ({ character, depositItem, withdrawItem }: Props) => {
       <Nav variant="underline" className="mb-2">
         <Nav.Item>
           <Nav.Link active={activeTab === 'character'} onClick={() => setActiveTab('character')}>
-            <Icon icon={faBoxArchive} /> Character
+            <Icon icon={faHatWizard} /> Character
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
           <Nav.Link active={activeTab === 'inventory'} onClick={() => setActiveTab('inventory')}>
-            <Icon icon={faBoxArchive} /> Inventory
+            <Icon icon={faSackDollar} /> Inventory
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>

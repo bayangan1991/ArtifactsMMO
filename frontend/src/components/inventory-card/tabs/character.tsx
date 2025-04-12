@@ -1,6 +1,10 @@
-import { Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap'
+import { faMagnifyingGlass, faUserLargeSlash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
+import React, { useContext } from 'react'
+import { Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap'
+import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
-
+import { ItemModalContext } from '../../../utils/contexts/modal/context.ts'
 interface Props {
   character: components['schemas']['CharacterSchema']
 }
@@ -25,18 +29,35 @@ const SkillBar = ({
   </div>
 )
 
-const Slot = ({
-  character,
-  slot,
-}: { character: components['schemas']['CharacterSchema']; slot: components['schemas']['ItemSlot'] }) => {
+interface SlotProps extends React.HTMLAttributes<HTMLDivElement> {
+  character: components['schemas']['CharacterSchema']
+  slot: components['schemas']['ItemSlot']
+}
+
+const Slot = ({ character, slot, ...rest }: SlotProps) => {
   const slotName: `${components['schemas']['ItemSlot']}_slot` = `${slot}_slot`
+  const item = useItem(character[slotName])
+  const { handleShow } = useContext(ItemModalContext)
+
+  if (!rest.style) rest.style = { minHeight: 100 }
+  if (!rest.style.minHeight) rest.style.minHeight = 100
 
   return (
-    <div>
-      {!!character[slotName] && (
-        <img src={`https://artifactsmmo.com/images/items/${character[slotName]}.png`} alt={slot} />
+    <div {...rest} className="d-flex justify-content-around align-items-center border rounded flex-column">
+      {item && character[slotName] && (
+        <>
+          <img src={`https://artifactsmmo.com/images/items/${item.code}.png`} height={40} alt={slot} />
+          <div className="d-flex justify-content-between w-100 px-2">
+            <Button size="sm" variant="outline-light" onClick={() => handleShow(item)}>
+              <Icon icon={faMagnifyingGlass} />
+            </Button>
+            <Button size="sm" variant="outline-light">
+              <Icon icon={faUserLargeSlash} />
+            </Button>
+          </div>
+        </>
       )}
-      {!character[slotName] && slot}
+      {!character[slotName] && <small className="text-muted">{slot}</small>}
     </div>
   )
 }
@@ -46,67 +67,26 @@ const Character = ({ character }: Props) => (
     <Card.Body>
       <Container>
         <Row>
-          <Col xs={4}>
+          <Col xs="auto">
             <h5>Equipment</h5>
-            <Container>
-              <Row>
-                <Col xs={3}>
-                  <Slot character={character} slot="utility1" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="helmet" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="utility2" />
-                </Col>
-
-                <Col xs={3}>
-                  <Slot character={character} slot="amulet" />
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={3}>
-                  <Slot character={character} slot="weapon" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="body_armor" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="shield" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="artifact1" />
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={3}>
-                  <Slot character={character} slot="ring1" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="leg_armor" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="ring2" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="artifact2" />
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={3}>
-                  <Slot character={character} slot="rune" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="boots" />
-                </Col>
-                <Col xs={3}>
-                  <Slot character={character} slot="bag" />
-                </Col>{' '}
-                <Col xs={3}>
-                  <Slot character={character} slot="artifact3" />
-                </Col>
-              </Row>
-            </Container>
+            <div className="gap-1" style={{ display: 'grid', gridTemplateColumns: '100px 100px 100px' }}>
+              <Slot character={character} style={{ gridColumnStart: 2 }} slot="helmet" />
+              <Slot character={character} style={{ gridColumnStart: 1 }} slot="utility1" />
+              <Slot character={character} slot="amulet" />
+              <Slot character={character} slot="utility2" />
+              <Slot character={character} slot="weapon" />
+              <Slot character={character} slot="body_armor" />
+              <Slot character={character} slot="shield" />
+              <Slot character={character} slot="ring1" />
+              <Slot character={character} slot="leg_armor" />
+              <Slot character={character} slot="ring2" />
+              <Slot character={character} slot="rune" />
+              <Slot character={character} slot="boots" />
+              <Slot character={character} slot="bag" />
+              <Slot character={character} slot="artifact1" />
+              <Slot character={character} slot="artifact2" />
+              <Slot character={character} slot="artifact3" />
+            </div>
           </Col>
           <Col>
             <h5>Skills</h5>
