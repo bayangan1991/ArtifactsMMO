@@ -1,4 +1,4 @@
-import { faCoins } from '@fortawesome/free-solid-svg-icons'
+import { faBorderAll, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Card, Table } from 'react-bootstrap'
@@ -51,6 +51,10 @@ const Bank = () => {
       <Card.Footer className="d-flex align-items-center gap-2 justify-content-between">
         <span>
           <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {bankDetails?.data.gold.toLocaleString()}
+        </span>
+        <span>
+          <Icon icon={faBorderAll} fixedWidth />
+          {bankItems.total || 0} / {bankDetails?.data.slots || 0}
         </span>
         <div className="d-flex align-items-center gap-2">
           <span className="ms-auto">Page:</span>
