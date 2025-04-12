@@ -31,6 +31,7 @@ interface CharacterContextType {
   timeUntilReady: Temporal.Duration | null
   actionQueue: Stack<Queue<ActionData>>
   togglePause(): void
+  forceUpdate(): void
 }
 
 const notImplemented = () => {
@@ -57,6 +58,7 @@ const CharacterContext = React.createContext<CharacterContextType>({
   timeUntilReady: null,
   actionQueue: new Stack(),
   togglePause: notImplemented,
+  forceUpdate: notImplemented,
 })
 
 export { CharacterContext }

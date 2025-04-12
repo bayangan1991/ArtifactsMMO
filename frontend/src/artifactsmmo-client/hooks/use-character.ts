@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
 import type { ActionData, Position, Queue } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
@@ -28,6 +28,7 @@ const useCharacter = (name: string | null) => {
   const [cooldown, setCooldown] = useState(Temporal.Now.instant())
   const [cooldownExpiration, setCooldownExpiration] = useState<Temporal.Duration | null>(null)
   const [status, setStatus] = useState<Status>(Status.Ready)
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
 
   // Character Data
 
@@ -117,6 +118,7 @@ const useCharacter = (name: string | null) => {
 
   const queueAction = useCallback(
     (queue: Queue<ActionData>, index?: number) => {
+      forceUpdate()
       if (index !== undefined) {
         actionQueue.insert(queue, index)
       } else {
@@ -385,6 +387,7 @@ const useCharacter = (name: string | null) => {
     timeUntilReady: cooldownExpiration,
     actionQueue,
     togglePause,
+    forceUpdate,
   }
 }
 export { useCharacter, Status }

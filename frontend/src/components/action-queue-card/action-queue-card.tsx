@@ -3,9 +3,10 @@ import { Card, ListGroup } from 'react-bootstrap'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 
 const ActionQueueCard = () => {
-  const { actionQueue } = useContext(CharacterContext)
+  const { actionQueue, forceUpdate } = useContext(CharacterContext)
+  const queueSize = actionQueue.size()
 
-  if (actionQueue.size() === 0) return
+  if (queueSize === 0) return
 
   return (
     <Card>
@@ -14,7 +15,14 @@ const ActionQueueCard = () => {
         <ListGroup variant="flush" numbered style={{ maxHeight: 300, overflowY: 'auto' }}>
           {actionQueue.data().map((item, i) => {
             return (
-              <ListGroup.Item action onClick={() => actionQueue.remove(i)} key={item.guid.toString()}>
+              <ListGroup.Item
+                action
+                onClick={() => {
+                  actionQueue.remove(i)
+                  forceUpdate()
+                }}
+                key={item.guid.toString()}
+              >
                 {item.label}
               </ListGroup.Item>
             )
