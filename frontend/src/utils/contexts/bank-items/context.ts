@@ -5,7 +5,7 @@ import type { PaginationType } from '../../../types.ts'
 interface BankItemsContextType {
   bankItems: components['schemas']['DataPage_SimpleItemSchema_'] | null
   pagination: PaginationType
-  refetch(): Promise<null>
+  refetch(): Promise<void>
 }
 
 const BankItemsContext = React.createContext<BankItemsContextType>({
