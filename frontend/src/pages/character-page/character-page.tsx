@@ -1,6 +1,7 @@
 import {} from '@fortawesome/free-solid-svg-icons'
 import { Nav } from 'react-bootstrap'
 import { Link, useParams } from 'react-router'
+import { useBankDetails } from '../../artifactsmmo-client/hooks/use-bank-details.ts'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
 import { CharacterView } from '../../components/character-view/character-view.tsx'
@@ -10,10 +11,16 @@ import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 const CharacterPage = () => {
   const { accountName, characterName } = useParams<{ accountName: string; characterName: string }>()
   const characters = useCharacters(accountName)
-  const bankItems = useBankItems()
+  const { refetch: refetchItems, ...bankItems } = useBankItems()
+  const { refetch: refetchDetail, ...bankDetails } = useBankDetails()
+
+  const refetch = async () => {
+    await refetchDetail()
+    await refetchItems()
+  }
 
   return (
-    <BankItemsContext.Provider value={bankItems}>
+    <BankItemsContext.Provider value={{ ...bankItems, ...bankDetails, refetch }}>
       <Nav variant="underline" defaultActiveKey={characterName} className="mx-3 mb-3">
         {characters.map((char) => (
           <Nav.Item key={char.name}>

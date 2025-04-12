@@ -1,3 +1,5 @@
+import { faBorderAll, faCoins, faSackXmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { Card, Table } from 'react-bootstrap'
 import type { components } from '../../../artifactsmmo-client/spec'
 import { Item } from '../../item/item.tsx'
@@ -50,9 +52,14 @@ const Inventory = ({ character, action, equip }: Props) => {
       </Card.Body>
       <Card.Footer className="d-flex justify-content-between">
         <span>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {character.gold.toLocaleString()}
+        </span>
+        <span>
+          <Icon icon={faBorderAll} fixedWidth />
           {usedSlots.length || 0} / {character.inventory?.length || 0}
         </span>
         <span>
+          <Icon icon={faSackXmark} fixedWidth />
           {usedInventorySize} / {character.inventory_max_items}
         </span>
       </Card.Footer>

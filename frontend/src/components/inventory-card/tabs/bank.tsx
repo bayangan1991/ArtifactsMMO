@@ -1,3 +1,5 @@
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Card, Table } from 'react-bootstrap'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
@@ -11,7 +13,7 @@ interface Props {
 }
 
 const Bank = ({ inventorySize, action }: Props) => {
-  const { bankItems, pagination } = useContext(BankItemsContext)
+  const { bankItems, pagination, bankDetails } = useContext(BankItemsContext)
 
   if (!bankItems) return
 
@@ -46,9 +48,14 @@ const Bank = ({ inventorySize, action }: Props) => {
           </tbody>
         </Table>
       </Card.Body>
-      <Card.Footer className="d-flex align-items-center gap-2">
-        <span className="ms-auto">Page:</span>
-        <Pagination {...pagination} />
+      <Card.Footer className="d-flex align-items-center gap-2 justify-content-between">
+        <span>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {bankDetails?.data.gold.toLocaleString()}
+        </span>
+        <div className="d-flex align-items-center gap-2">
+          <span className="ms-auto">Page:</span>
+          <Pagination {...pagination} />
+        </div>
       </Card.Footer>
     </Card>
   )
