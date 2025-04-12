@@ -145,7 +145,10 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip } = useActions({ onSuccess, onError })
+  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doDepositGold, doWithdrawGold } = useActions({
+    onSuccess,
+    onError,
+  })
 
   const move = useCallback(
     (pos: Position, queueIndex?: number, requeue?: boolean) => {
@@ -269,6 +272,7 @@ const useCharacter = (name: string | null) => {
     },
     [name, doUnEquip, queueAction]
   )
+
   const equip = useCallback(
     (
       code: string,
@@ -292,6 +296,44 @@ const useCharacter = (name: string | null) => {
       }
     },
     [name, doEquip, queueAction]
+  )
+
+  const depositGold = useCallback(
+    (quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleEquip = async () => {
+          const result = await doDepositGold(name, quantity)
+          if (result && requeue) depositGold(quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction({
+          label: `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
+          guid: Guid.create(),
+          action: handleEquip,
+        })
+      }
+    },
+    [name, doDepositGold, queueAction]
+  )
+
+  const withdrawGold = useCallback(
+    (quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleEquip = async () => {
+          const result = await doWithdrawGold(name, quantity)
+          if (result && requeue) withdrawGold(quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction({
+          label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
+          guid: Guid.create(),
+          action: handleEquip,
+        })
+      }
+    },
+    [name, doWithdrawGold, queueAction]
   )
 
   const [rest, repeatRest] = useSimpleAction({
@@ -318,6 +360,14 @@ const useCharacter = (name: string | null) => {
     onError,
     queueAction,
   })
+  const [buyExpansion] = useSimpleAction({
+    name: name,
+    label: 'Buy bank expansion',
+    action: '/my/{name}/action/bank/buy_expansion',
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
   return {
     character,
@@ -336,6 +386,9 @@ const useCharacter = (name: string | null) => {
       craft,
       unEquip,
       equip,
+      withdrawGold,
+      depositGold,
+      buyExpansion,
     },
     lastAction,
     error,
