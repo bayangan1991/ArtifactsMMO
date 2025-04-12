@@ -1,42 +1,26 @@
-import { faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { faHandFist, faMoon, faRepeat, faTrowel } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import type { Temporal } from '@js-temporal/polyfill'
-import type React from 'react'
+import { useContext } from 'react'
 import { useMemo } from 'react'
 import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
-import type { components } from '../../artifactsmmo-client/spec'
 import '@formatjs/intl-durationformat/polyfill'
 import { StatusColour } from '../../constants.ts'
+import type { FightData, MovementData, RestData, SkillData } from '../../types.ts'
+import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { isActionType } from '../../utils/is-action-type.ts'
 
-interface SimpleAction {
-  key: string
-  label: React.ReactNode
-  variant: string
-  action: () => void
-  repeat?: () => void
-}
-
-interface Props {
-  character: components['schemas']['CharacterSchema'] | null
-  simpleActions?: SimpleAction[]
-  lastAction: string | null
-  error: string | null
-  status: Status
-  timeUntilReady: Temporal.Duration | null
-  togglePause: () => void
-}
-
-const CharacterCard = ({
-  character,
-  simpleActions = [],
-  status,
-  lastAction,
-  timeUntilReady,
-  error,
-  togglePause,
-}: Props) => {
+const CharacterCard = () => {
+  const {
+    character,
+    actions: { rest, repeatRest, fight, repeatFight, gathering, repeatGathering },
+    lastAction,
+    timeUntilReady,
+    error,
+    togglePause,
+    status,
+  } = useContext(CharacterContext)
   const map = useMap(
     useMemo(() => {
       return {
@@ -47,6 +31,61 @@ const CharacterCard = ({
   )
 
   const locationString = map && map.data.name + (map.data.content ? `[${map.data.content?.code}]` : '')
+
+  const simpleActions = [
+    {
+      key: 'rest',
+      label: (
+        <>
+          <Icon icon={faMoon} /> Rest
+        </>
+      ),
+      variant: 'success',
+      action: rest,
+      repeat: repeatRest,
+    },
+    {
+      key: 'fight',
+      label: (
+        <>
+          <Icon icon={faHandFist} /> Fight
+        </>
+      ),
+      variant: 'danger',
+      action: fight,
+      repeat: repeatFight,
+    },
+    {
+      key: 'gather',
+      label: (
+        <>
+          <Icon icon={faTrowel} /> Gather
+        </>
+      ),
+      variant: 'warning',
+      action: gathering,
+      repeat: repeatGathering,
+    },
+  ]
+
+  const lastActionResult: string = useMemo(() => {
+    if (!lastAction) return ''
+    if (isActionType<FightData>(lastAction, 'fight')) {
+      const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
+      return `${lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
+    }
+    if (isActionType<MovementData>(lastAction, 'movement')) {
+      return `Moving to ${lastAction.destination.name}`
+    }
+    if (isActionType<SkillData>(lastAction, 'gathering')) {
+      return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
+    }
+    if (isActionType<RestData>(lastAction, 'rest')) {
+      return `Restored ${lastAction.hp_restored}hp`
+    }
+
+    return lastAction.cooldown.reason
+  }, [lastAction])
 
   return (
     <Card>
@@ -110,7 +149,7 @@ const CharacterCard = ({
                     label={`${character?.xp} / ${character?.max_xp}`}
                   />
                   <Stack gap={1} direction="horizontal">
-                    <span>{lastAction || error}</span>
+                    <span>{lastActionResult || error}</span>
                   </Stack>
                 </Stack>
               </Col>

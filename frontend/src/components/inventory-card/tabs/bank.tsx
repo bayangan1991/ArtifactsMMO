@@ -3,19 +3,19 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Card, Table } from 'react-bootstrap'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
+import { CharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 import { ItemActionGroup } from '../item-action-group.tsx'
 
-interface Props {
-  inventorySize?: number
-  action(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-}
-
-const Bank = ({ inventorySize, action }: Props) => {
+const Bank = () => {
+  const {
+    character,
+    actions: { withdraw },
+  } = useContext(CharacterContext)
   const { bankItems, pagination, bankDetails } = useContext(BankItemsContext)
 
-  if (!bankItems) return
+  if (!bankItems || !character) return
 
   return (
     <Card>
@@ -39,8 +39,8 @@ const Bank = ({ inventorySize, action }: Props) => {
                   <ItemActionGroup
                     code={item.code}
                     quantity={item.quantity}
-                    action={action}
-                    max={Math.min(item.quantity, inventorySize || Number.POSITIVE_INFINITY)}
+                    action={withdraw}
+                    max={Math.min(item.quantity, character.inventory_max_items)}
                   />
                 </td>
               </tr>

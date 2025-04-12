@@ -1,23 +1,16 @@
 import { faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useEffect, useState } from 'react'
 import { Accordion, Button, ButtonGroup, Card, Dropdown, Form, InputGroup, ListGroup, Stack } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
-import type { Position } from '../../types.ts'
+import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
-
-interface Props {
-  currentPosition?: Position
-  move: (pos: Position, index?: number, requeue?: boolean) => void
-  craft: (code: string, quantity: number, requeue?: boolean) => void
-  depositAll(pos: Position, requeue?: boolean, returnToPos?: boolean): void
-}
 
 const CraftControl = ({
   code,
@@ -38,7 +31,13 @@ const CraftControl = ({
   )
 }
 
-const ActionCard = ({ move, craft, currentPosition, depositAll }: Props) => {
+const ActionCard = () => {
+  const {
+    character,
+    actions: { move, depositAll, craft },
+  } = useContext(CharacterContext)
+  const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
+
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
 
   const [contentType, setContentType] = useState<components['schemas']['MapContentType'] | undefined>(undefined)

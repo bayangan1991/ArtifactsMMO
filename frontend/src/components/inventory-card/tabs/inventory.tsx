@@ -1,17 +1,19 @@
 import { faBorderAll, faCoins, faSackXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
+import { useContext } from 'react'
 import { Card, Table } from 'react-bootstrap'
-import type { components } from '../../../artifactsmmo-client/spec'
+import { CharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { ItemActionGroup } from '../item-action-group.tsx'
 
-interface Props {
-  character: components['schemas']['CharacterSchema']
-  action(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-  equip(code: string, slot: components['schemas']['ItemSlot'], quantity?: number): void
-}
+const Inventory = () => {
+  const {
+    character,
+    actions: { equip, deposit },
+  } = useContext(CharacterContext)
 
-const Inventory = ({ character, action, equip }: Props) => {
+  if (!character) return
+
   const usedSlots = character.inventory?.filter((item) => item.code !== '') || []
 
   const usedInventorySize = usedSlots.map((t) => t.quantity).reduce((v, acc) => v + acc, 0)
@@ -43,7 +45,7 @@ const Inventory = ({ character, action, equip }: Props) => {
                 </td>
                 <td>{item.quantity}</td>
                 <td>
-                  <ItemActionGroup code={item.code} quantity={item.quantity} action={action} max={item.quantity} />
+                  <ItemActionGroup code={item.code} quantity={item.quantity} action={deposit} max={item.quantity} />
                 </td>
               </tr>
             ))}
