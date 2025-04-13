@@ -1,4 +1,4 @@
-import { faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { faCoins, faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React, { useContext } from 'react'
 import { useEffect, useState } from 'react'
@@ -7,6 +7,7 @@ import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
+import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { Item } from '../item/item.tsx'
@@ -31,11 +32,32 @@ const CraftControl = ({
   )
 }
 
+const BankGoldAction = ({
+  action,
+  label,
+  initial = 0,
+}: { action: (quantity: number) => void; label: string; initial?: number }) => {
+  const [amount, setAmount] = useState(initial)
+
+  return (
+    <div>
+      <InputGroup>
+        <Form.Control type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
+        <Button onClick={() => action(amount)}>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth />
+          {label}
+        </Button>
+      </InputGroup>
+    </div>
+  )
+}
+
 const ActionCard = () => {
   const {
     character,
-    actions: { move, depositAll, craft },
+    actions: { move, depositAll, craft, buyExpansion, depositGold, withdrawGold },
   } = useContext(CharacterContext)
+  const { bankDetails } = useContext(BankItemsContext)
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
 
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
@@ -149,6 +171,12 @@ const ActionCard = () => {
                         </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
+                    <Button onClick={() => buyExpansion()}>
+                      Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
+                      {bankDetails?.data.next_expansion_cost.toLocaleString()})
+                    </Button>
+                    <BankGoldAction action={depositGold} label="Deposit" initial={character?.gold} />
+                    <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
                   </Stack>
                 </Accordion.Body>
               </Accordion.Item>
