@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
+import { Badge, Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { ItemModalContext } from '../../utils/contexts/modal/context.ts'
@@ -37,17 +37,18 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
           src={`https://artifactsmmo.com/images/items/${item.code}.png`}
           alt={item.code}
         />
-        {item.name}
-        {goBack && (
-          <Button size="sm" variant="outline-light" className="ms-auto" onClick={goBack}>
-            Back
-          </Button>
+        <span className="me-auto">{item.name}</span>
+        {item.tradeable && (
+          <Badge className="text-uppercase ms-auto" bg="success">
+            Tradeable
+          </Badge>
         )}
       </Modal.Header>
       <Modal.Body>
         {item.description && <p>{item.description}</p>}
         <Form>
           <h5 className="mt-3">Information</h5>
+          <FormFieldRow label="Level" value={item.level} />
           <FormFieldRow label="Type" value={item.type} />
           {item.subtype && <FormFieldRow label="Subtype" value={item.subtype} />}
           {item.effects && item.effects.length > 0 && (
@@ -102,6 +103,16 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
           )}
         </Form>
       </Modal.Body>
+      <Modal.Footer>
+        {goBack && (
+          <Button variant="outline-light" className="ms-2" onClick={goBack}>
+            Back
+          </Button>
+        )}
+        <Button onClick={handleClose} variant="outline-primary">
+          Close
+        </Button>
+      </Modal.Footer>
     </Modal>
   )
 }

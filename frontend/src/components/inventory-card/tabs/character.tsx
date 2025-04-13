@@ -80,7 +80,7 @@ const Character = () => {
   return (
     <Card>
       <Card.Body>
-        <Container>
+        <Container fluid>
           <Row>
             <Col xs="auto">
               <h5>Equipment</h5>
