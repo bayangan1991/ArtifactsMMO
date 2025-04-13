@@ -146,37 +146,41 @@ const ActionCard = () => {
               <Accordion.Item eventKey="1">
                 <Accordion.Header as="h4">Bank Actions</Accordion.Header>
                 <Accordion.Body>
-                  <Stack gap={2} direction="horizontal">
-                    <Dropdown as={ButtonGroup}>
-                      <Button onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
-                        Deposit All
-                      </Button>
-                      <Dropdown.Toggle split />
+                  <Stack gap={2}>
+                    <Stack gap={2} direction="horizontal">
+                      <Dropdown as={ButtonGroup}>
+                        <Button onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
+                          Deposit all items
+                        </Button>
+                        <Dropdown.Toggle split />
 
-                      <Dropdown.Menu>
-                        <Dropdown.Item
-                          onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, false, true)}
-                        >
-                          and return
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, false)}
-                        >
-                          repeatedly
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, true)}
-                        >
-                          repeatedly and return
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    <Button onClick={() => buyExpansion()}>
-                      Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
-                      {bankDetails?.data.next_expansion_cost.toLocaleString()})
-                    </Button>
-                    <BankGoldAction action={depositGold} label="Deposit" initial={character?.gold} />
-                    <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
+                        <Dropdown.Menu>
+                          <Dropdown.Item
+                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, false, true)}
+                          >
+                            and return
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, false)}
+                          >
+                            repeatedly
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, true)}
+                          >
+                            repeatedly and return
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                      <Button onClick={() => buyExpansion()}>
+                        Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
+                        {bankDetails?.data.next_expansion_cost.toLocaleString()})
+                      </Button>
+                    </Stack>
+                    <Stack gap={2} direction="horizontal">
+                      <BankGoldAction action={depositGold} label="Deposit" initial={character?.gold} />
+                      <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
+                    </Stack>
                   </Stack>
                 </Accordion.Body>
               </Accordion.Item>

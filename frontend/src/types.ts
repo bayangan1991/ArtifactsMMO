@@ -12,10 +12,10 @@ interface Queue<T> {
 type MovementData = components['schemas']['CharacterMovementDataSchema']
 type FightData = components['schemas']['CharacterFightDataSchema']
 type SkillData = components['schemas']['SkillDataSchema']
-type BankTransactionData = components['schemas']['BankItemTransactionSchema']
 type RestData = components['schemas']['CharacterRestDataSchema']
-type EquipmentData = components['schemas']['EquipmentResponseSchema']['data']
 type BankGoldTransaction = components['schemas']['BankGoldTransactionSchema']
+type BankTransactionData = components['schemas']['BankItemTransactionSchema']
+type EquipmentData = components['schemas']['EquipmentResponseSchema']['data']
 
 type ActionData =
   | MovementData
@@ -38,6 +38,7 @@ export type {
   FightData,
   SkillData,
   BankTransactionData,
+  BankGoldTransaction,
   RestData,
   ActionData,
   Queue,

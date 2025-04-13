@@ -1,15 +1,23 @@
 import { faHandFist, faMoon, faRepeat, faTrowel } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
+import React, { useContext } from 'react'
 import { useMemo } from 'react'
 import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
 import '@formatjs/intl-durationformat/polyfill'
 import { StatusColour } from '../../constants.ts'
-import type { FightData, MovementData, RestData, SkillData } from '../../types.ts'
+import type {
+  BankGoldTransaction,
+  BankTransactionData,
+  FightData,
+  MovementData,
+  RestData,
+  SkillData,
+} from '../../types.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { isActionType } from '../../utils/is-action-type.ts'
+import { Item } from '../item/item.tsx'
 
 const CharacterCard = () => {
   const {
@@ -66,14 +74,14 @@ const CharacterCard = () => {
     },
   ]
 
-  const lastActionResult: string = useMemo(() => {
+  const lastActionResult: React.ReactNode = useMemo(() => {
     if (!lastAction) return ''
+    if (isActionType<MovementData>(lastAction, 'movement')) {
+      return `Moving to ${lastAction.destination.name}`
+    }
     if (isActionType<FightData>(lastAction, 'fight')) {
       const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
       return `${lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
-    }
-    if (isActionType<MovementData>(lastAction, 'movement')) {
-      return `Moving to ${lastAction.destination.name}`
     }
     if (isActionType<SkillData>(lastAction, 'gathering')) {
       return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
@@ -81,7 +89,15 @@ const CharacterCard = () => {
     if (isActionType<RestData>(lastAction, 'rest')) {
       return `Restored ${lastAction.hp_restored}hp`
     }
-
+    if (isActionType<BankGoldTransaction>(lastAction, ['withdraw_gold', 'deposit_gold'])) {
+      return `Bank gold updated. New amount: ${lastAction.bank.quantity.toLocaleString()}`
+    }
+    if (isActionType<BankTransactionData>(lastAction, 'withdraw')) {
+      return `${<Item code={lastAction.item.code} />} withdrawn`
+    }
+    if (isActionType<BankTransactionData>(lastAction, 'deposit')) {
+      return `${<Item code={lastAction.item.code} />} deposited`
+    }
     return lastAction.cooldown.reason
   }, [lastAction])
 
