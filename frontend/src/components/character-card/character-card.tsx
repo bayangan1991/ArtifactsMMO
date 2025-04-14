@@ -80,8 +80,17 @@ const CharacterCard = () => {
       return `Moving to ${lastAction.destination.name}`
     }
     if (isActionType<FightData>(lastAction, 'fight')) {
-      const loot = lastAction.fight.drops.map((item) => `${item.code} x ${item.quantity}`).join(', ')
-      return `${lastAction.fight.result} fight${loot ? `, found: ${loot}` : ''}`
+      return (
+        <>
+          Fight: {lastAction.fight.result}
+          {!!lastAction.fight.drops.length && '. Found: '}
+          {lastAction.fight.drops.map((item) => (
+            <div className="me-1 d-inline-block" key={item.code}>
+              <Item code={item.code} /> <small className="text-muted">x{item.quantity}</small>
+            </div>
+          ))}
+        </>
+      )
     }
     if (isActionType<SkillData>(lastAction, 'gathering')) {
       return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
@@ -93,10 +102,18 @@ const CharacterCard = () => {
       return `Bank gold updated. New amount: ${lastAction.bank.quantity.toLocaleString()}`
     }
     if (isActionType<BankTransactionData>(lastAction, 'withdraw')) {
-      return `${<Item code={lastAction.item.code} />} withdrawn`
+      return (
+        <>
+          <Item code={lastAction.item.code} /> withdrawn
+        </>
+      )
     }
     if (isActionType<BankTransactionData>(lastAction, 'deposit')) {
-      return `${<Item code={lastAction.item.code} />} deposited`
+      return (
+        <>
+          <Item code={lastAction.item.code} /> deposited
+        </>
+      )
     }
     return lastAction.cooldown.reason
   }, [lastAction])
