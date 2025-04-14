@@ -39,6 +39,7 @@ export type {
   SkillData,
   BankTransactionData,
   BankGoldTransaction,
+  EquipmentData,
   RestData,
   ActionData,
   Queue,

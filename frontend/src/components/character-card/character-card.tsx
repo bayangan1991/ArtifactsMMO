@@ -10,6 +10,7 @@ import { StatusColour } from '../../constants.ts'
 import type {
   BankGoldTransaction,
   BankTransactionData,
+  EquipmentData,
   FightData,
   MovementData,
   RestData,
@@ -93,7 +94,17 @@ const CharacterCard = () => {
       )
     }
     if (isActionType<SkillData>(lastAction, 'gathering')) {
-      return `Gathered ${lastAction.details.items.map((item) => `${item.code} x ${item.quantity}`).join(', ')}`
+      return (
+        <>
+          Gathered{' '}
+          {lastAction.details.items.map((item) => (
+            <div className="ms-1 d-inline-block" key={item.code}>
+              <Item code={item.code} />
+              <small className="text-muted"> x{item.quantity}</small>
+            </div>
+          ))}
+        </>
+      )
     }
     if (isActionType<RestData>(lastAction, 'rest')) {
       return `Restored ${lastAction.hp_restored}hp`
@@ -115,7 +126,13 @@ const CharacterCard = () => {
         </>
       )
     }
-    return lastAction.cooldown.reason
+    if (isActionType<EquipmentData>(lastAction, ['equip', 'unequip'])) {
+      return (
+        <>
+          <Item code={lastAction.item.code} /> {lastAction.cooldown.reason}ped
+        </>
+      )
+    }
   }, [lastAction])
 
   return (
