@@ -106,7 +106,7 @@ const MonsterDetail = ({ code }: { code: string }) => {
         </h5>
       </div>
       <p>{monster.hp.toLocaleString()} hp</p>
-      {monster.effects && <h6>Effects</h6>}
+      {!!monster.effects?.length && <h6>Effects</h6>}
       <ListGroup>
         {monster.effects?.map((effect) => (
           <ListGroup.Item key={effect.code}>
