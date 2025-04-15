@@ -54,7 +54,7 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip, quan
 
   if (!item)
     return (
-      <div>
+      <div className="d-inline-block">
         <Placeholder as="span">{code}</Placeholder>
       </div>
     )

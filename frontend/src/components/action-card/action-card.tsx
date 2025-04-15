@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Accordion, Button, ButtonGroup, Card, Dropdown, Form, InputGroup, ListGroup, Stack } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
+import { useResource } from '../../artifactsmmo-client/hooks/use-resource.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
 import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
@@ -48,6 +49,36 @@ const BankGoldAction = ({
           {label}
         </Button>
       </InputGroup>
+    </div>
+  )
+}
+
+const ResourceDetail = ({ code }: { code: string }) => {
+  const resource = useResource(code)
+
+  if (!resource) return null
+
+  return (
+    <div>
+      <h5>
+        {resource.name}{' '}
+        <small className="text-muted">
+          {resource.skill}@lvl{resource.level}
+        </small>
+      </h5>
+      <ListGroup>
+        {resource.drops.map((item) => (
+          <ListGroup.Item key={item.code}>
+            <Item code={item.code} imgProps={{ height: 20 }} />
+            <small className="text-muted">
+              {' '}
+              x{item.min_quantity === item.max_quantity && item.min_quantity}
+              {item.min_quantity !== item.max_quantity && `${item.min_quantity}-${item.max_quantity}`} @{' '}
+              {((1 / item.rate) * 100).toFixed(2)}%
+            </small>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
     </div>
   )
 }
@@ -182,6 +213,15 @@ const ActionCard = () => {
                       <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
                     </Stack>
                   </Stack>
+                </Accordion.Body>
+              </Accordion.Item>
+            )}
+
+            {targetMap?.content?.type === 'resource' && (
+              <Accordion.Item eventKey="2">
+                <Accordion.Header as="h4">Resource Details</Accordion.Header>
+                <Accordion.Body>
+                  <ResourceDetail code={targetMap?.content?.code} />
                 </Accordion.Body>
               </Accordion.Item>
             )}
