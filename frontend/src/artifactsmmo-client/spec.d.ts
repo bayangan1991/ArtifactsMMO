@@ -2863,7 +2863,7 @@ export interface components {
     EffectSchema: {
       /**
        * Name
-       * @description Name of the monster.
+       * @description Name of the effect.
        */
       name: string
       /**
