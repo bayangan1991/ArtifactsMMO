@@ -96,7 +96,7 @@ const MonsterDetail = ({ code }: { code: string }) => {
         {monster.name} <small className="text-muted">lvl{monster.level}</small>
       </h5>
       <p>{monster.hp}hp</p>
-      <h6>Effect</h6>
+      {monster.effects && <h6>Effects</h6>}
       <ListGroup>
         {monster.effects?.map((effect) => (
           <ListGroup.Item key={effect.code}>
@@ -104,7 +104,7 @@ const MonsterDetail = ({ code }: { code: string }) => {
             <small className="text-muted">{effect.value}%</small>
           </ListGroup.Item>
         ))}
-      </ListGroup>{' '}
+      </ListGroup>
       <h6>Drops</h6>
       <ListGroup>
         {monster.drops.map((item) => (
