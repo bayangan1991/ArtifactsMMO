@@ -12,13 +12,13 @@ const CharacterEffect = ({ code, imgProps = { height: 25 } }: Props) => {
 
   if (!effect)
     return (
-      <div>
+      <div className="d-inline-block">
         <Placeholder as="span">{code}</Placeholder>
       </div>
     )
 
   return (
-    <div title={effect.description}>
+    <div className="d-inline-block" title={effect.description}>
       <img {...imgProps} src={`https://artifactsmmo.com/images/effects/${code}.png`} alt={code} />
       <span className="ms-2">{effect.name}</span>
     </div>

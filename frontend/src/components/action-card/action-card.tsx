@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react'
 import { Accordion, Button, ButtonGroup, Card, Dropdown, Form, InputGroup, ListGroup, Stack } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
+import { useMonster } from '../../artifactsmmo-client/hooks/use-monster.ts'
 import { useResource } from '../../artifactsmmo-client/hooks/use-resource.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
 import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
+import { CharacterEffect } from '../character-effect/character-effect.tsx'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
@@ -68,6 +70,44 @@ const ResourceDetail = ({ code }: { code: string }) => {
       </h5>
       <ListGroup>
         {resource.drops.map((item) => (
+          <ListGroup.Item key={item.code}>
+            <Item code={item.code} imgProps={{ height: 20 }} />
+            <small className="text-muted">
+              {' '}
+              x{item.min_quantity === item.max_quantity && item.min_quantity}
+              {item.min_quantity !== item.max_quantity && `${item.min_quantity}-${item.max_quantity}`} @{' '}
+              {((1 / item.rate) * 100).toFixed(2)}%
+            </small>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
+  )
+}
+
+const MonsterDetail = ({ code }: { code: string }) => {
+  const monster = useMonster(code)
+
+  if (!monster) return null
+
+  return (
+    <div>
+      <h5>
+        {monster.name} <small className="text-muted">lvl{monster.level}</small>
+      </h5>
+      <p>{monster.hp}hp</p>
+      <h6>Effect</h6>
+      <ListGroup>
+        {monster.effects?.map((effect) => (
+          <ListGroup.Item key={effect.code}>
+            <CharacterEffect code={effect.code} imgProps={{ height: 20 }} />{' '}
+            <small className="text-muted">{effect.value}%</small>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>{' '}
+      <h6>Drops</h6>
+      <ListGroup>
+        {monster.drops.map((item) => (
           <ListGroup.Item key={item.code}>
             <Item code={item.code} imgProps={{ height: 20 }} />
             <small className="text-muted">
@@ -222,6 +262,15 @@ const ActionCard = () => {
                 <Accordion.Header as="h4">Resource Details</Accordion.Header>
                 <Accordion.Body>
                   <ResourceDetail code={targetMap?.content?.code} />
+                </Accordion.Body>
+              </Accordion.Item>
+            )}
+
+            {targetMap?.content?.type === 'monster' && (
+              <Accordion.Item eventKey="3">
+                <Accordion.Header as="h4">Monster Details</Accordion.Header>
+                <Accordion.Body>
+                  <MonsterDetail code={targetMap?.content?.code} />
                 </Accordion.Body>
               </Accordion.Item>
             )}
