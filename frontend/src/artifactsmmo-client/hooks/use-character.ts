@@ -196,11 +196,14 @@ const useCharacter = (name: string | null) => {
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action: handleWithdraw,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
+            guid: Guid.create(),
+            action: handleWithdraw,
+          },
+          queueIndex
+        )
       }
     },
     [name, doWithdraw, queueAction]
@@ -233,15 +236,17 @@ const useCharacter = (name: string | null) => {
       const handleSmartCraft = async () => {
         if (!item.craft || !item?.craft.items) return null
         const itemCount = item.craft.items.reduce((count, component) => count + component.quantity, 0)
+        setStatus(Status.Paused)
         const data = await refetch()
         if (!itemCount || !data) return null
         const craftAmount = Math.floor(data.data.inventory_max_items / itemCount)
         item.craft.items.map((component) => {
           withdraw(component.code, component.quantity * craftAmount, 0)
         })
-        craft(item.code, craftAmount, item.craft.items.length - 1)
-        move(workshop, item.craft.items.length - 1)
+        craft(item.code, craftAmount, item.craft.items.length)
+        move(workshop, item.craft.items.length)
         if (requeue) smartCraft(item, workshop, requeue)
+        setStatus(Status.Ready)
         return null
       }
 
@@ -285,11 +290,14 @@ const useCharacter = (name: string | null) => {
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
-          guid: Guid.create(),
-          action: handleUnEquip,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
+            guid: Guid.create(),
+            action: handleUnEquip,
+          },
+          queueIndex
+        )
       }
     },
     [name, doUnEquip, queueAction]
@@ -310,11 +318,14 @@ const useCharacter = (name: string | null) => {
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
-          guid: Guid.create(),
-          action: handleEquip,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
+            guid: Guid.create(),
+            action: handleEquip,
+          },
+          queueIndex
+        )
       }
     },
     [name, doEquip, queueAction]
@@ -329,11 +340,14 @@ const useCharacter = (name: string | null) => {
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
-          guid: Guid.create(),
-          action: handleEquip,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
+            guid: Guid.create(),
+            action: handleEquip,
+          },
+          queueIndex
+        )
       }
     },
     [name, doDepositGold, queueAction]
@@ -348,11 +362,14 @@ const useCharacter = (name: string | null) => {
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
-          guid: Guid.create(),
-          action: handleEquip,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
+            guid: Guid.create(),
+            action: handleEquip,
+          },
+          queueIndex
+        )
       }
     },
     [name, doWithdrawGold, queueAction]

@@ -15,7 +15,7 @@ interface CharacterContextType {
     depositAll(pos: Position, requeue?: boolean, returnToPos?: boolean): void
     withdraw(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
     gathering(queueIndex?: number, requeue?: boolean): void
-    craft(code: string, quantity: number, requeue?: boolean): void
+    craft(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
     smartCraft(item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean): void
     unEquip(slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean): void
     equip(
