@@ -16,6 +16,7 @@ interface CharacterContextType {
     withdraw(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
     gathering(queueIndex?: number, requeue?: boolean): void
     craft(code: string, quantity: number, requeue?: boolean): void
+    smartCraft(item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean): void
     unEquip(slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean): void
     equip(
       code: string,
@@ -52,6 +53,7 @@ const CharacterContext = React.createContext<CharacterContextType>({
     withdraw: notImplemented,
     gathering: notImplemented,
     craft: notImplemented,
+    smartCraft: notImplemented,
     unEquip: notImplemented,
     equip: notImplemented,
     buyExpansion: notImplemented,

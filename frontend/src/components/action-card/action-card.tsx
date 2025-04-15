@@ -1,4 +1,4 @@
-import { faCoins, faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { faBrain, faCoins, faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React, { useContext } from 'react'
 import { useEffect, useState } from 'react'
@@ -14,12 +14,14 @@ import {
   ListGroup,
   Stack,
 } from 'react-bootstrap'
+import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import { useMonster } from '../../artifactsmmo-client/hooks/use-monster.ts'
 import { useResource } from '../../artifactsmmo-client/hooks/use-resource.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
+import type { Position } from '../../types.ts'
 import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
@@ -27,21 +29,29 @@ import { CharacterEffect } from '../character-effect/character-effect.tsx'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
 
-const CraftControl = ({
-  code,
-  craft,
-}: { code: string; craft: (code: string, quantity: number, requeue?: boolean) => void }) => {
+const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) => {
   const [quantity, setQuantity] = useState(1)
+  const {
+    actions: { craft, smartCraft },
+  } = useContext(CharacterContext)
+  const item = useItem(code)
 
   return (
-    <InputGroup size="sm" style={{ width: 120 }}>
+    <InputGroup size="sm" style={{ width: 200 }}>
       <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
       <Button onClick={() => craft(code, quantity)}>
         <Icon icon={faHammer} />
       </Button>
-      <Button onClick={() => craft(code, quantity, true)}>
-        <Icon icon={faRepeat} />
-      </Button>
+      {item && (
+        <>
+          <Button onClick={() => smartCraft(item, workshop)}>
+            <Icon icon={faBrain} />
+          </Button>
+          <Button onClick={() => smartCraft(item, workshop, true)}>
+            <Icon icon={faRepeat} />
+          </Button>
+        </>
+      )}
     </InputGroup>
   )
 }
@@ -178,7 +188,7 @@ const MonsterDetail = ({ code }: { code: string }) => {
 const ActionCard = () => {
   const {
     character,
-    actions: { move, depositAll, craft, buyExpansion, depositGold, withdrawGold },
+    actions: { move, depositAll, buyExpansion, depositGold, withdrawGold },
   } = useContext(CharacterContext)
   const { bankDetails } = useContext(BankItemsContext)
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
@@ -248,7 +258,7 @@ const ActionCard = () => {
             </Button>
           </InputGroup>
           <Accordion className="mt-2">
-            {items && (
+            {items && targetMap && (
               <Accordion.Item eventKey="0">
                 <Accordion.Header as="h4">Crafting ({items.total})</Accordion.Header>
                 <Accordion.Body>
@@ -256,7 +266,7 @@ const ActionCard = () => {
                     {items.data.map((item) => (
                       <ListGroup.Item key={item.code} className="d-flex justify-content-between align-items-center">
                         <Item code={item.code} imgProps={{ height: 20 }} />
-                        <CraftControl code={item.code} craft={craft} />
+                        <CraftControl code={item.code} workshop={{ x: targetMap.x, y: targetMap.y }} />
                       </ListGroup.Item>
                     ))}
                   </ListGroup>

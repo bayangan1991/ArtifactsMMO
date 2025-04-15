@@ -225,6 +225,32 @@ const useCharacter = (name: string | null) => {
     [name, doCraft, queueAction]
   )
 
+  const smartCraft = useCallback(
+    (item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean) => {
+      const handleSmartCraft = async () => {
+        if (!item.craft || !item?.craft.items) return null
+        const itemCount = item.craft.items.reduce((count, component) => count + component.quantity, 0)
+        const data = await refetch()
+        if (!itemCount || !data) return null
+        const craftAmount = Math.floor(data.data.inventory_max_items / itemCount)
+        item.craft.items.map((component) => {
+          withdraw(component.code, component.quantity * craftAmount)
+        })
+        move(workshop)
+        craft(item.code, craftAmount)
+        if (requeue) smartCraft(item, workshop, requeue)
+        return null
+      }
+
+      queueAction({
+        label: `${requeue ? 'Repeat s' : 'S'}mart craft of ${item.name} @ ${workshop.x},${workshop.y}`,
+        guid: Guid.create(),
+        action: handleSmartCraft,
+      })
+    },
+    [craft, move, withdraw, refetch, queueAction]
+  )
+
   const depositAll = useCallback(
     (pos: Position, requeue?: boolean, returnToPos?: boolean) => {
       const handleDepositAll = async () => {
@@ -234,9 +260,7 @@ const useCharacter = (name: string | null) => {
         for (const slot of data?.data.inventory || []) {
           if (slot.code) deposit(slot.code, slot.quantity, 1)
         }
-        if (requeue) {
-          depositAll(pos, requeue, returnToPos)
-        }
+        if (requeue) depositAll(pos, requeue, returnToPos)
         return null
       }
 
@@ -375,6 +399,7 @@ const useCharacter = (name: string | null) => {
       depositAll,
       withdraw,
       craft,
+      smartCraft,
       unEquip,
       equip,
       withdrawGold,
