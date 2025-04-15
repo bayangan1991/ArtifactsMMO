@@ -239,8 +239,8 @@ const useCharacter = (name: string | null) => {
         item.craft.items.map((component) => {
           withdraw(component.code, component.quantity * craftAmount, 0)
         })
-        craft(item.code, craftAmount, craft.items.length - 1)
-        move(workshop, craft.items.length - 1)
+        craft(item.code, craftAmount, item.craft.items.length - 1)
+        move(workshop, item.craft.items.length - 1)
         if (requeue) smartCraft(item, workshop, requeue)
         return null
       }
