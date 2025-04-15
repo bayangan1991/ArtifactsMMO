@@ -207,19 +207,22 @@ const useCharacter = (name: string | null) => {
   )
 
   const craft = useCallback(
-    (code: string, quantity: number, requeue?: boolean) => {
+    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
       if (name) {
         const handleCraft = async () => {
           const result = await doCraft(name, code, quantity)
-          if (result && requeue) craft(code, quantity, requeue)
+          if (result && requeue) craft(code, quantity, queueIndex, requeue)
           return result
         }
 
-        queueAction({
-          label: `${requeue ? 'Repeat c' : 'C'}raft ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action: handleCraft,
-        })
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat c' : 'C'}raft ${quantity} x ${code}`,
+            guid: Guid.create(),
+            action: handleCraft,
+          },
+          queueIndex
+        )
       }
     },
     [name, doCraft, queueAction]
@@ -234,10 +237,10 @@ const useCharacter = (name: string | null) => {
         if (!itemCount || !data) return null
         const craftAmount = Math.floor(data.data.inventory_max_items / itemCount)
         item.craft.items.map((component) => {
-          withdraw(component.code, component.quantity * craftAmount)
+          withdraw(component.code, component.quantity * craftAmount, 0)
         })
-        move(workshop)
-        craft(item.code, craftAmount)
+        craft(item.code, craftAmount, craft.items.length - 1)
+        move(workshop, craft.items.length - 1)
         if (requeue) smartCraft(item, workshop, requeue)
         return null
       }
