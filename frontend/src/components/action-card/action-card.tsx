@@ -2,7 +2,18 @@ import { faCoins, faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-s
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React, { useContext } from 'react'
 import { useEffect, useState } from 'react'
-import { Accordion, Button, ButtonGroup, Card, Dropdown, Form, InputGroup, ListGroup, Stack } from 'react-bootstrap'
+import {
+  Accordion,
+  Badge,
+  Button,
+  ButtonGroup,
+  Card,
+  Dropdown,
+  Form,
+  InputGroup,
+  ListGroup,
+  Stack,
+} from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import { useMonster } from '../../artifactsmmo-client/hooks/use-monster.ts'
@@ -92,20 +103,47 @@ const ResourceDetail = ({ code }: { code: string }) => {
 
 const MonsterDetail = ({ code }: { code: string }) => {
   const monster = useMonster(code)
+  const damageTypes = ['air', 'earth', 'fire', 'water'] as const
 
   if (!monster) return null
 
   return (
     <div>
-      <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
-        <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
-          <img src={`https://artifactsmmo.com/images/monsters/${code}.png`} alt="" height={50} />
+      <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
+          <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
+            <img src={`https://artifactsmmo.com/images/monsters/${code}.png`} alt="" height={50} />
+          </div>
+          <h5>
+            {monster.name} <small className="text-muted">lvl{monster.level}</small>
+          </h5>
         </div>
         <h5>
-          {monster.name} <small className="text-muted">lvl{monster.level}</small>
+          <Badge bg="danger">{monster.hp.toLocaleString()} HP</Badge>
         </h5>
       </div>
-      <p>{monster.hp.toLocaleString()} hp</p>
+      <h6>Damage</h6>
+      <ListGroup className="mb-2">
+        {damageTypes.map(
+          (type) =>
+            monster[`attack_${type}`] > 0 && (
+              <ListGroup.Item key={type}>
+                <CharacterEffect code={`dmg_${type}`} /> x <strong>{monster[`attack_${type}`]}</strong>
+              </ListGroup.Item>
+            )
+        )}
+      </ListGroup>
+      <h6>Resistance</h6>
+      <ListGroup className="mb-2">
+        {damageTypes.map(
+          (type) =>
+            monster[`res_${type}`] > 0 && (
+              <ListGroup.Item key={type}>
+                <CharacterEffect code={`res_${type}`} /> x <strong>{monster[`res_${type}`]}%</strong>
+              </ListGroup.Item>
+            )
+        )}
+      </ListGroup>
       {!!monster.effects?.length && <h6>Effects</h6>}
       <ListGroup>
         {monster.effects?.map((effect) => (
@@ -117,6 +155,10 @@ const MonsterDetail = ({ code }: { code: string }) => {
       </ListGroup>
       <h6>Drops</h6>
       <ListGroup>
+        <ListGroup.Item>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {monster.min_gold.toLocaleString()}-
+          {monster.max_gold.toLocaleString()} gold
+        </ListGroup.Item>
         {monster.drops.map((item) => (
           <ListGroup.Item key={item.code}>
             <Item code={item.code} imgProps={{ height: 20 }} />
