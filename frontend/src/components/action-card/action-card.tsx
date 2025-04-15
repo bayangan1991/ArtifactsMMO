@@ -62,12 +62,17 @@ const ResourceDetail = ({ code }: { code: string }) => {
 
   return (
     <div>
-      <h5>
-        {resource.name}{' '}
-        <small className="text-muted">
-          {resource.skill}@lvl{resource.level}
-        </small>
-      </h5>
+      <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
+        <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
+          <img src={`https://artifactsmmo.com/images/resources/${code}.png`} alt="" height={50} />
+        </div>
+        <h5>
+          {resource.name}{' '}
+          <small className="text-muted">
+            {resource.skill}@lvl{resource.level}
+          </small>
+        </h5>
+      </div>
       <ListGroup>
         {resource.drops.map((item) => (
           <ListGroup.Item key={item.code}>
@@ -92,10 +97,15 @@ const MonsterDetail = ({ code }: { code: string }) => {
 
   return (
     <div>
-      <h5>
-        {monster.name} <small className="text-muted">lvl{monster.level}</small>
-      </h5>
-      <p>{monster.hp}hp</p>
+      <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
+        <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
+          <img src={`https://artifactsmmo.com/images/monsters/${code}.png`} alt="" height={50} />
+        </div>
+        <h5>
+          {monster.name} <small className="text-muted">lvl{monster.level}</small>
+        </h5>
+      </div>
+      <p>{monster.hp.toLocaleString()} hp</p>
       {monster.effects && <h6>Effects</h6>}
       <ListGroup>
         {monster.effects?.map((effect) => (
