@@ -2,6 +2,7 @@ import './App.scss'
 import { useState } from 'react'
 import { Button, Container, Navbar } from 'react-bootstrap'
 import { Outlet } from 'react-router'
+import logo from '../public/logo.svg'
 import { AccountsModal } from './components/modals/accounts-modal.tsx'
 import { AccountContext } from './utils/contexts/accounts/context.ts'
 import { useAccounts } from './utils/contexts/accounts/hooks.ts'
@@ -23,7 +24,16 @@ const App = () => {
 
       <Navbar bg="black" fixed="top">
         <Container fluid className="gap-2">
-          <Navbar.Brand>Artifacts MMO Client</Navbar.Brand>
+          <Navbar.Brand>
+            <img
+              src={logo}
+              width="30"
+              height="30"
+              className="d-inline-block align-top me-2"
+              alt="React Bootstrap logo"
+            />
+            Artifacts MMO Client
+          </Navbar.Brand>
           <Button variant="warning" onClick={() => setShowAccountsModal(true)}>
             Accounts
           </Button>
