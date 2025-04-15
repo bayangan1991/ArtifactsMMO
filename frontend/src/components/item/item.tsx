@@ -59,6 +59,8 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip, quan
       </div>
     )
 
+  const adjustedQuantity = itemType === 'utility' ? Math.min(quantity, 100) : 1
+
   return (
     <>
       <Link
@@ -89,7 +91,7 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip, quan
 
           <Dropdown.Menu>
             {SLOTS[itemType].map((slot) => (
-              <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, quantity)}>
+              <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, adjustedQuantity)}>
                 {slot}
               </Dropdown.Item>
             ))}
