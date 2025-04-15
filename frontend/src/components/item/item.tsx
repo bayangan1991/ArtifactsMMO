@@ -12,6 +12,7 @@ interface Props {
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>
   useHistory?: boolean
   equip?(code: string, slot: components['schemas']['ItemSlot'], quantity?: number): void
+  quantity?: number
 }
 
 type SlotItemType =
@@ -45,7 +46,7 @@ const SLOTS: Record<SlotItemType, components['schemas']['ItemSlot'][]> = {
 
 const isSlotType = (type: string): type is SlotItemType => Object.keys(SLOTS).includes(type)
 
-const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip }: Props) => {
+const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip, quantity = 1 }: Props) => {
   const item = useItem(code)
   const { handleShow } = useContext(ItemModalContext)
 
@@ -88,7 +89,7 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false, equip }: Pr
 
           <Dropdown.Menu>
             {SLOTS[itemType].map((slot) => (
-              <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, 1)}>
+              <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, quantity)}>
                 {slot}
               </Dropdown.Item>
             ))}

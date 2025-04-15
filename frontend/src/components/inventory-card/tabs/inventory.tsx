@@ -41,7 +41,7 @@ const Inventory = () => {
             {usedSlots.map((item) => (
               <tr key={item.slot}>
                 <td>
-                  <Item code={item.code} equip={equip} />
+                  <Item code={item.code} equip={equip} quantity={item.quantity} />
                 </td>
                 <td>{item.quantity}</td>
                 <td>
