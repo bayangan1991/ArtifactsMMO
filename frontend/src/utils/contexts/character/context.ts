@@ -29,6 +29,7 @@ interface CharacterContextType {
     withdrawGold(quantity: number, queueIndex?: number, requeue?: boolean): void
     depositGold(quantity: number, queueIndex?: number, requeue?: boolean): void
     taskAccept(queueIndex?: number, requeue?: boolean): void
+    taskTrade(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
     taskComplete(queueIndex?: number, requeue?: boolean): void
     taskExchange(queueIndex?: number, requeue?: boolean): void
     taskAbandon(queueIndex?: number, requeue?: boolean): void
@@ -64,6 +65,7 @@ const CharacterContext = React.createContext<CharacterContextType>({
     withdrawGold: notImplemented,
     depositGold: notImplemented,
     taskAccept: notImplemented,
+    taskTrade: notImplemented,
     taskComplete: notImplemented,
     taskExchange: notImplemented,
     taskAbandon: notImplemented,

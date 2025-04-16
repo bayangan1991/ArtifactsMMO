@@ -15,7 +15,8 @@ type SkillData = components['schemas']['SkillDataSchema']
 type RestData = components['schemas']['CharacterRestDataSchema']
 type BankGoldTransaction = components['schemas']['BankGoldTransactionSchema']
 type BankTransactionData = components['schemas']['BankItemTransactionSchema']
-type EquipmentData = components['schemas']['EquipmentResponseSchema']['data']
+type EquipmentData = components['schemas']['EquipRequestSchema']
+type TaskTradeData = components['schemas']['TaskTradeDataSchema']
 
 type ActionData =
   | MovementData
@@ -25,6 +26,7 @@ type ActionData =
   | RestData
   | EquipmentData
   | BankGoldTransaction
+  | TaskTradeData
 
 interface PaginationType {
   page: number
@@ -41,6 +43,7 @@ export type {
   BankGoldTransaction,
   EquipmentData,
   RestData,
+  TaskTradeData,
   ActionData,
   Queue,
   Position,

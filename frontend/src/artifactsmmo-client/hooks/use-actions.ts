@@ -179,7 +179,28 @@ const useActions = ({ onSuccess, onError }: Params) => {
     [client, onSuccess, onError]
   )
 
-  return { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doWithdrawGold, doDepositGold }
+  const doTaskTrade = useCallback(
+    async (name: string, code: string, quantity: number) => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/task/trade', {
+          body: { code, quantity },
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
+  return { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doWithdrawGold, doDepositGold, doTaskTrade }
 }
 
 export { useActions }

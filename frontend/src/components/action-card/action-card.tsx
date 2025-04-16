@@ -188,7 +188,17 @@ const MonsterDetail = ({ code }: { code: string }) => {
 const ActionCard = () => {
   const {
     character,
-    actions: { move, depositAll, buyExpansion, depositGold, withdrawGold, taskAccept, taskComplete, taskExchange },
+    actions: {
+      move,
+      depositAll,
+      buyExpansion,
+      depositGold,
+      withdrawGold,
+      taskAccept,
+      taskComplete,
+      taskExchange,
+      taskTrade,
+    },
   } = useContext(CharacterContext)
   const { bankDetails } = useContext(BankItemsContext)
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
@@ -218,6 +228,16 @@ const ActionCard = () => {
 
   const distance =
     targetMap && currentPosition ? euclideanDistance({ x: targetMap.x, y: targetMap.y }, currentPosition) : 0
+
+  const taskItemQuantity = Math.min(
+    character?.inventory?.reduce((acc, item) => {
+      if (item.code === character?.task) {
+        return acc + item.quantity
+      }
+      return acc
+    }, 0) || 0,
+    (character?.task_total || 0) - (character?.task_progress || 0)
+  )
 
   return (
     <Card>
@@ -343,6 +363,9 @@ const ActionCard = () => {
                 <Accordion.Body>
                   <Stack gap={2} direction="horizontal">
                     <Button onClick={() => taskAccept()}>Accept Task</Button>
+                    {character?.task && character?.task_total && (
+                      <Button onClick={() => taskTrade(character.task, taskItemQuantity)}>Trade Items</Button>
+                    )}
                     <Button onClick={() => taskComplete()}>Complete Task</Button>
                     <Button onClick={() => taskExchange()}>Random Reward</Button>
                   </Stack>

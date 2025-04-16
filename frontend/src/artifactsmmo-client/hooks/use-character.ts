@@ -142,10 +142,11 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doDepositGold, doWithdrawGold } = useActions({
-    onSuccess,
-    onError,
-  })
+  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doDepositGold, doWithdrawGold, doTaskTrade } =
+    useActions({
+      onSuccess,
+      onError,
+    })
 
   const move = useCallback(
     (pos: Position, queueIndex?: number, requeue?: boolean) => {
@@ -375,6 +376,28 @@ const useCharacter = (name: string | null) => {
     [name, doWithdrawGold, queueAction]
   )
 
+  const taskTrade = useCallback(
+    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleTaskTrade = async () => {
+          const result = await doTaskTrade(name, code, quantity)
+          if (result && requeue) taskTrade(code, quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat t' : 'T'}rade ${quantity} x ${code} to task master`,
+            guid: Guid.create(),
+            action: handleTaskTrade,
+          },
+          queueIndex
+        )
+      }
+    },
+    [name, doTaskTrade, queueAction]
+  )
+
   const rest = useSimpleAction({
     name,
     label: 'Rest',
@@ -458,6 +481,7 @@ const useCharacter = (name: string | null) => {
       depositGold,
       buyExpansion,
       taskAccept,
+      taskTrade,
       taskComplete,
       taskExchange,
       taskAbandon,
