@@ -1,7 +1,7 @@
 import { faBorderAll, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
-import { Card, Table } from 'react-bootstrap'
+import { Card, Form, Table } from 'react-bootstrap'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
 import { CharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
@@ -13,12 +13,20 @@ const Bank = () => {
     character,
     actions: { withdraw },
   } = useContext(CharacterContext)
-  const { bankItems, pagination, bankDetails } = useContext(BankItemsContext)
+  const { bankItems, pagination, bankDetails, filter, setFilter } = useContext(BankItemsContext)
 
   if (!bankItems || !character) return
 
   return (
     <Card>
+      <Card.Header>
+        <Form.Control
+          type="text"
+          value={filter || ''}
+          placeholder="Filter"
+          onChange={(e) => setFilter(e.target.value)}
+        />
+      </Card.Header>
       <Card.Body>
         <Table>
           <thead>
