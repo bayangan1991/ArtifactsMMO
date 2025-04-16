@@ -3,6 +3,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React, { useContext, useMemo } from 'react'
 import { Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap'
 import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
+import { useMonster } from '../../../artifactsmmo-client/hooks/use-monster.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
 import { CharacterContext } from '../../../utils/contexts/character/context.ts'
 import { ItemModalContext } from '../../../utils/contexts/modal/context.ts'
@@ -76,6 +77,37 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
   )
 }
 
+const TaskDetail = () => {
+  const { character } = useContext(CharacterContext)
+  const monster = useMonster(character?.task || '')
+  const item = useItem(character?.task || '')
+
+  if (!character || !character.task) return
+
+  return (
+    <div className="mb-3">
+      <h5>Active Task</h5>
+      {character.task_type === 'monsters' && monster && (
+        <>
+          Slay {character.task_total} {monster.name}
+        </>
+      )}
+      {character.task_type === 'items' && item && (
+        <>
+          Deliver {character.task_total} {item.name}
+        </>
+      )}
+      <ProgressBar
+        className="mt-1"
+        variant="warning"
+        now={character.task_progress}
+        max={character.task_total}
+        label={character.task_progress}
+      />
+    </div>
+  )
+}
+
 const Character = () => {
   return (
     <Card>
@@ -104,6 +136,7 @@ const Character = () => {
               </div>
             </Col>
             <Col>
+              <TaskDetail />
               <h5>Skills</h5>
               <ListGroup>
                 <ListGroup.Item>
