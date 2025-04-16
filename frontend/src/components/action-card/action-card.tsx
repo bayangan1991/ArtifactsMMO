@@ -188,7 +188,7 @@ const MonsterDetail = ({ code }: { code: string }) => {
 const ActionCard = () => {
   const {
     character,
-    actions: { move, depositAll, buyExpansion, depositGold, withdrawGold },
+    actions: { move, depositAll, buyExpansion, depositGold, withdrawGold, taskAccept, taskComplete, taskExchange },
   } = useContext(CharacterContext)
   const { bankDetails } = useContext(BankItemsContext)
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
@@ -333,6 +333,19 @@ const ActionCard = () => {
                 <Accordion.Header as="h4">Monster Details</Accordion.Header>
                 <Accordion.Body>
                   <MonsterDetail code={targetMap?.content?.code} />
+                </Accordion.Body>
+              </Accordion.Item>
+            )}
+
+            {targetMap?.content?.type === 'tasks_master' && (
+              <Accordion.Item eventKey="4">
+                <Accordion.Header as="h4">Tasks Master</Accordion.Header>
+                <Accordion.Body>
+                  <Stack gap={2} direction="horizontal">
+                    <Button onClick={() => taskAccept()}>Accept Task</Button>
+                    <Button onClick={() => taskComplete()}>Complete Task</Button>
+                    <Button onClick={() => taskExchange()}>Random Reward</Button>
+                  </Stack>
                 </Accordion.Body>
               </Accordion.Item>
             )}

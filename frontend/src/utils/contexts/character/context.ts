@@ -28,6 +28,10 @@ interface CharacterContextType {
     buyExpansion(queueIndex?: number, requeue?: boolean): void
     withdrawGold(quantity: number, queueIndex?: number, requeue?: boolean): void
     depositGold(quantity: number, queueIndex?: number, requeue?: boolean): void
+    taskAccept(queueIndex?: number, requeue?: boolean): void
+    taskComplete(queueIndex?: number, requeue?: boolean): void
+    taskExchange(queueIndex?: number, requeue?: boolean): void
+    taskAbandon(queueIndex?: number, requeue?: boolean): void
   }
   lastAction: ActionData | null
   error: string | null
@@ -59,6 +63,10 @@ const CharacterContext = React.createContext<CharacterContextType>({
     buyExpansion: notImplemented,
     withdrawGold: notImplemented,
     depositGold: notImplemented,
+    taskAccept: notImplemented,
+    taskComplete: notImplemented,
+    taskExchange: notImplemented,
+    taskAbandon: notImplemented,
   },
   lastAction: null,
   error: null,

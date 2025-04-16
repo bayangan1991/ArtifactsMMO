@@ -407,6 +407,38 @@ const useCharacter = (name: string | null) => {
     onError,
     queueAction,
   })
+  const taskAccept = useSimpleAction({
+    name: name,
+    label: 'Accept a new task',
+    path: '/my/{name}/action/task/new',
+    onSuccess,
+    onError,
+    queueAction,
+  })
+  const taskComplete = useSimpleAction({
+    name: name,
+    label: 'Complete current task',
+    path: '/my/{name}/action/task/complete',
+    onSuccess,
+    onError,
+    queueAction,
+  })
+  const taskExchange = useSimpleAction({
+    name: name,
+    label: 'Exchange 6x task coins for reward',
+    path: '/my/{name}/action/task/exchange',
+    onSuccess,
+    onError,
+    queueAction,
+  })
+  const taskAbandon = useSimpleAction({
+    name: name,
+    label: 'Abandon current task',
+    path: '/my/{name}/action/task/cancel',
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
   return {
     character,
@@ -425,6 +457,10 @@ const useCharacter = (name: string | null) => {
       withdrawGold,
       depositGold,
       buyExpansion,
+      taskAccept,
+      taskComplete,
+      taskExchange,
+      taskAbandon,
     },
     lastAction,
     error,

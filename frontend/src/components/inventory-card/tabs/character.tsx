@@ -78,7 +78,10 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
 }
 
 const TaskDetail = () => {
-  const { character } = useContext(CharacterContext)
+  const {
+    character,
+    actions: { taskAbandon },
+  } = useContext(CharacterContext)
   const monster = useMonster(character?.task || '')
   const item = useItem(character?.task || '')
 
@@ -87,16 +90,21 @@ const TaskDetail = () => {
   return (
     <div className="mb-3">
       <h5>Active Task</h5>
-      {character.task_type === 'monsters' && monster && (
-        <>
-          Slay {character.task_total} {monster.name}
-        </>
-      )}
-      {character.task_type === 'items' && item && (
-        <>
-          Deliver {character.task_total} {item.name}
-        </>
-      )}
+      <div className="d-flex justify-content-between align-items-end">
+        {character.task_type === 'monsters' && monster && (
+          <>
+            Slay {character.task_total} {monster.name}
+          </>
+        )}
+        {character.task_type === 'items' && item && (
+          <>
+            Deliver {character.task_total} {item.name}
+          </>
+        )}
+        <Button variant="outline-danger" size="sm" onClick={() => taskAbandon()}>
+          Abandon
+        </Button>
+      </div>
       <ProgressBar
         className="mt-1"
         variant="warning"
