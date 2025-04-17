@@ -1,25 +1,23 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useReducer } from 'react'
 import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
 const useMonster = (code: string) => {
-  const { client } = useContext(ApiClientContext)
-  const [monster, setMonster] = useState<components['schemas']['MonsterSchema'] | null>(null)
+  const { client, getCache } = useContext(ApiClientContext)
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
+
+  const cache = getCache<components['schemas']['MonsterSchema']>('monsters')
 
   useEffect(() => {
-    client
-      .GET('/monsters/{code}', { params: { path: { code } } })
-      .then((result) => {
-        if (result.data) {
-          setMonster(result.data.data)
-        } else {
-          setMonster(null)
-        }
-      })
-      .catch(() => setMonster(null))
-  }, [client, code])
+    client.GET('/monsters/{code}', { params: { path: { code } } }).then((result) => {
+      if (result.data) {
+        cache[code] = result.data.data
+        forceUpdate()
+      }
+    })
+  }, [client, code, cache])
 
-  return monster
+  return cache[code]
 }
 
 export { useMonster }

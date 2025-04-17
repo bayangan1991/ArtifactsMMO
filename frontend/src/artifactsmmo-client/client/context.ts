@@ -4,7 +4,7 @@ import type { paths } from '../spec'
 
 interface ApiClientContextType {
   client: Client<paths>
-  getCache<T>(name: string): Record<string, T>
+  getCache<T, K extends string | number | symbol = string>(name: string): Record<K, T>
 }
 
 const notImplemented = () => {
