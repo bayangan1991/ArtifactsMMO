@@ -31,7 +31,15 @@ const useClient = (apiKey?: string) => {
     }
   }, [client, authMiddleware])
 
-  return { client }
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const [cache] = useState<Record<string, any>>({})
+
+  const getCache = (name: string) => {
+    if (!Object.keys(cache).includes(name)) cache[name] = {}
+    return cache[name]
+  }
+
+  return { client, getCache }
 }
 
 export { useClient }
