@@ -33,6 +33,8 @@ interface CharacterContextType {
     taskComplete(queueIndex?: number, requeue?: boolean): void
     taskExchange(queueIndex?: number, requeue?: boolean): void
     taskAbandon(queueIndex?: number, requeue?: boolean): void
+    buyItem(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
+    sellItem(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
   }
   lastAction: ActionData | null
   error: string | null
@@ -69,6 +71,8 @@ const CharacterContext = React.createContext<CharacterContextType>({
     taskComplete: notImplemented,
     taskExchange: notImplemented,
     taskAbandon: notImplemented,
+    buyItem: notImplemented,
+    sellItem: notImplemented,
   },
   lastAction: null,
   error: null,

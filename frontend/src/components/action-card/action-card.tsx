@@ -10,6 +10,7 @@ import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { BankDetail } from './detail/bank-detail.tsx'
 import { CraftDetail } from './detail/craft-detail.tsx'
 import { MonsterDetail } from './detail/monster-detail.tsx'
+import { NpcDetail } from './detail/npc-detail.tsx'
 import { ResourceDetail } from './detail/resource-detail.tsx'
 import { TasksMasterDetail } from './detail/tasks-master-detail.tsx'
 
@@ -124,6 +125,15 @@ const ActionCard = () => {
                 <Accordion.Header as="h4">Tasks Master</Accordion.Header>
                 <Accordion.Body>
                   <TasksMasterDetail />
+                </Accordion.Body>
+              </Accordion.Item>
+            )}
+
+            {targetMap?.content?.type === 'npc' && (
+              <Accordion.Item eventKey="5">
+                <Accordion.Header as="h4">NPC Vendor</Accordion.Header>
+                <Accordion.Body>
+                  <NpcDetail npc={targetMap.content.code} />
                 </Accordion.Body>
               </Accordion.Item>
             )}

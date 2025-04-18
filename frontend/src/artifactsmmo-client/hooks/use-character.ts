@@ -142,11 +142,22 @@ const useCharacter = (name: string | null) => {
     setStatus(Status.Ready)
   }, [])
 
-  const { doMove, doDeposit, doWithdraw, doCraft, doUnEquip, doEquip, doDepositGold, doWithdrawGold, doTaskTrade } =
-    useActions({
-      onSuccess,
-      onError,
-    })
+  const {
+    doMove,
+    doDeposit,
+    doWithdraw,
+    doCraft,
+    doUnEquip,
+    doEquip,
+    doDepositGold,
+    doWithdrawGold,
+    doTaskTrade,
+    doBuyItem,
+    doSellItem,
+  } = useActions({
+    onSuccess,
+    onError,
+  })
 
   const move = useCallback(
     (pos: Position, queueIndex?: number, requeue?: boolean) => {
@@ -398,6 +409,49 @@ const useCharacter = (name: string | null) => {
     [name, doTaskTrade, queueAction]
   )
 
+  const buyItem = useCallback(
+    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleBuyItem = async () => {
+          const result = await doBuyItem(name, code, quantity)
+          if (result && requeue) buyItem(code, quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat b' : 'B'}uy ${quantity} x ${code}`,
+            guid: Guid.create(),
+            action: handleBuyItem,
+          },
+          queueIndex
+        )
+      }
+    },
+    [name, doBuyItem, queueAction]
+  )
+  const sellItem = useCallback(
+    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleSellItem = async () => {
+          const result = await doSellItem(name, code, quantity)
+          if (result && requeue) sellItem(code, quantity, queueIndex, requeue)
+          return result
+        }
+
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat s' : 'S'}ell ${quantity} x ${code}`,
+            guid: Guid.create(),
+            action: handleSellItem,
+          },
+          queueIndex
+        )
+      }
+    },
+    [name, doSellItem, queueAction]
+  )
+
   const rest = useSimpleAction({
     name,
     label: 'Rest',
@@ -485,6 +539,8 @@ const useCharacter = (name: string | null) => {
       taskComplete,
       taskExchange,
       taskAbandon,
+      buyItem,
+      sellItem,
     },
     lastAction,
     error,

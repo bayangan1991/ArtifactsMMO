@@ -1,44 +1,40 @@
-import { faBrain, faHammer, faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext, useState } from 'react'
-import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap'
-import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
-import { useItems } from '../../../artifactsmmo-client/hooks/use-items.ts'
+import { Badge, Button, Form, InputGroup, ListGroup } from 'react-bootstrap'
+import { useNpcItems } from '../../../artifactsmmo-client/hooks/use-npc-items.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
-import type { Position } from '../../../types.ts'
 import { CharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 
-const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) => {
+const BuyItemControl = ({ item }: { item: components['schemas']['NPCItem'] }) => {
   const [quantity, setQuantity] = useState(1)
   const {
-    actions: { craft, smartCraft },
+    actions: { buyItem, sellItem },
   } = useContext(CharacterContext)
-  const item = useItem(code)
 
   return (
     <InputGroup size="sm">
       <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-      <Button onClick={() => craft(code, quantity)}>
-        <Icon icon={faHammer} />
-      </Button>
-      {item && (
-        <>
-          <Button onClick={() => smartCraft(item, workshop)}>
-            <Icon icon={faBrain} />
-          </Button>
-          <Button onClick={() => smartCraft(item, workshop, true)}>
-            <Icon icon={faRepeat} />
-          </Button>
-        </>
+      {item.buy_price && (
+        <Button variant="outline-success" onClick={() => buyItem(item.code, quantity)}>
+          <Badge bg="success">Buy</Badge>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth className="mx-1" />x{item.buy_price.toLocaleString()}
+        </Button>
+      )}
+      {item.sell_price && (
+        <Button variant="outline-warning" onClick={() => sellItem(item.code, quantity)}>
+          <Badge bg="warning">Sell</Badge>
+          <Icon icon={faCoins} color="#ffd82f" fixedWidth className="mx-1" />x{item.sell_price.toLocaleString()}
+        </Button>
       )}
     </InputGroup>
   )
 }
 
-const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill']; pos: Position }) => {
-  const { items, pagination } = useItems({ skill })
+const NpcDetail = ({ npc }: { npc: string }) => {
+  const { items, pagination } = useNpcItems({ npc })
 
   return (
     <>
@@ -48,7 +44,7 @@ const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill'
             <div className="w-100">
               <Item code={item.code} imgProps={{ height: 20 }} />
             </div>
-            <CraftControl code={item.code} workshop={{ x: pos.x, y: pos.y }} />
+            <BuyItemControl item={item} />
           </ListGroup.Item>
         ))}
       </ListGroup>
@@ -59,4 +55,4 @@ const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill'
   )
 }
 
-export { CraftDetail }
+export { NpcDetail }

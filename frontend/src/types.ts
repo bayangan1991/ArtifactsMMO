@@ -17,6 +17,7 @@ type BankGoldTransaction = components['schemas']['BankGoldTransactionSchema']
 type BankTransactionData = components['schemas']['BankItemTransactionSchema']
 type EquipmentData = components['schemas']['EquipRequestSchema']
 type TaskTradeData = components['schemas']['TaskTradeDataSchema']
+type NpcTransactionData = components['schemas']['NpcMerchantTransactionSchema']
 
 type ActionData =
   | MovementData
@@ -27,6 +28,7 @@ type ActionData =
   | EquipmentData
   | BankGoldTransaction
   | TaskTradeData
+  | NpcTransactionData
 
 interface PaginationType {
   page: number
@@ -44,6 +46,7 @@ export type {
   EquipmentData,
   RestData,
   TaskTradeData,
+  NpcTransactionData,
   ActionData,
   Queue,
   Position,
