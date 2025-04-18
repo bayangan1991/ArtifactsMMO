@@ -37,28 +37,29 @@ interface SlotProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Slot = ({ slot, ...rest }: SlotProps) => {
+  const { handleShow } = useContext(ItemModalContext)
   const {
     character,
     actions: { unEquip },
   } = useContext(CharacterContext)
-
-  if (!character) return
-
   const slotName: `${components['schemas']['ItemSlot']}_slot` = `${slot}_slot`
-  const item = useItem(character[slotName])
-  const { handleShow } = useContext(ItemModalContext)
+  const slotItem = character ? character[slotName] : null
+  const item = useItem(slotItem)
+
   const slotQuantity = useMemo(() => {
-    if (slot === 'utility1') return character.utility1_slot_quantity
-    if (slot === 'utility2') return character.utility2_slot_quantity
+    if (character && slot === 'utility1') return character.utility1_slot_quantity
+    if (character && slot === 'utility2') return character.utility2_slot_quantity
     return 1
   }, [slot, character])
 
   if (!rest.style) rest.style = { minHeight: 120 }
   if (!rest.style.minHeight) rest.style.minHeight = 120
 
+  if (!character) return
+
   return (
     <div {...rest} className="d-flex justify-content-around align-items-center border rounded flex-column">
-      {item && character[slotName] && (
+      {item && slotItem && (
         <>
           <img src={`https://artifactsmmo.com/images/items/${item.code}.png`} height={40} alt={slot} />
           <div className="d-flex justify-content-between w-100 px-2">
@@ -72,7 +73,7 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
           </div>
         </>
       )}
-      {!character[slotName] && <small className="text-muted">{slot}</small>}
+      {!slotItem && <small className="text-muted">{slot}</small>}
     </div>
   )
 }

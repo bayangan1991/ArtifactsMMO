@@ -1,206 +1,23 @@
-import { faBrain, faCoins, faHammer, faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import React, { useContext } from 'react'
-import { useEffect, useState } from 'react'
-import {
-  Accordion,
-  Badge,
-  Button,
-  ButtonGroup,
-  Card,
-  Dropdown,
-  Form,
-  InputGroup,
-  ListGroup,
-  Stack,
-} from 'react-bootstrap'
-import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
-import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
+import React, { useContext, useEffect, useState } from 'react'
+import { Accordion, Button, Card, Form, InputGroup } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
-import { useMonster } from '../../artifactsmmo-client/hooks/use-monster.ts'
-import { useResource } from '../../artifactsmmo-client/hooks/use-resource.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { RESOURCE_TYPES } from '../../constants.ts'
-import type { Position } from '../../types.ts'
-import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { CharacterEffect } from '../character-effect/character-effect.tsx'
-import { Item } from '../item/item.tsx'
-import { Pagination } from '../pagination/pagination.tsx'
-
-const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) => {
-  const [quantity, setQuantity] = useState(1)
-  const {
-    actions: { craft, smartCraft },
-  } = useContext(CharacterContext)
-  const item = useItem(code)
-
-  return (
-    <InputGroup size="sm" style={{ width: 200 }}>
-      <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-      <Button onClick={() => craft(code, quantity)}>
-        <Icon icon={faHammer} />
-      </Button>
-      {item && (
-        <>
-          <Button onClick={() => smartCraft(item, workshop)}>
-            <Icon icon={faBrain} />
-          </Button>
-          <Button onClick={() => smartCraft(item, workshop, true)}>
-            <Icon icon={faRepeat} />
-          </Button>
-        </>
-      )}
-    </InputGroup>
-  )
-}
-
-const BankGoldAction = ({
-  action,
-  label,
-  initial = 0,
-}: { action: (quantity: number) => void; label: string; initial?: number }) => {
-  const [amount, setAmount] = useState(initial)
-
-  return (
-    <div>
-      <InputGroup>
-        <Form.Control type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
-        <Button onClick={() => action(amount)}>
-          <Icon icon={faCoins} color="#ffd82f" fixedWidth />
-          {label}
-        </Button>
-      </InputGroup>
-    </div>
-  )
-}
-
-const ResourceDetail = ({ code }: { code: string }) => {
-  const resource = useResource(code)
-
-  if (!resource) return null
-
-  return (
-    <div>
-      <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
-        <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
-          <img src={`https://artifactsmmo.com/images/resources/${code}.png`} alt="" height={50} />
-        </div>
-        <h5>
-          {resource.name}{' '}
-          <small className="text-muted">
-            {resource.skill}@lvl{resource.level}
-          </small>
-        </h5>
-      </div>
-      <ListGroup>
-        {resource.drops.map((item) => (
-          <ListGroup.Item key={item.code}>
-            <Item code={item.code} imgProps={{ height: 20 }} />
-            <small className="text-muted">
-              {' '}
-              x{item.min_quantity === item.max_quantity && item.min_quantity}
-              {item.min_quantity !== item.max_quantity && `${item.min_quantity}-${item.max_quantity}`} @{' '}
-              {((1 / item.rate) * 100).toFixed(2)}%
-            </small>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-    </div>
-  )
-}
-
-const MonsterDetail = ({ code }: { code: string }) => {
-  const monster = useMonster(code)
-  const damageTypes = ['air', 'earth', 'fire', 'water'] as const
-
-  if (!monster) return null
-
-  return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="d-flex justify-content-start align-items-end gap-2 mb-2">
-          <div style={{ minWidth: 50 }} className="d-flex align-items-center justify-content-center">
-            <img src={`https://artifactsmmo.com/images/monsters/${code}.png`} alt="" height={50} />
-          </div>
-          <h5>
-            {monster.name} <small className="text-muted">lvl{monster.level}</small>
-          </h5>
-        </div>
-        <h5>
-          <Badge bg="danger">{monster.hp.toLocaleString()} HP</Badge>
-        </h5>
-      </div>
-      <h6>Damage</h6>
-      <ListGroup className="mb-2">
-        {damageTypes.map(
-          (type) =>
-            monster[`attack_${type}`] > 0 && (
-              <ListGroup.Item key={type}>
-                <CharacterEffect code={`dmg_${type}`} /> x <strong>{monster[`attack_${type}`]}</strong>
-              </ListGroup.Item>
-            )
-        )}
-      </ListGroup>
-      <h6>Resistance</h6>
-      <ListGroup className="mb-2">
-        {damageTypes.map(
-          (type) =>
-            monster[`res_${type}`] > 0 && (
-              <ListGroup.Item key={type}>
-                <CharacterEffect code={`res_${type}`} /> x <strong>{monster[`res_${type}`]}%</strong>
-              </ListGroup.Item>
-            )
-        )}
-      </ListGroup>
-      {!!monster.effects?.length && <h6>Effects</h6>}
-      <ListGroup>
-        {monster.effects?.map((effect) => (
-          <ListGroup.Item key={effect.code}>
-            <CharacterEffect code={effect.code} imgProps={{ height: 20 }} />{' '}
-            <small className="text-muted">{effect.value}%</small>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-      <h6>Drops</h6>
-      <ListGroup>
-        <ListGroup.Item>
-          <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {monster.min_gold.toLocaleString()}-
-          {monster.max_gold.toLocaleString()} gold
-        </ListGroup.Item>
-        {monster.drops.map((item) => (
-          <ListGroup.Item key={item.code}>
-            <Item code={item.code} imgProps={{ height: 20 }} />
-            <small className="text-muted">
-              {' '}
-              x{item.min_quantity === item.max_quantity && item.min_quantity}
-              {item.min_quantity !== item.max_quantity && `${item.min_quantity}-${item.max_quantity}`} @{' '}
-              {((1 / item.rate) * 100).toFixed(2)}%
-            </small>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-    </div>
-  )
-}
+import { BankDetail } from './detail/bank-detail.tsx'
+import { CraftDetail } from './detail/craft-detail.tsx'
+import { MonsterDetail } from './detail/monster-detail.tsx'
+import { ResourceDetail } from './detail/resource-detail.tsx'
+import { TasksMasterDetail } from './detail/tasks-master-detail.tsx'
 
 const ActionCard = () => {
   const {
     character,
-    actions: {
-      move,
-      depositAll,
-      buyExpansion,
-      depositGold,
-      withdrawGold,
-      taskAccept,
-      taskComplete,
-      taskExchange,
-      taskTrade,
-    },
+    actions: { move },
   } = useContext(CharacterContext)
-  const { bankDetails } = useContext(BankItemsContext)
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
 
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
@@ -211,11 +28,6 @@ const ActionCard = () => {
   const mapLookup: Record<string, components['schemas']['MapSchema']> = Object.fromEntries(
     maps.data ? maps.data.map((item) => [`${item.x},${item.y}`, item]) : []
   )
-
-  const { items, pagination } = useItems({
-    skill: targetMap?.content?.code as components['schemas']['CraftSkill'],
-    skip: targetMap?.content?.type !== 'workshop',
-  })
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const [x, y] = e.currentTarget.value.split(',').map(Number)
@@ -228,16 +40,6 @@ const ActionCard = () => {
 
   const distance =
     targetMap && currentPosition ? euclideanDistance({ x: targetMap.x, y: targetMap.y }, currentPosition) : 0
-
-  const taskItemQuantity = Math.min(
-    character?.inventory?.reduce((acc, item) => {
-      if (item.code === character?.task) {
-        return acc + item.quantity
-      }
-      return acc
-    }, 0) || 0,
-    (character?.task_total || 0) - (character?.task_progress || 0)
-  )
 
   return (
     <Card>
@@ -278,21 +80,14 @@ const ActionCard = () => {
             </Button>
           </InputGroup>
           <Accordion className="mt-2">
-            {items && targetMap && (
+            {targetMap?.content?.type === 'workshop' && (
               <Accordion.Item eventKey="0">
-                <Accordion.Header as="h4">Crafting ({items.total})</Accordion.Header>
+                <Accordion.Header as="h4">Crafting</Accordion.Header>
                 <Accordion.Body>
-                  <ListGroup variant="flush">
-                    {items.data.map((item) => (
-                      <ListGroup.Item key={item.code} className="d-flex justify-content-between align-items-center">
-                        <Item code={item.code} imgProps={{ height: 20 }} />
-                        <CraftControl code={item.code} workshop={{ x: targetMap.x, y: targetMap.y }} />
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                  <div className="mt-2 d-flex justify-content-around align-items-center">
-                    <Pagination {...pagination} />
-                  </div>
+                  <CraftDetail
+                    skill={targetMap.content.code as components['schemas']['CraftSkill']}
+                    pos={{ x: targetMap.x, y: targetMap.y }}
+                  />
                 </Accordion.Body>
               </Accordion.Item>
             )}
@@ -301,42 +96,7 @@ const ActionCard = () => {
               <Accordion.Item eventKey="1">
                 <Accordion.Header as="h4">Bank Actions</Accordion.Header>
                 <Accordion.Body>
-                  <Stack gap={2}>
-                    <Stack gap={2} direction="horizontal">
-                      <Dropdown as={ButtonGroup}>
-                        <Button onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
-                          Deposit all items
-                        </Button>
-                        <Dropdown.Toggle split />
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, false, true)}
-                          >
-                            and return
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, false)}
-                          >
-                            repeatedly
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() => depositAll({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, true, true)}
-                          >
-                            repeatedly and return
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                      <Button onClick={() => buyExpansion()}>
-                        Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
-                        {bankDetails?.data.next_expansion_cost.toLocaleString()})
-                      </Button>
-                    </Stack>
-                    <Stack gap={2} direction="horizontal">
-                      <BankGoldAction action={depositGold} label="Deposit" initial={character?.gold} />
-                      <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
-                    </Stack>
-                  </Stack>
+                  <BankDetail pos={{ x: targetMap.x, y: targetMap.y }} />
                 </Accordion.Body>
               </Accordion.Item>
             )}
@@ -363,14 +123,7 @@ const ActionCard = () => {
               <Accordion.Item eventKey="4">
                 <Accordion.Header as="h4">Tasks Master</Accordion.Header>
                 <Accordion.Body>
-                  <Stack gap={2} direction="horizontal">
-                    <Button onClick={() => taskAccept()}>Accept Task</Button>
-                    {character?.task && character?.task_total && (
-                      <Button onClick={() => taskTrade(character.task, taskItemQuantity)}>Trade Items</Button>
-                    )}
-                    <Button onClick={() => taskComplete()}>Complete Task</Button>
-                    <Button onClick={() => taskExchange()}>Random Reward</Button>
-                  </Stack>
+                  <TasksMasterDetail />
                 </Accordion.Body>
               </Accordion.Item>
             )}
