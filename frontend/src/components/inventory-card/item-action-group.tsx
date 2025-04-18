@@ -1,4 +1,4 @@
-import { faRepeat, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faRepeat, faSackXmark, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext, useEffect, useState } from 'react'
 import { Button, Dropdown, Form, InputGroup } from 'react-bootstrap'
@@ -46,7 +46,7 @@ interface Props {
 
 export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
   const {
-    actions: { equip },
+    actions: { equip, consumeItem },
   } = useContext(CharacterContext)
   const item = useItem(code)
   const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
@@ -55,24 +55,38 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
     setSelectedQuantity(Math.min(quantity, max))
   }, [quantity, max])
 
-  const itemType = item && isSlotType(item?.type) ? item.type : null
-  const equipQuantity = itemType === 'utility' ? Math.min(selectedQuantity, 100) : 1
+  const slotType = item && isSlotType(item?.type) ? item.type : null
+  const equipQuantity = slotType === 'utility' ? Math.min(selectedQuantity, 100) : 1
 
   return (
     <InputGroup size="sm">
-      {item && itemType && SLOTS[itemType].length === 1 && (
-        <Button size="sm" variant="light" onClick={() => equip(item.code, SLOTS[itemType][0], 1)}>
+      {item?.type === 'consumable' && (
+        <>
+          <Button size="sm" variant="outline-danger" onClick={() => consumeItem(item, selectedQuantity)}>
+            <Icon icon={faSackXmark} />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline-danger"
+            onClick={() => consumeItem(item, selectedQuantity, undefined, true)}
+          >
+            <Icon icon={faRepeat} />
+          </Button>
+        </>
+      )}
+      {item && slotType && SLOTS[slotType].length === 1 && (
+        <Button size="sm" variant="light" onClick={() => equip(item.code, SLOTS[slotType][0], 1)}>
           <Icon icon={faUser} />
         </Button>
       )}
-      {item && itemType && SLOTS[itemType].length > 1 && (
+      {item && slotType && SLOTS[slotType].length > 1 && (
         <Dropdown className="d-inline-block">
           <Dropdown.Toggle size="sm" variant="light">
             <Icon icon={faUser} />
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            {SLOTS[itemType].map((slot) => (
+            {SLOTS[slotType].map((slot) => (
               <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, equipQuantity)}>
                 {slot}
               </Dropdown.Item>

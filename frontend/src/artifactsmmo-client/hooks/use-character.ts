@@ -104,7 +104,7 @@ const useCharacter = (name: string | null) => {
       }),
     [actionQueue]
   )
-  useInterval(pollQueue, 1000 as const)
+  useInterval(pollQueue, 2000 as const)
 
   // Run action when set
   useEffect(() => {
@@ -155,6 +155,7 @@ const useCharacter = (name: string | null) => {
     doTaskTrade,
     doBuyItem,
     doSellItem,
+    doConsumeItem,
   } = useActions({
     onSuccess,
     onError,
@@ -457,6 +458,7 @@ const useCharacter = (name: string | null) => {
     },
     [name, doBuyItem, queueAction]
   )
+
   const sellItem = useCallback(
     (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
       if (name) {
@@ -477,6 +479,38 @@ const useCharacter = (name: string | null) => {
       }
     },
     [name, doSellItem, queueAction]
+  )
+
+  const consumeItem = useCallback(
+    (item: components['schemas']['ItemSchema'], quantity: number, queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const action = async () => {
+          let result: Awaited<ReturnType<typeof doConsumeItem>> | null
+          let toConsume = quantity
+          if (character && item.effects?.some((effect) => effect.code === 'heal')) {
+            const missingHp = character.max_hp - character.hp
+            const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
+            toConsume = Math.min(quantity, fullHealQuantity)
+            result = await doConsumeItem(name, item.code, toConsume)
+          } else {
+            result = await doConsumeItem(name, item.code, quantity)
+          }
+          if (result && requeue && quantity - toConsume > 0)
+            consumeItem(item, quantity - toConsume, queueIndex, requeue)
+          return result
+        }
+
+        queueAction(
+          {
+            label: `${requeue ? 'Repeat c' : 'C'}onsume ${item.name}`,
+            guid: Guid.create(),
+            action,
+          },
+          queueIndex
+        )
+      }
+    },
+    [name, doConsumeItem, queueAction, character]
   )
 
   const rest = useSimpleAction({
@@ -560,6 +594,7 @@ const useCharacter = (name: string | null) => {
       taskAbandon,
       buyItem,
       sellItem,
+      consumeItem,
     },
     lastAction,
     error,
