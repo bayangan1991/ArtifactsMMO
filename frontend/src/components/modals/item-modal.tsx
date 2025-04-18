@@ -98,7 +98,9 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
                   </ListGroup.Item>
                 ))}
               </ListGroup>
-              <Pagination {...pagination} />
+              <div className="d-flex justify-content-center">
+                <Pagination {...pagination} size="sm" />
+              </div>
             </>
           )}
         </Form>

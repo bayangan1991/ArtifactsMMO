@@ -290,7 +290,9 @@ const ActionCard = () => {
                       </ListGroup.Item>
                     ))}
                   </ListGroup>
-                  <Pagination className="mt-2 ms-auto" {...pagination} />
+                  <div className="mt-2 d-flex justify-content-around align-items-center">
+                    <Pagination {...pagination} />
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
             )}
