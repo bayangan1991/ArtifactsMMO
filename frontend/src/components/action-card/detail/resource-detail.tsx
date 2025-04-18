@@ -1,4 +1,3 @@
-import React from 'react'
 import { ListGroup } from 'react-bootstrap'
 import { useResource } from '../../../artifactsmmo-client/hooks/use-resource.ts'
 import { Item } from '../../item/item.tsx'
