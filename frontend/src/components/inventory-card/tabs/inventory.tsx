@@ -9,7 +9,7 @@ import { ItemActionGroup } from '../item-action-group.tsx'
 const Inventory = () => {
   const {
     character,
-    actions: { equip, deposit },
+    actions: { deposit },
   } = useContext(CharacterContext)
 
   if (!character) return
@@ -41,7 +41,7 @@ const Inventory = () => {
             {usedSlots.map((item) => (
               <tr key={item.slot}>
                 <td>
-                  <Item code={item.code} equip={equip} quantity={item.quantity} />
+                  <Item code={item.code} />
                 </td>
                 <td>{item.quantity}</td>
                 <td>
