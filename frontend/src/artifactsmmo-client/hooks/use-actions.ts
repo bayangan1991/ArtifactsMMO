@@ -53,6 +53,26 @@ const useActions = ({ onSuccess, onError }: Params) => {
     [client, onSuccess, onError]
   )
 
+  const doFight = useCallback(
+    async (name: string): Promise<null | components['schemas']['CharacterFightDataSchema']> => {
+      try {
+        const { data, error } = await client.POST('/my/{name}/action/fight', {
+          params: {
+            path: { name },
+          },
+        })
+        if (data?.data) {
+          onSuccess(data.data)
+          return data.data
+        }
+        // @ts-ignore
+        onError(error?.error.message)
+      } catch {}
+      return null
+    },
+    [client, onSuccess, onError]
+  )
+
   const doWithdraw = useCallback(
     async (name: string, code: string, quantity: number) => {
       try {
@@ -244,6 +264,7 @@ const useActions = ({ onSuccess, onError }: Params) => {
 
   return {
     doMove,
+    doFight,
     doDeposit,
     doWithdraw,
     doCraft,

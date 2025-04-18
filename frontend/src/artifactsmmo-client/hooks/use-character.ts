@@ -144,6 +144,7 @@ const useCharacter = (name: string | null) => {
 
   const {
     doMove,
+    doFight,
     doDeposit,
     doWithdraw,
     doCraft,
@@ -175,6 +176,32 @@ const useCharacter = (name: string | null) => {
       }
     },
     [name, doMove, queueAction]
+  )
+
+  const fight = useCallback(
+    (queueIndex?: number, requeue?: boolean) => {
+      if (name) {
+        const handleFight = async () => {
+          const before = await refetch()
+          const result = await doFight(name)
+          if (result && requeue) {
+            const hpLost = (before?.data.hp || 0) - result.character.hp
+            if (result.character.hp - hpLost * 1.5 > 0) {
+              fight(0, requeue)
+            } else {
+              fight(undefined, requeue)
+            }
+          }
+          return result
+        }
+
+        queueAction(
+          { label: `${requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action: handleFight },
+          queueIndex
+        )
+      }
+    },
+    [name, doFight, queueAction, refetch]
   )
 
   const deposit = useCallback(
@@ -456,14 +483,6 @@ const useCharacter = (name: string | null) => {
     name,
     label: 'Rest',
     path: '/my/{name}/action/rest',
-    onSuccess,
-    onError,
-    queueAction,
-  })
-  const fight = useSimpleAction({
-    name,
-    label: 'Fight',
-    path: '/my/{name}/action/fight',
     onSuccess,
     onError,
     queueAction,
