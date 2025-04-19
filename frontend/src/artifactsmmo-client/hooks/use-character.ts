@@ -487,11 +487,17 @@ const useCharacter = (name: string | null) => {
         const action = async () => {
           let result: Awaited<ReturnType<typeof doConsumeItem>> | null
           let toConsume = quantity
-          if (character && item.effects?.some((effect) => effect.code === 'heal')) {
-            const missingHp = character.max_hp - character.hp
-            const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
-            toConsume = Math.min(quantity, fullHealQuantity)
-            result = await doConsumeItem(name, item.code, toConsume)
+          if (item.effects?.some((effect) => effect.code === 'heal')) {
+            const current = await refetch()
+            if (current) {
+              const missingHp = current.data.max_hp - current.data.hp
+              const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
+              toConsume = Math.min(quantity, fullHealQuantity)
+              console.log({max_hp: current.data.max_hp, hp: current.data.hp,missingHp, fullHealQuantity, toConsume, quantity})
+              result = await doConsumeItem(name, item.code, toConsume)
+            } else {
+              return null
+            }
           } else {
             result = await doConsumeItem(name, item.code, quantity)
           }
@@ -510,7 +516,7 @@ const useCharacter = (name: string | null) => {
         )
       }
     },
-    [name, doConsumeItem, queueAction, character]
+    [name, doConsumeItem, queueAction, refetch]
   )
 
   const rest = useSimpleAction({
