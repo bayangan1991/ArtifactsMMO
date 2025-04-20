@@ -235,6 +235,42 @@ const useActions = (name: string | null | undefined) => {
     [client, name]
   )
 
+  const doRecycleItem = useCallback(
+    async ({ code, quantity }: { code: string; quantity: number }) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/recycling', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
+    },
+    [client, name]
+  )
+
+  const doDeleteItem = useCallback(
+    async ({ code, quantity }: { code: string; quantity: number }) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/delete', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
+    },
+    [client, name]
+  )
+
   return {
     doMove,
     doFight,
@@ -249,6 +285,8 @@ const useActions = (name: string | null | undefined) => {
     doBuyItem,
     doSellItem,
     doConsumeItem,
+    doRecycleItem,
+    doDeleteItem,
   }
 }
 

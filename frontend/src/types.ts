@@ -19,6 +19,8 @@ type EquipmentData = components['schemas']['EquipRequestSchema']
 type TaskTradeData = components['schemas']['TaskTradeDataSchema']
 type NpcTransactionData = components['schemas']['NpcMerchantTransactionSchema']
 type UseItemData = components['schemas']['UseItemSchema']
+type RecycleData = components['schemas']['RecyclingDataSchema']
+type DeleteData = components['schemas']['DeleteItemSchema']
 
 type ActionData =
   | MovementData
@@ -31,6 +33,8 @@ type ActionData =
   | TaskTradeData
   | NpcTransactionData
   | UseItemData
+  | RecycleData
+  | DeleteData
 
 interface PaginationType {
   page: number
@@ -49,6 +53,7 @@ export type {
   RestData,
   TaskTradeData,
   NpcTransactionData,
+  DeleteData,
   UseItemData,
   ActionData,
   Queue,

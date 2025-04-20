@@ -157,6 +157,8 @@ const useCharacter = (name: string | null) => {
     doBuyItem,
     doSellItem,
     doConsumeItem,
+    doRecycleItem,
+    doDeleteItem,
   } = useActions(name)
 
   const move = useQueueableAction({
@@ -243,6 +245,22 @@ const useCharacter = (name: string | null) => {
   const sellItem = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat s' : 'S'}ell ${quantity} x ${code}`,
     action: doSellItem,
+    onSuccess,
+    onError,
+    queueAction,
+  })
+
+  const recycleItem = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat r' : 'R'}ecycle ${quantity} x ${code}`,
+    action: doRecycleItem,
+    onSuccess,
+    onError,
+    queueAction,
+  })
+
+  const deleteItem = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}elete ${quantity} x ${code}`,
+    action: doDeleteItem,
     onSuccess,
     onError,
     queueAction,
@@ -458,6 +476,8 @@ const useCharacter = (name: string | null) => {
       buyItem,
       sellItem,
       consumeItem,
+      recycleItem,
+      deleteItem,
     },
     lastAction,
     error,

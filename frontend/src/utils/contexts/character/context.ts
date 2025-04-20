@@ -35,6 +35,8 @@ interface CharacterContextType {
     taskAbandon(args: QueueParams): void
     buyItem(args: { code: string; quantity: number } & QueueParams): void
     sellItem(args: { code: string; quantity: number } & QueueParams): void
+    recycleItem(args: { code: string; quantity: number } & QueueParams): void
+    deleteItem(args: { code: string; quantity: number } & QueueParams): void
     consumeItem(
       args: {
         item: components['schemas']['ItemSchema']
@@ -82,6 +84,8 @@ const CharacterContext = React.createContext<CharacterContextType>({
     buyItem: notImplemented,
     sellItem: notImplemented,
     consumeItem: notImplemented,
+    recycleItem: notImplemented,
+    deleteItem: notImplemented,
   },
   lastAction: null,
   error: null,
