@@ -18,7 +18,6 @@ export const useQueueableAction = <Action extends ActionType>(
 ): ((callbackParams: Parameters<Action>[0] & { queueIndex?: number; requeue?: boolean }) => void) => {
   const handleAction = useCallback(
     (actionParams: Parameters<Action>[0] & { queueIndex?: number; requeue?: boolean }) => {
-      console.log(actionParams)
       const action = async () => {
         try {
           const result = await hookParams.action(actionParams)

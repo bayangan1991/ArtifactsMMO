@@ -138,7 +138,6 @@ const useCharacter = (name: string | null) => {
   }, [])
 
   const onError = useCallback((error: string) => {
-    console.log(error)
     setLastAction(null)
     setError(error)
     setStatus(Status.Ready)

@@ -18,7 +18,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -33,7 +34,8 @@ const useActions = (name: string | null | undefined) => {
     if (data?.data) {
       return data.data
     }
-    throw new Error(error || 'unknown error')
+    // @ts-ignore
+    throw new Error(error?.error.message || 'unknown error')
   }, [client, name])
 
   const doWithdraw = useCallback(
@@ -48,7 +50,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -65,7 +68,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -82,7 +86,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -98,7 +103,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -115,7 +121,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -132,7 +139,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -149,7 +157,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -166,7 +175,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -183,7 +193,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -200,7 +211,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
@@ -217,7 +229,8 @@ const useActions = (name: string | null | undefined) => {
       if (data?.data) {
         return data.data
       }
-      throw new Error(error || 'unknown error')
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
     },
     [client, name]
   )
