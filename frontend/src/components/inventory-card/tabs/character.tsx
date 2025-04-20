@@ -67,7 +67,7 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
               <Icon icon={faMagnifyingGlass} />
             </Button>
             {slotQuantity > 1 && `x${slotQuantity}`}
-            <Button onClick={() => unEquip(slot, slotQuantity)} size="sm" variant="outline-light">
+            <Button onClick={() => unEquip({ slot, quantity: slotQuantity })} size="sm" variant="outline-light">
               <Icon icon={faUserLargeSlash} />
             </Button>
           </div>
@@ -102,7 +102,7 @@ const TaskDetail = () => {
             Deliver {character.task_total} {item.name}
           </>
         )}
-        <Button variant="outline-danger" size="sm" onClick={() => taskAbandon()}>
+        <Button variant="outline-danger" size="sm" onClick={() => taskAbandon({})}>
           Abandon
         </Button>
       </div>

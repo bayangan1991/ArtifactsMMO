@@ -20,7 +20,7 @@ const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) 
   return (
     <InputGroup size="sm">
       <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-      <Button onClick={() => craft(code, quantity)}>
+      <Button onClick={() => craft({ code, quantity })}>
         <Icon icon={faHammer} />
       </Button>
       {item && (

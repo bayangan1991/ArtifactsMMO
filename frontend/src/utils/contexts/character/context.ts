@@ -5,42 +5,44 @@ import type { components } from '../../../artifactsmmo-client/spec'
 import type { ActionData, Position, Queue } from '../../../types.ts'
 import { Stack } from '../../stack.ts'
 
+type QueueParams = { queueIndex?: number; requeue?: boolean }
+
 interface CharacterContextType {
   character: components['schemas']['CharacterSchema'] | null
   actions: {
-    move(pos: Position, queueIndex?: number, requeue?: boolean): void
-    rest(queueIndex?: number, requeue?: boolean): void
-    fight(queueIndex?: number, requeue?: boolean): void
-    deposit(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    depositAll(pos: Position, requeue?: boolean, returnToPos?: boolean): void
-    withdraw(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    gathering(queueIndex?: number, requeue?: boolean): void
-    craft(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    smartCraft(item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean): void
-    unEquip(slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean): void
+    move(args: { pos: Position } & QueueParams): void
+    rest(args: QueueParams): void
+    fight(args: QueueParams): void
+    deposit(args: { code: string; quantity: number } & QueueParams): void
+    withdraw(args: { code: string; quantity: number } & QueueParams): void
+    gathering(args: QueueParams): void
+    craft(args: { code: string; quantity: number } & QueueParams): void
+    unEquip(args: { slot: components['schemas']['ItemSlot']; quantity: number } & QueueParams): void
     equip(
-      code: string,
-      slot: components['schemas']['ItemSlot'],
-      quantity: number,
-      queueIndex?: number,
-      requeue?: boolean
+      args: {
+        code: string
+        slot: components['schemas']['ItemSlot']
+        quantity: number
+      } & QueueParams
     ): void
-    buyExpansion(queueIndex?: number, requeue?: boolean): void
-    withdrawGold(quantity: number, queueIndex?: number, requeue?: boolean): void
-    depositGold(quantity: number, queueIndex?: number, requeue?: boolean): void
-    taskAccept(queueIndex?: number, requeue?: boolean): void
-    taskTrade(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    taskComplete(queueIndex?: number, requeue?: boolean): void
-    taskExchange(queueIndex?: number, requeue?: boolean): void
-    taskAbandon(queueIndex?: number, requeue?: boolean): void
-    buyItem(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
-    sellItem(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
+    buyExpansion(args: QueueParams): void
+    withdrawGold(args: { quantity: number } & QueueParams): void
+    depositGold(args: { quantity: number } & QueueParams): void
+    taskAccept(args: QueueParams): void
+    taskTrade(args: { code: string; quantity: number } & QueueParams): void
+    taskComplete(args: QueueParams): void
+    taskExchange(args: QueueParams): void
+    taskAbandon(args: QueueParams): void
+    buyItem(args: { code: string; quantity: number } & QueueParams): void
+    sellItem(args: { code: string; quantity: number } & QueueParams): void
     consumeItem(
-      item: components['schemas']['ItemSchema'],
-      quantity: number,
-      queueIndex?: number,
-      requeue?: boolean
+      args: {
+        item: components['schemas']['ItemSchema']
+        quantity: number
+      } & QueueParams
     ): void
+    smartCraft(item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean): void
+    depositAll(pos: Position, requeue?: boolean, returnToPos?: boolean): void
   }
   lastAction: ActionData | null
   error: string | null

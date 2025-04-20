@@ -10,14 +10,14 @@ const BankGoldAction = ({
   action,
   label,
   initial = 0,
-}: { action: (quantity: number) => void; label: string; initial?: number }) => {
+}: { action: (args: { quantity: number }) => void; label: string; initial?: number }) => {
   const [amount, setAmount] = useState(initial)
 
   return (
     <div>
       <InputGroup>
         <Form.Control type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
-        <Button onClick={() => action(amount)}>
+        <Button onClick={() => action({ quantity: amount })}>
           <Icon icon={faCoins} color="#ffd82f" fixedWidth />
           {label}
         </Button>
@@ -46,7 +46,7 @@ const BankDetail = ({ pos }: { pos: Position }) => {
             <Dropdown.Item onClick={() => depositAll(pos, true, true)}>repeatedly and return</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <Button onClick={() => buyExpansion()}>
+        <Button onClick={() => buyExpansion({})}>
           Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
           {bankDetails?.data.next_expansion_cost.toLocaleString()})
         </Button>

@@ -72,11 +72,14 @@ const ActionCard = () => {
                 })}
               </Form.Select>
             )}
-            <Button type="button" onClick={() => move({ x: targetMap?.x || 0, y: targetMap?.y || 0 })}>
+            <Button type="button" onClick={() => move({ pos: { x: targetMap?.x || 0, y: targetMap?.y || 0 } })}>
               <Icon icon={faPersonHiking} /> Move {distance > 0 && `(${distance * 5}s)`}
             </Button>
 
-            <Button type="button" onClick={() => move({ x: targetMap?.x || 0, y: targetMap?.y || 0 }, undefined, true)}>
+            <Button
+              type="button"
+              onClick={() => move({ pos: { x: targetMap?.x || 0, y: targetMap?.y || 0 }, requeue: true })}
+            >
               <Icon icon={faRepeat} />
             </Button>
           </InputGroup>

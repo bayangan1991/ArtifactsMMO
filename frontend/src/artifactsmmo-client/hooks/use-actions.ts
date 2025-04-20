@@ -7,10 +7,10 @@ const useActions = (name: string | null | undefined) => {
   const { client } = useContext(ApiClientContext)
 
   const doMove = useCallback(
-    async ({ x, y }: Position) => {
+    async ({ pos }: { pos: Position }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/move', {
-        body: { x, y },
+        body: pos,
         params: {
           path: { name },
         },
@@ -37,7 +37,7 @@ const useActions = (name: string | null | undefined) => {
   }, [client, name])
 
   const doWithdraw = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
         body: { code, quantity },
@@ -54,7 +54,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doDeposit = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
         body: { code, quantity },
@@ -71,7 +71,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doCraft = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/crafting', {
         body: { code, quantity },
@@ -87,7 +87,7 @@ const useActions = (name: string | null | undefined) => {
     [client, name]
   )
   const doUnEquip = useCallback(
-    async (slot: components['schemas']['ItemSlot'], quantity: number) => {
+    async ({ slot, quantity }: { slot: components['schemas']['ItemSlot']; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/unequip', {
         body: { slot, quantity },
@@ -104,7 +104,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doEquip = useCallback(
-    async (code: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
+    async ({ code, slot, quantity }: { code: string; slot: components['schemas']['ItemSlot']; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/equip', {
         body: { slot, quantity, code },
@@ -121,7 +121,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doWithdrawGold = useCallback(
-    async (quantity: number) => {
+    async ({ quantity }: { quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/gold', {
         body: { quantity },
@@ -138,7 +138,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doDepositGold = useCallback(
-    async (quantity: number) => {
+    async ({ quantity }: { quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/deposit/gold', {
         body: { quantity },
@@ -155,7 +155,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doTaskTrade = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/task/trade', {
         body: { code, quantity },
@@ -172,7 +172,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doBuyItem = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/npc/buy', {
         body: { code, quantity },
@@ -189,7 +189,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doSellItem = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/npc/sell', {
         body: { code, quantity },
@@ -206,7 +206,7 @@ const useActions = (name: string | null | undefined) => {
   )
 
   const doConsumeItem = useCallback(
-    async (code: string, quantity: number) => {
+    async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/use', {
         body: { code, quantity },

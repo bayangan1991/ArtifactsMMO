@@ -7,6 +7,7 @@ import { Stack } from '../../utils/stack.ts'
 import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 import { useActions } from './use-actions.ts'
+import { useQueueableAction } from './use-queuable-action.ts'
 import { useSimpleAction } from './use-simple-action.ts'
 import { useStatus } from './use-status.ts'
 
@@ -137,6 +138,7 @@ const useCharacter = (name: string | null) => {
   }, [])
 
   const onError = useCallback((error: string) => {
+    console.log(error)
     setLastAction(null)
     setError(error)
     setStatus(Status.Ready)
@@ -158,363 +160,94 @@ const useCharacter = (name: string | null) => {
     doConsumeItem,
   } = useActions(name)
 
-  const move = useCallback(
-    (pos: Position, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doMove(pos)
-          if (requeue) move(pos, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
+  const move = useQueueableAction({
+    label: ({ pos, requeue }) => `${requeue ? 'Repeat m' : 'M'}ove to ${pos.x},${pos.y}`,
+    action: doMove,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-      queueAction(
-        { label: `${requeue ? 'Repeat m' : 'M'}ove to ${pos.x},${pos.y}`, guid: Guid.create(), action },
-        queueIndex
-      )
-    },
-    [doMove, queueAction, onError, onSuccess]
-  )
+  const deposit = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x ${code}`,
+    action: doDeposit,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-  const fight = useCallback(
-    (queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        const before = await refetch()
-        try {
-          const result = await doFight()
-          const hpLost = (before?.data.hp || 0) - result.character.hp
-          if (result.character.hp - hpLost * 1.5 > 0) {
-            fight(0, requeue)
-          } else {
-            fight(undefined, requeue)
-          }
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
+  const withdraw = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
+    action: doWithdraw,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-      queueAction({ label: `${requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action }, queueIndex)
-    },
-    [doFight, queueAction, refetch, onError, onSuccess]
-  )
+  const craft = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat c' : 'C'}raft ${quantity} x ${code}`,
+    action: doCraft,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-  const deposit = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doDeposit(code, quantity)
-          if (requeue) deposit(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
+  const unEquip = useQueueableAction({
+    label: ({ slot, quantity, requeue }) => `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
+    action: doUnEquip,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doDeposit, queueAction, onError, onSuccess]
-  )
+  const equip = useQueueableAction({
+    label: ({ code, slot, quantity, requeue }) =>
+      `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
+    action: doEquip,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-  const withdraw = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doWithdraw(code, quantity)
-          if (requeue) withdraw(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
+  const depositGold = useQueueableAction({
+    label: ({ quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
+    action: doDepositGold,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doWithdraw, queueAction, onError, onSuccess]
-  )
+  const withdrawGold = useQueueableAction({
+    label: ({ quantity, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
+    action: doWithdrawGold,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-  const craft = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doCraft(code, quantity)
-          if (requeue) craft(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
+  const taskTrade = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat t' : 'T'}rade ${quantity} x ${code} to task master`,
+    action: doTaskTrade,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat c' : 'C'}raft ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doCraft, queueAction, onError, onSuccess]
-  )
+  const buyItem = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat b' : 'B'}uy ${quantity} x ${code}`,
+    action: doBuyItem,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
-  const unEquip = useCallback(
-    (slot: components['schemas']['ItemSlot'], quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doUnEquip(slot, quantity)
-          if (requeue) unEquip(slot, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doUnEquip, queueAction, onError, onSuccess]
-  )
-
-  const equip = useCallback(
-    (
-      code: string,
-      slot: components['schemas']['ItemSlot'],
-      quantity: number,
-      queueIndex?: number,
-      requeue?: boolean
-    ) => {
-      const action = async () => {
-        try {
-          const result = await doEquip(code, slot, quantity)
-          if (requeue) equip(code, slot, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doEquip, queueAction, onError, onSuccess]
-  )
-
-  const depositGold = useCallback(
-    (quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doDepositGold(quantity)
-          if (requeue) depositGold(quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doDepositGold, queueAction, onError, onSuccess]
-  )
-
-  const withdrawGold = useCallback(
-    (quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doWithdrawGold(quantity)
-          if (requeue) withdrawGold(quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doWithdrawGold, queueAction, onError, onSuccess]
-  )
-
-  const taskTrade = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doTaskTrade(code, quantity)
-          if (requeue) taskTrade(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat t' : 'T'}rade ${quantity} x ${code} to task master`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doTaskTrade, queueAction, onError, onSuccess]
-  )
-
-  const buyItem = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doBuyItem(code, quantity)
-          if (requeue) buyItem(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat b' : 'B'}uy ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doBuyItem, queueAction, onError, onSuccess]
-  )
-
-  const sellItem = useCallback(
-    (code: string, quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        try {
-          const result = await doSellItem(code, quantity)
-          if (requeue) sellItem(code, quantity, queueIndex, requeue)
-          onSuccess(result)
-          return result
-        } catch (err) {
-          if (err instanceof Error && err.message) onError(err.message)
-          return null
-        }
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat s' : 'S'}ell ${quantity} x ${code}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doSellItem, queueAction, onError, onSuccess]
-  )
-
-  const consumeItem = useCallback(
-    (item: components['schemas']['ItemSchema'], quantity: number, queueIndex?: number, requeue?: boolean) => {
-      const action = async () => {
-        let result: Awaited<ReturnType<typeof doConsumeItem>> | null
-        let toConsume = quantity
-        if (item.effects?.some((effect) => effect.code === 'heal')) {
-          const current = await refetch()
-          if (current) {
-            const missingHp = current.data.max_hp - current.data.hp
-            const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
-            toConsume = Math.min(quantity, fullHealQuantity)
-            try {
-              result = await doConsumeItem(item.code, toConsume)
-            } catch (err) {
-              if (err instanceof Error && err.message) onError(err.message)
-              return null
-            }
-          } else {
-            return null
-          }
-        } else {
-          try {
-            result = await doConsumeItem(item.code, quantity)
-          } catch (err) {
-            if (err instanceof Error && err.message) onError(err.message)
-            return null
-          }
-        }
-        if (requeue && quantity - toConsume > 0) consumeItem(item, quantity - toConsume, queueIndex, requeue)
-        onSuccess(result)
-        return result
-      }
-
-      queueAction(
-        {
-          label: `${requeue ? 'Repeat c' : 'C'}onsume ${item.name}`,
-          guid: Guid.create(),
-          action,
-        },
-        queueIndex
-      )
-    },
-    [doConsumeItem, queueAction, refetch, onError, onSuccess]
-  )
+  const sellItem = useQueueableAction({
+    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat s' : 'S'}ell ${quantity} x ${code}`,
+    action: doSellItem,
+    onSuccess,
+    onError,
+    queueAction,
+  })
 
   const rest = useSimpleAction({
     name,
@@ -573,7 +306,83 @@ const useCharacter = (name: string | null) => {
     queueAction,
   })
 
-  // Composite Actions
+  // Smart Action
+
+  const fight = useCallback(
+    ({ queueIndex, requeue }: { queueIndex?: number; requeue?: boolean }) => {
+      const action = async () => {
+        const before = await refetch()
+        try {
+          const result = await doFight()
+          const hpLost = (before?.data.hp || 0) - result.character.hp
+          if (result.character.hp - hpLost * 1.5 > 0) {
+            fight({ queueIndex: 0, requeue })
+          } else {
+            fight({ requeue })
+          }
+          onSuccess(result)
+          return result
+        } catch (err) {
+          if (err instanceof Error && err.message) onError(err.message)
+          return null
+        }
+      }
+
+      queueAction({ label: `${requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action }, queueIndex)
+    },
+    [doFight, queueAction, refetch, onError, onSuccess]
+  )
+
+  const consumeItem = useCallback(
+    ({
+      item,
+      quantity,
+      queueIndex,
+      requeue,
+    }: { item: components['schemas']['ItemSchema']; quantity: number; queueIndex?: number; requeue?: boolean }) => {
+      const action = async () => {
+        let result: Awaited<ReturnType<typeof doConsumeItem>> | null
+        let toConsume = quantity
+        if (item.effects?.some((effect) => effect.code === 'heal')) {
+          const current = await refetch()
+          if (current) {
+            const missingHp = current.data.max_hp - current.data.hp
+            const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
+            toConsume = Math.min(quantity, fullHealQuantity)
+            try {
+              result = await doConsumeItem({ code: item.code, quantity: toConsume })
+            } catch (err) {
+              if (err instanceof Error && err.message) onError(err.message)
+              return null
+            }
+          } else {
+            return null
+          }
+        } else {
+          try {
+            result = await doConsumeItem({ code: item.code, quantity: quantity })
+          } catch (err) {
+            if (err instanceof Error && err.message) onError(err.message)
+            return null
+          }
+        }
+        if (requeue && quantity - toConsume > 0)
+          consumeItem({ item, quantity: quantity - toConsume, queueIndex, requeue })
+        onSuccess(result)
+        return result
+      }
+
+      queueAction(
+        {
+          label: `${requeue ? 'Repeat c' : 'C'}onsume ${item.name}`,
+          guid: Guid.create(),
+          action,
+        },
+        queueIndex
+      )
+    },
+    [doConsumeItem, queueAction, refetch, onError, onSuccess]
+  )
 
   const smartCraft = useCallback(
     (item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean) => {
@@ -585,10 +394,10 @@ const useCharacter = (name: string | null) => {
         if (!itemCount || !data) return null
         const craftAmount = Math.floor(data.data.inventory_max_items / itemCount)
         item.craft.items.map((component) => {
-          withdraw(component.code, component.quantity * craftAmount, 0)
+          withdraw({ code: component.code, quantity: component.quantity * craftAmount, queueIndex: 0 })
         })
-        craft(item.code, craftAmount, item.craft.items.length)
-        move(workshop, item.craft.items.length)
+        craft({ code: item.code, quantity: craftAmount, queueIndex: item.craft.items.length })
+        move({ pos: workshop, queueIndex: item.craft.items.length })
         if (requeue) smartCraft(item, workshop, requeue)
         setStatus(Status.Ready)
         return null
@@ -607,10 +416,10 @@ const useCharacter = (name: string | null) => {
     (pos: Position, requeue?: boolean, returnToPos?: boolean) => {
       const action = async () => {
         const data = await refetch()
-        move(pos, 0)
-        if (returnToPos) move({ x: data?.data.x || 0, y: data?.data.y || 0 }, 1)
+        move({ pos, queueIndex: 0 })
+        if (returnToPos) move({ pos: { x: data?.data.x || 0, y: data?.data.y || 0 }, queueIndex: 1 })
         for (const slot of data?.data.inventory || []) {
-          if (slot.code) deposit(slot.code, slot.quantity, 1)
+          if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
         }
         if (requeue) depositAll(pos, requeue, returnToPos)
         return null

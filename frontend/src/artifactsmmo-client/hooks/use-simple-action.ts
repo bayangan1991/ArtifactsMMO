@@ -43,7 +43,7 @@ export const useSimpleAction = <T extends ActionData>({
   }, [client, name, path, onSuccess, onError])
 
   const action = useCallback(
-    (queueIndex?: number, requeue?: boolean) => {
+    ({ queueIndex, requeue }: { queueIndex?: number; requeue?: boolean }) => {
       if (name) {
         const handleAction = async () => {
           const result = await doAction()
@@ -51,12 +51,12 @@ export const useSimpleAction = <T extends ActionData>({
           if (requeue) {
             if (path === '/my/{name}/action/gathering') {
               if (result) {
-                action(0, requeue)
+                action({ queueIndex: 0, requeue })
               } else {
-                action(undefined, requeue)
+                action({ requeue })
               }
             } else if (result) {
-              action(queueIndex, requeue)
+              action({ queueIndex, requeue })
             }
           }
           return result

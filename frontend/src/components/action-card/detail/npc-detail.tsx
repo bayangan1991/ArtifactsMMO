@@ -18,13 +18,13 @@ const BuyItemControl = ({ item }: { item: components['schemas']['NPCItem'] }) =>
     <InputGroup size="sm">
       <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
       {item.buy_price && (
-        <Button variant="outline-success" onClick={() => buyItem(item.code, quantity)}>
+        <Button variant="outline-success" onClick={() => buyItem({ code: item.code, quantity })}>
           <Badge bg="success">Buy</Badge>
           <Icon icon={faCoins} color="#ffd82f" fixedWidth className="mx-1" />x{item.buy_price.toLocaleString()}
         </Button>
       )}
       {item.sell_price && (
-        <Button variant="outline-warning" onClick={() => sellItem(item.code, quantity)}>
+        <Button variant="outline-warning" onClick={() => sellItem({ code: item.code, quantity })}>
           <Badge bg="warning">Sell</Badge>
           <Icon icon={faCoins} color="#ffd82f" fixedWidth className="mx-1" />x{item.sell_price.toLocaleString()}
         </Button>

@@ -38,7 +38,7 @@ const SLOTS: Record<SlotItemType, components['schemas']['ItemSlot'][]> = {
 const isSlotType = (type: string): type is SlotItemType => Object.keys(SLOTS).includes(type)
 
 interface Props {
-  action(code: string, quantity: number, queueIndex?: number, requeue?: boolean): void
+  action(args: { code: string; quantity: number; queueIndex?: number; requeue?: boolean }): void
   code: string
   quantity: number
   max: number
@@ -62,20 +62,24 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
     <InputGroup size="sm">
       {item?.type === 'consumable' && (
         <>
-          <Button size="sm" variant="outline-danger" onClick={() => consumeItem(item, selectedQuantity)}>
+          <Button size="sm" variant="outline-danger" onClick={() => consumeItem({ item, quantity: selectedQuantity })}>
             <Icon icon={faSackXmark} />
           </Button>
           <Button
             size="sm"
             variant="outline-danger"
-            onClick={() => consumeItem(item, selectedQuantity, undefined, true)}
+            onClick={() => consumeItem({ item, quantity: selectedQuantity, requeue: true })}
           >
             <Icon icon={faRepeat} />
           </Button>
         </>
       )}
       {item && slotType && SLOTS[slotType].length === 1 && (
-        <Button size="sm" variant="light" onClick={() => equip(item.code, SLOTS[slotType][0], 1)}>
+        <Button
+          size="sm"
+          variant="light"
+          onClick={() => equip({ code: item.code, slot: SLOTS[slotType][0], quantity: 1 })}
+        >
           <Icon icon={faUser} />
         </Button>
       )}
@@ -87,7 +91,7 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
 
           <Dropdown.Menu>
             {SLOTS[slotType].map((slot) => (
-              <Dropdown.Item key={slot} onClick={() => equip(item.code, slot, equipQuantity)}>
+              <Dropdown.Item key={slot} onClick={() => equip({ code: item.code, slot, quantity: equipQuantity })}>
                 {slot}
               </Dropdown.Item>
             ))}
@@ -101,16 +105,16 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
         max={max}
         min={1}
       />
-      <Button variant="primary" onClick={() => action(code, selectedQuantity)}>
+      <Button variant="primary" onClick={() => action({ code, quantity: selectedQuantity })}>
         X
       </Button>
-      <Button variant="warning" onClick={() => action(code, 1)}>
+      <Button variant="warning" onClick={() => action({ code, quantity: 1 })}>
         1
       </Button>
-      <Button variant="danger" onClick={() => action(code, quantity)}>
+      <Button variant="danger" onClick={() => action({ code, quantity })}>
         All
       </Button>
-      <Button variant="info" onClick={() => action(code, selectedQuantity, undefined, true)}>
+      <Button variant="info" onClick={() => action({ code, quantity: selectedQuantity, requeue: true })}>
         <Icon icon={faRepeat} />
       </Button>
     </InputGroup>
