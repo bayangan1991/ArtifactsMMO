@@ -1,286 +1,225 @@
 import { useCallback, useContext } from 'react'
-import type { ActionData, Position } from '../../types.ts'
+import type { Position } from '../../types.ts'
 import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 
-interface Params {
-  onSuccess: (data: ActionData) => void
-  onError: (error: string) => void
-}
-
-const useActions = ({ onSuccess, onError }: Params) => {
+const useActions = (name: string | null | undefined) => {
   const { client } = useContext(ApiClientContext)
 
-  const doDeposit = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
-    },
-    [client, onSuccess, onError]
-  )
-
   const doMove = useCallback(
-    async (name: string, { x, y }: Position): Promise<null | components['schemas']['CharacterMovementDataSchema']> => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/move', {
-          body: { x, y },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async ({ x, y }: Position) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/move', {
+        body: { x, y },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
-  const doFight = useCallback(
-    async (name: string): Promise<null | components['schemas']['CharacterFightDataSchema']> => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/fight', {
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
-    },
-    [client, onSuccess, onError]
-  )
+  const doFight = useCallback(async () => {
+    if (!name) throw new Error('Function not implemented.')
+    const { data, error } = await client.POST('/my/{name}/action/fight', {
+      params: {
+        path: { name },
+      },
+    })
+    if (data?.data) {
+      return data.data
+    }
+    throw new Error(error || 'unknown error')
+  }, [client, name])
 
   const doWithdraw = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
+  )
+
+  const doDeposit = useCallback(
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
+    },
+    [client, name]
   )
 
   const doCraft = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/crafting', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/crafting', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
-
   const doUnEquip = useCallback(
-    async (name: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/unequip', {
-          body: { slot, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (slot: components['schemas']['ItemSlot'], quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/unequip', {
+        body: { slot, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doEquip = useCallback(
-    async (name: string, code: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/equip', {
-          body: { slot, quantity, code },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, slot: components['schemas']['ItemSlot'], quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/equip', {
+        body: { slot, quantity, code },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doWithdrawGold = useCallback(
-    async (name: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/gold', {
-          body: { quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/gold', {
+        body: { quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doDepositGold = useCallback(
-    async (name: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/bank/deposit/gold', {
-          body: { quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/bank/deposit/gold', {
+        body: { quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doTaskTrade = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/task/trade', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/task/trade', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doBuyItem = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/npc/buy', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/npc/buy', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doSellItem = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/npc/sell', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/npc/sell', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   const doConsumeItem = useCallback(
-    async (name: string, code: string, quantity: number) => {
-      try {
-        const { data, error } = await client.POST('/my/{name}/action/use', {
-          body: { code, quantity },
-          params: {
-            path: { name },
-          },
-        })
-        if (data?.data) {
-          onSuccess(data.data)
-          return data.data
-        }
-        // @ts-ignore
-        onError(error?.error.message)
-      } catch {}
-      return null
+    async (code: string, quantity: number) => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/use', {
+        body: { code, quantity },
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        return data.data
+      }
+      throw new Error(error || 'unknown error')
     },
-    [client, onSuccess, onError]
+    [client, name]
   )
 
   return {
