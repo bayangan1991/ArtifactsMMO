@@ -332,10 +332,12 @@ const useCharacter = (name: string | null) => {
         try {
           const result = await doFight()
           const hpLost = (before?.data.hp || 0) - result.character.hp
-          if (result.character.hp - hpLost * 1.5 > 0) {
-            fight({ queueIndex: 0, requeue })
-          } else {
-            fight({ requeue })
+          if (requeue) {
+            if (result.character.hp - hpLost * 1.5 > 0) {
+              fight({ queueIndex: 0, requeue })
+            } else {
+              fight({ requeue })
+            }
           }
           onSuccess(result)
           return result
