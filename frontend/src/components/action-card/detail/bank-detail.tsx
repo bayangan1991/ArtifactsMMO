@@ -37,13 +37,18 @@ const BankDetail = ({ pos }: { pos: Position }) => {
     <Stack gap={2}>
       <Stack gap={2} direction="horizontal">
         <Dropdown as={ButtonGroup}>
-          <Button onClick={() => depositAll(pos)}>Deposit all items</Button>
+          <Button onClick={() => depositAll({ pos })}>Deposit all items</Button>
           <Dropdown.Toggle split />
-
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => depositAll(pos, false, true)}>and return</Dropdown.Item>
-            <Dropdown.Item onClick={() => depositAll(pos, true, false)}>repeatedly</Dropdown.Item>
-            <Dropdown.Item onClick={() => depositAll(pos, true, true)}>repeatedly and return</Dropdown.Item>
+            <Dropdown.Item onClick={() => depositAll({ pos, requeue: false, returnToPos: true })}>
+              and return
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => depositAll({ pos, requeue: true, returnToPos: false })}>
+              repeatedly
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => depositAll({ pos, requeue: true, returnToPos: true })}>
+              repeatedly and return
+            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <Button onClick={() => buyExpansion()}>

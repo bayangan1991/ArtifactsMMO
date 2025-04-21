@@ -358,7 +358,7 @@ const useCharacter = (name: string | null) => {
       quantity,
       queueIndex,
       requeue,
-    }: { item: components['schemas']['ItemSchema']; quantity: number; queueIndex?: number; requeue?: boolean }) => {
+    }: { item: components['schemas']['ItemSchema']; quantity: number } & QueueParams) => {
       const action = async () => {
         let result: Awaited<ReturnType<typeof doConsumeItem>> | null
         let toConsume = quantity
@@ -404,35 +404,44 @@ const useCharacter = (name: string | null) => {
   )
 
   const smartCraft = useCallback(
-    (item: components['schemas']['ItemSchema'], workshop: Position, requeue?: boolean) => {
+    ({
+      item,
+      workshop,
+      quantity,
+      requeue,
+      queueIndex,
+    }: { item: components['schemas']['ItemSchema']; workshop: Position; quantity?: number } & QueueParams) => {
       const handleSmartCraft = async () => {
         if (!item.craft || !item?.craft.items) return null
         const itemCount = item.craft.items.reduce((count, component) => count + component.quantity, 0)
         setStatus(Status.Paused)
         const data = await refetch()
         if (!itemCount || !data) return null
-        const craftAmount = Math.floor(data.data.inventory_max_items / itemCount)
+        const craftAmount = quantity || Math.floor(data.data.inventory_max_items / itemCount)
         item.craft.items.map((component) => {
           withdraw({ code: component.code, quantity: component.quantity * craftAmount, queueIndex: 0 })
         })
         craft({ code: item.code, quantity: craftAmount, queueIndex: item.craft.items.length })
         move({ pos: workshop, queueIndex: item.craft.items.length })
-        if (requeue) smartCraft(item, workshop, requeue)
+        if (requeue) smartCraft({ item, workshop, quantity, requeue })
         setStatus(Status.Ready)
         return null
       }
 
-      queueAction({
-        label: `${requeue ? 'Repeat s' : 'S'}mart craft of ${item.name} @ ${workshop.x},${workshop.y}`,
-        guid: Guid.create(),
-        action: handleSmartCraft,
-      })
+      queueAction(
+        {
+          label: `${requeue ? 'Repeat s' : 'S'}mart craft of ${item.name} @ ${workshop.x},${workshop.y}`,
+          guid: Guid.create(),
+          action: handleSmartCraft,
+        },
+        queueIndex
+      )
     },
     [craft, move, withdraw, refetch, queueAction]
   )
 
   const depositAll = useCallback(
-    (pos: Position, requeue?: boolean, returnToPos?: boolean) => {
+    ({ pos, requeue, returnToPos, queueIndex }: { pos: Position; returnToPos?: boolean } & QueueParams) => {
       const action = async () => {
         const data = await refetch()
         move({ pos, queueIndex: 0 })
@@ -440,15 +449,18 @@ const useCharacter = (name: string | null) => {
         for (const slot of data?.data.inventory || []) {
           if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
         }
-        if (requeue) depositAll(pos, requeue, returnToPos)
+        if (requeue) depositAll({ pos, requeue, returnToPos })
         return null
       }
 
-      queueAction({
-        label: `${requeue ? 'Repeat d' : 'D'}eposit all to ${pos.x},${pos.y}${returnToPos ? ' and return' : ''}`,
-        guid: Guid.create(),
-        action,
-      })
+      queueAction(
+        {
+          label: `${requeue ? 'Repeat d' : 'D'}eposit all to ${pos.x},${pos.y}${returnToPos ? ' and return' : ''}`,
+          guid: Guid.create(),
+          action,
+        },
+        queueIndex
+      )
     },
     [refetch, deposit, move, queueAction]
   )

@@ -13,22 +13,23 @@ import { Pagination } from '../../pagination/pagination.tsx'
 const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) => {
   const [quantity, setQuantity] = useState(1)
   const {
-    actions: { craft, smartCraft },
+    actions: { smartCraft },
   } = useContext(CharacterContext)
   const item = useItem(code)
 
   return (
     <InputGroup size="sm">
       <Form.Control type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-      <Button onClick={() => craft({ code, quantity })}>
-        <Icon icon={faHammer} />
-      </Button>
       {item && (
         <>
-          <Button onClick={() => smartCraft(item, workshop)}>
+          <Button onClick={() => smartCraft({ item, workshop, quantity })}>
+            <Icon icon={faHammer} />
+          </Button>
+
+          <Button onClick={() => smartCraft({ item, workshop })}>
             <Icon icon={faBrain} />
           </Button>
-          <Button onClick={() => smartCraft(item, workshop, true)}>
+          <Button onClick={() => smartCraft({ item, workshop, requeue: true })}>
             <Icon icon={faRepeat} />
           </Button>
         </>
