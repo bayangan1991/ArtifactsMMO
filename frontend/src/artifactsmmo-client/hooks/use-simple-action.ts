@@ -1,7 +1,7 @@
 import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback, useContext } from 'react'
-import type { ActionData, Queue } from '../../types.ts'
+import type { ActionData, Queue, QueueParams } from '../../types.ts'
 import { ApiClientContext } from '../client/context.ts'
 import type { paths } from '../spec'
 
@@ -43,7 +43,7 @@ export const useSimpleAction = <T extends ActionData>({
   }, [client, name, path, onSuccess, onError])
 
   const action = useCallback(
-    ({ queueIndex, requeue }: { queueIndex?: number; requeue?: boolean }) => {
+    ({ queueIndex, requeue }: QueueParams) => {
       if (name) {
         const handleAction = async () => {
           const result = await doAction()

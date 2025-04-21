@@ -208,7 +208,7 @@ const CharacterCard = () => {
       <Card.Footer className="d-flex gap-2">
         {simpleActions.map((action) => (
           <ButtonGroup key={action.key} size="sm">
-            <Button variant={action.variant} onClick={() => action.action({})}>
+            <Button variant={action.variant} onClick={() => action.action()}>
               {action.label}
             </Button>
             <Button variant={action.variant} onClick={() => action.action({ requeue: true })}>

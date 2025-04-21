@@ -102,7 +102,7 @@ const TaskDetail = () => {
             Deliver {character.task_total} {item.name}
           </>
         )}
-        <Button variant="outline-danger" size="sm" onClick={() => taskAbandon({})}>
+        <Button variant="outline-danger" size="sm" onClick={() => taskAbandon()}>
           Abandon
         </Button>
       </div>

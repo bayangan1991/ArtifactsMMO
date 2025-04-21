@@ -59,3 +59,5 @@ export type {
   Queue,
   Position,
 }
+
+export type QueueParams = { queueIndex?: number; requeue?: boolean }

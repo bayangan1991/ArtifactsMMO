@@ -1,11 +1,9 @@
-import {} from '@fortawesome/free-solid-svg-icons'
 import { Nav } from 'react-bootstrap'
 import { Link, useParams } from 'react-router'
 import { useBankDetails } from '../../artifactsmmo-client/hooks/use-bank-details.ts'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
 import { CharacterView } from '../../components/character-view/character-view.tsx'
-import type {} from '../../types.ts'
 import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 
 const CharacterPage = () => {

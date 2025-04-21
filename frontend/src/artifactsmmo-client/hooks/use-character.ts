@@ -2,7 +2,7 @@ import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
-import type { ActionData, Position, Queue } from '../../types.ts'
+import type { ActionData, Position, Queue, QueueParams } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
 import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
@@ -326,7 +326,7 @@ const useCharacter = (name: string | null) => {
   // Smart Action
 
   const fight = useCallback(
-    ({ queueIndex, requeue }: { queueIndex?: number; requeue?: boolean }) => {
+    ({ queueIndex, requeue }: QueueParams) => {
       const action = async () => {
         const before = await refetch()
         try {

@@ -46,7 +46,7 @@ const BankDetail = ({ pos }: { pos: Position }) => {
             <Dropdown.Item onClick={() => depositAll(pos, true, true)}>repeatedly and return</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <Button onClick={() => buyExpansion({})}>
+        <Button onClick={() => buyExpansion()}>
           Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
           {bankDetails?.data.next_expansion_cost.toLocaleString()})
         </Button>

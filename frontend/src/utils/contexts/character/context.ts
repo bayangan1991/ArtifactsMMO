@@ -2,20 +2,18 @@ import type { Temporal } from '@js-temporal/polyfill'
 import React from 'react'
 import { Status } from '../../../artifactsmmo-client/hooks/use-character.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
-import type { ActionData, Position, Queue } from '../../../types.ts'
+import type { ActionData, Position, Queue, QueueParams } from '../../../types.ts'
 import { Stack } from '../../stack.ts'
-
-type QueueParams = { queueIndex?: number; requeue?: boolean }
 
 interface CharacterContextType {
   character: components['schemas']['CharacterSchema'] | null
   actions: {
     move(args: { pos: Position } & QueueParams): void
-    rest(args: QueueParams): void
-    fight(args: QueueParams): void
+    rest(args?: QueueParams): void
+    fight(args?: QueueParams): void
     deposit(args: { code: string; quantity: number } & QueueParams): void
     withdraw(args: { code: string; quantity: number } & QueueParams): void
-    gathering(args: QueueParams): void
+    gathering(args?: QueueParams): void
     craft(args: { code: string; quantity: number } & QueueParams): void
     unEquip(args: { slot: components['schemas']['ItemSlot']; quantity: number } & QueueParams): void
     equip(
@@ -25,14 +23,14 @@ interface CharacterContextType {
         quantity: number
       } & QueueParams
     ): void
-    buyExpansion(args: QueueParams): void
+    buyExpansion(args?: QueueParams): void
     withdrawGold(args: { quantity: number } & QueueParams): void
     depositGold(args: { quantity: number } & QueueParams): void
-    taskAccept(args: QueueParams): void
+    taskAccept(args?: QueueParams): void
     taskTrade(args: { code: string; quantity: number } & QueueParams): void
-    taskComplete(args: QueueParams): void
-    taskExchange(args: QueueParams): void
-    taskAbandon(args: QueueParams): void
+    taskComplete(args?: QueueParams): void
+    taskExchange(args?: QueueParams): void
+    taskAbandon(args?: QueueParams): void
     buyItem(args: { code: string; quantity: number } & QueueParams): void
     sellItem(args: { code: string; quantity: number } & QueueParams): void
     recycleItem(args: { code: string; quantity: number } & QueueParams): void

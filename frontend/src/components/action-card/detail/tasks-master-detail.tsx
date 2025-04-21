@@ -20,12 +20,12 @@ const TasksMasterDetail = () => {
 
   return (
     <Stack gap={2} direction="horizontal">
-      <Button onClick={() => taskAccept({})}>Accept Task</Button>
+      <Button onClick={() => taskAccept()}>Accept Task</Button>
       {character?.task && character?.task_total && (
         <Button onClick={() => taskTrade({ code: character.task, quantity: taskItemQuantity })}>Trade Items</Button>
       )}
-      <Button onClick={() => taskComplete({})}>Complete Task</Button>
-      <Button onClick={() => taskExchange({})}>Random Reward</Button>
+      <Button onClick={() => taskComplete()}>Complete Task</Button>
+      <Button onClick={() => taskExchange()}>Random Reward</Button>
     </Stack>
   )
 }
