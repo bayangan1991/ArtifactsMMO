@@ -430,7 +430,7 @@ const useCharacter = (name: string | null) => {
 
       queueAction(
         {
-          label: `${requeue ? 'Repeat s' : 'S'}mart craft of ${item.name} @ ${workshop.x},${workshop.y}`,
+          label: `${requeue ? 'Repeat s' : 'S'}mart craft of ${quantity ? `${quantity} x ` : ''} ${item.name} @ ${workshop.x},${workshop.y}`,
           guid: Guid.create(),
           action: handleSmartCraft,
         },
