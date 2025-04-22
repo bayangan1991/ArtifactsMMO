@@ -43,20 +43,20 @@ export const useSimpleAction = <T extends ActionData>({
   }, [client, name, path, onSuccess, onError])
 
   const action = useCallback(
-    ({ queueIndex, requeue }: QueueParams) => {
+    (params?: QueueParams) => {
       if (name) {
         const handleAction = async () => {
           const result = await doAction()
           // Special handling for gathering
-          if (requeue) {
+          if (params?.requeue) {
             if (path === '/my/{name}/action/gathering') {
               if (result) {
-                action({ queueIndex: 0, requeue })
+                action({ queueIndex: 0, requeue: params?.requeue })
               } else {
-                action({ requeue })
+                action({ requeue: params?.requeue })
               }
             } else if (result) {
-              action({ queueIndex, requeue })
+              action(params)
             }
           }
           return result
@@ -64,11 +64,11 @@ export const useSimpleAction = <T extends ActionData>({
 
         queueAction(
           {
-            label: `${requeue ? 'Repeat ' : ''}${label}`,
+            label: `${params?.requeue ? 'Repeat ' : ''}${label}`,
             guid: Guid.create(),
             action: handleAction,
           },
-          queueIndex
+          params?.queueIndex
         )
       }
     },
