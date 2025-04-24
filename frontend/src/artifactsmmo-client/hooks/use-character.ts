@@ -343,6 +343,7 @@ const useCharacter = (name: string | null) => {
           return result
         } catch (err) {
           if (err instanceof Error && err.message) onError(err.message)
+          if (requeue) fight({ requeue })
           return null
         }
       }
