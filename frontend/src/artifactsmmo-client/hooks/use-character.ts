@@ -462,7 +462,8 @@ const useCharacter = (name: string | null) => {
             },
             { usedSlots: 0, usedInventory: 0 }
           )
-          if (usedSlots < 20 || usedInventory < data.data.inventory_max_items) {
+          console.log({ usedSlots, usedInventory })
+          if (usedSlots < 20 && usedInventory < data.data.inventory_max_items) {
             if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
             return null
           }
