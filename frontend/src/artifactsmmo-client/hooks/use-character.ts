@@ -441,21 +441,45 @@ const useCharacter = (name: string | null) => {
   )
 
   const depositAll = useCallback(
-    ({ pos, requeue, returnToPos, queueIndex }: { pos: Position; returnToPos?: boolean } & QueueParams) => {
+    ({
+      pos,
+      returnToPos = false,
+      ifFull = false,
+      requeue,
+      queueIndex,
+    }: { pos: Position; returnToPos?: boolean; ifFull?: boolean } & QueueParams) => {
       const action = async () => {
         const data = await refetch()
+
+        if (ifFull && data?.data.inventory) {
+          const { usedSlots, usedInventory } = data.data.inventory.reduce(
+            (curr, slot) => {
+              return {
+                usedSlots: curr.usedSlots + (slot.code ? 1 : 0),
+                usedInventory: curr.usedInventory + slot.quantity,
+              }
+            },
+            { usedSlots: 0, usedInventory: 0 }
+          )
+          console.log({ usedSlots, usedInventory })
+          if (usedSlots < 20 || usedInventory < data.data.inventory_max_items) {
+            if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
+            return null
+          }
+        }
+
         move({ pos, queueIndex: 0 })
         if (returnToPos) move({ pos: { x: data?.data.x || 0, y: data?.data.y || 0 }, queueIndex: 1 })
         for (const slot of data?.data.inventory || []) {
           if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
         }
-        if (requeue) depositAll({ pos, requeue, returnToPos })
+        if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
         return null
       }
 
       queueAction(
         {
-          label: `${requeue ? 'Repeat d' : 'D'}eposit all to ${pos.x},${pos.y}${returnToPos ? ' and return' : ''}`,
+          label: `${requeue ? 'Repeat d' : 'D'}eposit all${ifFull ? ' if full' : ''} to ${pos.x},${pos.y}${returnToPos ? ' and return' : ''}`,
           guid: Guid.create(),
           action,
         },

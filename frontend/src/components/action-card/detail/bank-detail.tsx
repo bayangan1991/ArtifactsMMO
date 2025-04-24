@@ -49,6 +49,12 @@ const BankDetail = ({ pos }: { pos: Position }) => {
             <Dropdown.Item onClick={() => depositAll({ pos, requeue: true, returnToPos: true })}>
               repeatedly and return
             </Dropdown.Item>
+            <Dropdown.Item onClick={() => depositAll({ pos, ifFull: true, requeue: true, returnToPos: false })}>
+              if full repeatedly
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => depositAll({ pos, ifFull: true, requeue: true, returnToPos: true })}>
+              if full repeatedly and return
+            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <Button onClick={() => buyExpansion()}>

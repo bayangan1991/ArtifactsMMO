@@ -44,7 +44,7 @@ interface CharacterContextType {
     smartCraft(
       args: { item: components['schemas']['ItemSchema']; workshop: Position; quantity?: number } & QueueParams
     ): void
-    depositAll(args: { pos: Position; returnToPos?: boolean } & QueueParams): void
+    depositAll(args: { pos: Position; returnToPos?: boolean; ifFull?: boolean } & QueueParams): void
   }
   lastAction: ActionData | null
   error: string | null
