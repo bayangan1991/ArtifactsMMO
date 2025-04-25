@@ -1,4 +1,4 @@
-import { faBank, faHatWizard, faSackDollar } from '@fortawesome/free-solid-svg-icons'
+import { faBank, faHatWizard, faSackDollar, faShop } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext, useState } from 'react'
 import { Nav } from 'react-bootstrap'
@@ -6,7 +6,7 @@ import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import * as Tabs from './tabs'
 
 const InventoryCard = () => {
-  const [activeTab, setActiveTab] = useState<'character' | 'inventory' | 'bank'>('character')
+  const [activeTab, setActiveTab] = useState<'character' | 'inventory' | 'bank' | 'grand-exchange'>('character')
   const { refetch } = useContext(BankItemsContext)
 
   return (
@@ -32,10 +32,21 @@ const InventoryCard = () => {
             <Icon icon={faBank} /> Bank
           </Nav.Link>
         </Nav.Item>
+        <Nav.Item>
+          <Nav.Link
+            active={activeTab === 'grand-exchange'}
+            onClick={() => {
+              refetch().then(() => setActiveTab('grand-exchange'))
+            }}
+          >
+            <Icon icon={faShop} /> Grand Exchange
+          </Nav.Link>
+        </Nav.Item>
       </Nav>
       {activeTab === 'character' && <Tabs.Character />}
       {activeTab === 'inventory' && <Tabs.Inventory />}
       {activeTab === 'bank' && <Tabs.Bank />}
+      {activeTab === 'grand-exchange' && <Tabs.GrandExchange />}
     </>
   )
 }
