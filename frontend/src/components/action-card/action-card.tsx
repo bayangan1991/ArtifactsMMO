@@ -1,10 +1,10 @@
 import { faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import React, { useContext, useEffect, useState } from 'react'
-import { Accordion, Button, Card, Form, InputGroup } from 'react-bootstrap'
+import { Accordion, Button, Card, Form, InputGroup, Nav } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { RESOURCE_TYPES } from '../../constants.ts'
+import { MAP_CONTENT_TYPES } from '../../constants.ts'
 import { CharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { BankDetail } from './detail/bank-detail.tsx'
@@ -23,7 +23,7 @@ const ActionCard = () => {
 
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
 
-  const [contentType, setContentType] = useState<components['schemas']['MapContentType'] | undefined>(undefined)
+  const [contentType, setContentType] = useState<components['schemas']['MapContentType']>('monster')
   const maps = useMaps({ currentPosition, contentType })
 
   const mapLookup: Record<string, components['schemas']['MapSchema']> = Object.fromEntries(
@@ -47,18 +47,19 @@ const ActionCard = () => {
       <Form>
         <Card.Body>
           <Card.Title>Actions</Card.Title>
+          <Nav variant="pills" className="border-0 mb-2">
+            {Object.entries(MAP_CONTENT_TYPES).map(([type, label]) => (
+              <Nav.Item key={type}>
+                <Nav.Link
+                  active={contentType === type}
+                  onClick={() => setContentType(type as components['schemas']['MapContentType'])}
+                >
+                  {label}
+                </Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
           <InputGroup>
-            <Form.Select
-              value={contentType}
-              onChange={(e) => setContentType(e.target.value as components['schemas']['MapContentType'])}
-            >
-              <option>---</option>
-              {RESOURCE_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Form.Select>
             {maps.data && (
               <Form.Select onChange={handleSelect} style={{ width: '30%' }}>
                 {maps.data.map((item) => {
