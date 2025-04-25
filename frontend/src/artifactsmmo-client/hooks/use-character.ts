@@ -44,7 +44,7 @@ const useCharacter = (name: string | null) => {
             const ready = Temporal.Instant.compare(Temporal.Now.instant(), newCooldown) > -1
             setStatus((currentStatus) => {
               if (ready) {
-                if (currentStatus === Status.Paused) return Status.Paused
+                if ([Status.Paused, Status.Waiting].includes(currentStatus)) return currentStatus
                 return Status.Ready
               }
               return Status.Cooldown
@@ -326,29 +326,29 @@ const useCharacter = (name: string | null) => {
   // Smart Action
 
   const fight = useCallback(
-    ({ queueIndex, requeue }: QueueParams) => {
+    (params?: QueueParams) => {
       const action = async () => {
         const before = await refetch()
         try {
           const result = await doFight()
           const hpLost = (before?.data.hp || 0) - result.character.hp
-          if (requeue) {
+          if (params?.requeue) {
             if (result.character.hp - hpLost * 1.5 > 0) {
-              fight({ queueIndex: 0, requeue })
+              fight({ queueIndex: 0, requeue: params?.requeue })
             } else {
-              fight({ requeue })
+              fight({ requeue: params?.requeue })
             }
           }
           onSuccess(result)
           return result
         } catch (err) {
           if (err instanceof Error && err.message) onError(err.message)
-          if (requeue) fight({ requeue })
+          if (params?.requeue) fight({ requeue: params?.requeue })
           return null
         }
       }
 
-      queueAction({ label: `${requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action }, queueIndex)
+      queueAction({ label: `${params?.requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action }, params?.queueIndex)
     },
     [doFight, queueAction, refetch, onError, onSuccess]
   )
@@ -415,7 +415,6 @@ const useCharacter = (name: string | null) => {
       const handleSmartCraft = async () => {
         if (!item.craft || !item?.craft.items) return null
         const itemCount = item.craft.items.reduce((count, component) => count + component.quantity, 0)
-        setStatus(Status.Paused)
         const data = await refetch()
         if (!itemCount || !data) return null
         const craftAmount = quantity || Math.floor(data.data.inventory_max_items / itemCount)
@@ -425,7 +424,7 @@ const useCharacter = (name: string | null) => {
         craft({ code: item.code, quantity: craftAmount, queueIndex: item.craft.items.length })
         move({ pos: workshop, queueIndex: item.craft.items.length })
         if (requeue) smartCraft({ item, workshop, quantity, requeue })
-        setStatus(Status.Ready)
+        setStatus(Status.Cooldown)
         return null
       }
 
