@@ -348,7 +348,10 @@ const useCharacter = (name: string | null) => {
         }
       }
 
-      queueAction({ label: `${params?.requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action }, params?.queueIndex)
+      queueAction(
+        { label: `${params?.requeue ? 'Repeat f' : 'F'}ight`, guid: Guid.create(), action },
+        params?.queueIndex
+      )
     },
     [doFight, queueAction, refetch, onError, onSuccess]
   )
@@ -463,6 +466,7 @@ const useCharacter = (name: string | null) => {
           )
           if (usedSlots < 20 && usedInventory < data.data.inventory_max_items) {
             if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
+            setStatus(Status.Cooldown)
             return null
           }
         }
@@ -473,6 +477,7 @@ const useCharacter = (name: string | null) => {
           if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
         }
         if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
+        setStatus(Status.Cooldown)
         return null
       }
 
