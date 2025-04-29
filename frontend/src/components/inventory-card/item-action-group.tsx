@@ -1,10 +1,10 @@
 import { faRecycle, faRepeat, faSackXmark, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Dropdown, Form, InputGroup } from 'react-bootstrap'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 
 type SlotItemType =
   | 'weapon'
@@ -47,7 +47,7 @@ interface Props {
 export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
   const {
     actions: { equip, consumeItem, recycleItem, deleteItem },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const item = useItem(code)
   const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
 

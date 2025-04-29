@@ -1,6 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap'
 import { useCharacter } from '../../artifactsmmo-client/hooks/use-character.ts'
-import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { CharacterContextProvider } from '../../utils/contexts/character/context.ts'
 import { ActionCard } from '../action-card/action-card.tsx'
 import { ActionQueueCard } from '../action-queue-card/action-queue-card.tsx'
 import { CharacterCard } from '../character-card/character-card.tsx'
@@ -14,7 +14,7 @@ const CharacterView = ({ characterName }: Props) => {
   const character = useCharacter(characterName || null)
 
   return (
-    <CharacterContext.Provider value={character}>
+    <CharacterContextProvider value={character}>
       <Container fluid>
         <Row className="g-4">
           <Col md={6} lg={4} className="d-flex gap-2 flex-column">
@@ -25,7 +25,7 @@ const CharacterView = ({ characterName }: Props) => {
           <Col className="d-flex gap-2 flex-column">{<InventoryCard />}</Col>
         </Row>
       </Container>
-    </CharacterContext.Provider>
+    </CharacterContextProvider>
   )
 }
 

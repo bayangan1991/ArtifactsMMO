@@ -1,6 +1,6 @@
 import { faHandFist, faMoon, faRepeat, faTrowel } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useMemo } from 'react'
 import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { Status } from '../../artifactsmmo-client/hooks/use-character.ts'
@@ -16,7 +16,7 @@ import type {
   RestData,
   SkillData,
 } from '../../types.ts'
-import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 import { isActionType } from '../../utils/is-action-type.ts'
 import { Item } from '../item/item.tsx'
 
@@ -29,7 +29,7 @@ const CharacterCard = () => {
     error,
     togglePause,
     status,
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
 
   const map = useMap(
     useMemo(() => {

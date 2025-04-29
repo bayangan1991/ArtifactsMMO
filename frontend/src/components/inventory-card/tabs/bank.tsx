@@ -3,7 +3,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Card, Form, Table } from 'react-bootstrap'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
-import { CharacterContext } from '../../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 import { ItemActionGroup } from '../item-action-group.tsx'
@@ -12,7 +12,7 @@ const Bank = () => {
   const {
     character,
     actions: { withdraw },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const { bankItems, pagination, bankDetails, filter, setFilter } = useContext(BankItemsContext)
 
   if (!bankItems || !character) return

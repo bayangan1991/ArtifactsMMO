@@ -1,9 +1,8 @@
-import { useContext } from 'react'
 import { Card, ListGroup } from 'react-bootstrap'
-import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 
 const ActionQueueCard = () => {
-  const { actionQueue, forceUpdate } = useContext(CharacterContext)
+  const { actionQueue, forceUpdate } = useCharacterContext()
   const queueSize = actionQueue.size()
 
   if (queueSize === 0) return

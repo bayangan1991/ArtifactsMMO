@@ -1,9 +1,9 @@
 import type { Temporal } from '@js-temporal/polyfill'
 import React from 'react'
-import { Status } from '../../../artifactsmmo-client/hooks/use-character.ts'
+import type { Status } from '../../../artifactsmmo-client/hooks/use-character.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
 import type { ActionData, Position, Queue, QueueParams } from '../../../types.ts'
-import { Stack } from '../../stack.ts'
+import type { Stack } from '../../stack.ts'
 
 interface CharacterContextType {
   character: components['schemas']['CharacterSchema'] | null
@@ -55,45 +55,16 @@ interface CharacterContextType {
   forceUpdate(): void
 }
 
-const notImplemented = () => {
-  throw new Error('Function not implemented.')
+const CharacterContext = React.createContext<CharacterContextType | undefined>(undefined)
+
+const CharacterContextProvider = CharacterContext.Provider
+
+const useCharacterContext = () => {
+  const context = React.useContext(CharacterContext)
+  if (!context) {
+    throw new Error('useCharacterContext must be used within a CharacterProvider')
+  }
+  return context
 }
 
-const CharacterContext = React.createContext<CharacterContextType>({
-  character: null,
-  actions: {
-    move: notImplemented,
-    rest: notImplemented,
-    fight: notImplemented,
-    deposit: notImplemented,
-    depositAll: notImplemented,
-    withdraw: notImplemented,
-    gathering: notImplemented,
-    craft: notImplemented,
-    smartCraft: notImplemented,
-    unEquip: notImplemented,
-    equip: notImplemented,
-    buyExpansion: notImplemented,
-    withdrawGold: notImplemented,
-    depositGold: notImplemented,
-    taskAccept: notImplemented,
-    taskTrade: notImplemented,
-    taskComplete: notImplemented,
-    taskExchange: notImplemented,
-    taskAbandon: notImplemented,
-    buyItem: notImplemented,
-    sellItem: notImplemented,
-    consumeItem: notImplemented,
-    recycleItem: notImplemented,
-    deleteItem: notImplemented,
-  },
-  lastAction: null,
-  error: null,
-  status: Status.Waiting,
-  timeUntilReady: null,
-  actionQueue: new Stack(),
-  togglePause: notImplemented,
-  forceUpdate: notImplemented,
-})
-
-export { CharacterContext }
+export { CharacterContextProvider, useCharacterContext }

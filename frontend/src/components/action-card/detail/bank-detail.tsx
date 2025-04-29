@@ -4,7 +4,7 @@ import { useContext, useState } from 'react'
 import { Button, ButtonGroup, Dropdown, Form, InputGroup, Stack } from 'react-bootstrap'
 import type { Position } from '../../../types.ts'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
-import { CharacterContext } from '../../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 
 const BankGoldAction = ({
   action,
@@ -31,7 +31,7 @@ const BankDetail = ({ pos }: { pos: Position }) => {
   const {
     character,
     actions: { depositAll, buyExpansion, depositGold, withdrawGold },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
 
   return (
     <Stack gap={2}>

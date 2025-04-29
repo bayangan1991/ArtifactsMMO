@@ -1,12 +1,12 @@
 import { faBrain, faHammer, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Button, Form, InputGroup, ListGroup } from 'react-bootstrap'
 import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import { useItems } from '../../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
 import type { Position } from '../../../types.ts'
-import { CharacterContext } from '../../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 
@@ -14,7 +14,7 @@ const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) 
   const [quantity, setQuantity] = useState(1)
   const {
     actions: { smartCraft },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const item = useItem(code)
 
   return (

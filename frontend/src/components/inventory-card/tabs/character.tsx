@@ -5,7 +5,7 @@ import { Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react
 import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import { useMonster } from '../../../artifactsmmo-client/hooks/use-monster.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
-import { CharacterContext } from '../../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { ItemModalContext } from '../../../utils/contexts/modal/context.ts'
 
 const SkillBar = ({
@@ -13,7 +13,7 @@ const SkillBar = ({
 }: {
   skill: components['schemas']['Skill']
 }) => {
-  const { character } = useContext(CharacterContext)
+  const { character } = useCharacterContext()
 
   if (!character) return
 
@@ -41,7 +41,7 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
   const {
     character,
     actions: { unEquip },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const slotName: `${components['schemas']['ItemSlot']}_slot` = `${slot}_slot`
   const slotItem = character ? character[slotName] : null
   const item = useItem(slotItem)
@@ -82,7 +82,7 @@ const TaskDetail = () => {
   const {
     character,
     actions: { taskAbandon },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const monster = useMonster(character?.task || '')
   const item = useItem(character?.task || '')
 

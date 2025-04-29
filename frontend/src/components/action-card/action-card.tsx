@@ -1,11 +1,11 @@
 import { faPersonHiking, faRepeat } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Accordion, Button, Card, Form, InputGroup, Nav } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { MAP_CONTENT_TYPES } from '../../constants.ts'
-import { CharacterContext } from '../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { BankDetail } from './detail/bank-detail.tsx'
 import { CraftDetail } from './detail/craft-detail.tsx'
@@ -18,7 +18,7 @@ const ActionCard = () => {
   const {
     character,
     actions: { move },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
 
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)

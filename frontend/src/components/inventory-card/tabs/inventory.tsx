@@ -1,8 +1,7 @@
 import { faBorderAll, faCoins, faSackXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
 import { Card, Table } from 'react-bootstrap'
-import { CharacterContext } from '../../../utils/contexts/character/context.ts'
+import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { ItemActionGroup } from '../item-action-group.tsx'
 
@@ -10,7 +9,7 @@ const Inventory = () => {
   const {
     character,
     actions: { deposit },
-  } = useContext(CharacterContext)
+  } = useCharacterContext()
 
   if (!character) return
 
