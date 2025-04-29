@@ -11,7 +11,7 @@ const InventoryCard = () => {
 
   return (
     <>
-      <Nav variant="underline" className="mb-2">
+      <Nav variant="underline" className="mb-0 px-2">
         <Nav.Item>
           <Nav.Link active={activeTab === 'character'} onClick={() => setActiveTab('character')}>
             <Icon icon={faHatWizard} /> Character
@@ -32,7 +32,7 @@ const InventoryCard = () => {
             <Icon icon={faBank} /> Bank
           </Nav.Link>
         </Nav.Item>
-        <Nav.Item>
+        <Nav.Item className="ms-auto">
           <Nav.Link
             active={activeTab === 'grand-exchange'}
             onClick={() => {
