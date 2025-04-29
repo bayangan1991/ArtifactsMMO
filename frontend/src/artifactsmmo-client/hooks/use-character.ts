@@ -110,8 +110,14 @@ const useCharacter = (name: string | null) => {
   // Run action when set
   useEffect(() => {
     if (doNextAction && status === Status.Waiting) {
-      actionQueue.pop()?.action()
-      setDoNextAction(false)
+      try {
+        actionQueue.pop()?.action()
+      } catch (err) {
+        console.log(err)
+        setStatus(Status.Ready)
+      } finally {
+        setDoNextAction(false)
+      }
     }
   }, [doNextAction, status, actionQueue.pop])
 
