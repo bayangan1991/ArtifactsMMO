@@ -1,4 +1,4 @@
-import { faRecycle, faRepeat, faSackXmark, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons'
+import { fa1, faHashtag, faRecycle, faRepeat, faSackXmark, faTrashCan, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { Button, Dropdown, Form, InputGroup } from 'react-bootstrap'
@@ -106,21 +106,18 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
         min={1}
       />
       <Button variant="primary" onClick={() => action({ code, quantity: selectedQuantity })}>
-        X
+        <Icon icon={faHashtag} />
       </Button>
       <Button variant="warning" onClick={() => action({ code, quantity: 1 })}>
-        1
-      </Button>
-      <Button variant="danger" onClick={() => action({ code, quantity })}>
-        All
+        <Icon icon={fa1} />
       </Button>
       <Button variant="info" onClick={() => action({ code, quantity: selectedQuantity, requeue: true })}>
         <Icon icon={faRepeat} />
       </Button>
-      <Button onClick={() => recycleItem({ code, quantity: selectedQuantity })}>
+      <Button variant="success" onClick={() => recycleItem({ code, quantity: selectedQuantity })}>
         <Icon icon={faRecycle} />
       </Button>
-      <Button onClick={() => deleteItem({ code, quantity: selectedQuantity })}>
+      <Button variant="danger" onClick={() => deleteItem({ code, quantity: selectedQuantity })}>
         <Icon icon={faTrashCan} />
       </Button>
     </InputGroup>
