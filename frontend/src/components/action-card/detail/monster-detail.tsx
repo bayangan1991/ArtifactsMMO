@@ -36,12 +36,17 @@ const MonsterDetail = ({ code }: { code: string }) => {
               </ListGroup.Item>
             )
         )}
+        {monster.critical_strike !== 0 && (
+          <ListGroup.Item>
+            <CharacterEffect code="critical_strike" /> x <strong>{monster.critical_strike}%</strong>
+          </ListGroup.Item>
+        )}
       </ListGroup>
       <h6>Resistance</h6>
       <ListGroup className="mb-2">
         {damageTypes.map(
           (type) =>
-            monster[`res_${type}`] > 0 && (
+            monster[`res_${type}`] !== 0 && (
               <ListGroup.Item key={type}>
                 <CharacterEffect code={`res_${type}`} /> x <strong>{monster[`res_${type}`]}%</strong>
               </ListGroup.Item>
