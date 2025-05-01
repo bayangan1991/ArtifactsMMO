@@ -53,15 +53,19 @@ const MonsterDetail = ({ code }: { code: string }) => {
             )
         )}
       </ListGroup>
-      {!!monster.effects?.length && <h6>Effects</h6>}
-      <ListGroup>
-        {monster.effects?.map((effect) => (
-          <ListGroup.Item key={effect.code}>
-            <CharacterEffect code={effect.code} imgProps={{ height: 20 }} />{' '}
-            <small className="text-muted">{effect.value}%</small>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+      {!!monster.effects?.length && (
+        <>
+          <h6>Effects</h6>
+          <ListGroup className="mb-2">
+            {monster.effects.map((effect) => (
+              <ListGroup.Item key={effect.code}>
+                <CharacterEffect code={effect.code} imgProps={{ height: 20 }} />{' '}
+                <small className="text-muted">{effect.value}</small>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </>
+      )}
       <h6>Drops</h6>
       <ListGroup>
         <ListGroup.Item>
