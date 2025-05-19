@@ -1,10 +1,10 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Temporal } from '@js-temporal/polyfill'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useCallback, useContext, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router'
 import { BUILD_TIME } from '../../build-time.ts'
 import { AccountContext } from '../../utils/contexts/accounts/context.ts'
 import type { Account } from '../../utils/contexts/accounts/types.ts'
@@ -18,7 +18,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   const navigate = useNavigate()
   const { accounts, save } = useContext(AccountContext)
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
-  const { accountName } = useParams()
+  const { accountName } = useParams({ strict: false })
   const [selectedAccount, setSelectedAccount] = useState<string | null>(accountName || accounts[0]?.name || null)
 
   const { handleSubmit, register } = useForm<Account>()
@@ -45,7 +45,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   const handleSave = () => {
     save(currentAccounts)
     handleClose()
-    if (selectedAccount) navigate(`/${selectedAccount}/`)
+    if (selectedAccount) navigate({ to: '/$accountName/', params: { accountName: selectedAccount } })
   }
 
   return (

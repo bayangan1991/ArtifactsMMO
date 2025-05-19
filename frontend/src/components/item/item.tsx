@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Placeholder } from 'react-bootstrap'
-import { Link } from 'react-router'
+import { Link } from '@tanstack/react-router'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item'
 import { ItemModalContext } from '../../utils/contexts/modal/context.ts'
 
@@ -26,7 +26,9 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false }: Props) =>
       <Link
         to="#"
         className="text-decoration-none text-light"
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
           handleShow(item, useHistory)
         }}
       >

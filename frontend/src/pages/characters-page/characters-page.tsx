@@ -1,9 +1,12 @@
+import { Link } from '@tanstack/react-router'
 import { Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
-import { Link, useParams } from 'react-router'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
 
-const CharactersPage = () => {
-  const { accountName } = useParams()
+interface Props {
+  accountName: string
+}
+
+const CharactersPage = ({ accountName }: Props) => {
   const characters = useCharacters(accountName)
   return (
     <Container>
@@ -15,7 +18,7 @@ const CharactersPage = () => {
               <Col lg={4} key={character.name} className="p-2 d-flex justify-content-center align-items-center">
                 <Card style={{ maxWidth: 200, width: '100%', margin: 'auto' }}>
                   <Card.Body>
-                    <Link to={`${character.name}/`}>
+                    <Link to="/$accountName/$characterName/" params={{ accountName, characterName: character.name }}>
                       <Card.Img
                         src={`https://artifactsmmo.com/images/characters/${character.skin}.png`}
                         height={100}

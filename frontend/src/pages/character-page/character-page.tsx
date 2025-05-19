@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router'
 import { Nav } from 'react-bootstrap'
-import { Link, useParams } from 'react-router'
 import { useBankDetails } from '../../artifactsmmo-client/hooks/use-bank-details.ts'
 import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
@@ -8,8 +8,12 @@ import { CharacterView } from '../../components/character-view/character-view.ts
 import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
 import { GrandExchangeContext } from '../../utils/contexts/grand-exchange/context.ts'
 
-const CharacterPage = () => {
-  const { accountName, characterName } = useParams<{ accountName: string; characterName: string }>()
+interface Props {
+  accountName: string
+  characterName: string
+}
+
+const CharacterPage = ({ accountName, characterName }: Props) => {
   const characters = useCharacters(accountName)
   const { refetch: refetchItems, ...bankItems } = useBankItems()
   const { refetch: refetchDetail, ...bankDetails } = useBankDetails()
