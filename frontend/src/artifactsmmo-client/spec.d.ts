@@ -633,9 +633,29 @@ export interface paths {
     }
     /**
      * Get All Characters Logs
-     * @description History of the last 100 actions of all your characters.
+     * @description History of the last 250 actions of all your characters.
      */
     get: operations['get_all_characters_logs_my_logs_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/my/logs/{name}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Character Logs
+     * @description History of the last actions of your character.
+     */
+    get: operations['get_character_logs_my_logs__name__get']
     put?: never
     post?: never
     delete?: never
@@ -6109,6 +6129,41 @@ export interface operations {
       }
       header?: never
       path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successfully fetched logs. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['DataPage_LogSchema_']
+        }
+      }
+      /** @description Logs not found. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  get_character_logs_my_logs__name__get: {
+    parameters: {
+      query?: {
+        /** @description Page number */
+        page?: number
+        /** @description Page size */
+        size?: number
+      }
+      header?: never
+      path: {
+        /** @description Name of your character. */
+        name: string
+      }
       cookie?: never
     }
     requestBody?: never
