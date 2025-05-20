@@ -31,16 +31,9 @@ const CharacterCard = () => {
     status,
   } = useCharacterContext()
 
-  const map = useMap(
-    useMemo(() => {
-      return {
-        x: character?.x || 0,
-        y: character?.y || 0,
-      }
-    }, [character])
-  )
+  const { data: map } = useMap(character ? { x: character.x, y: character.y } : undefined)
 
-  const locationString = map && map.data.name + (map.data.content ? `[${map.data.content?.code}]` : '')
+  const locationString = map && map.name + (map.content ? `[${map.content?.code}]` : '')
 
   const simpleActions = [
     {
@@ -177,9 +170,9 @@ const CharacterCard = () => {
               <Col xs={3}>
                 <Card.Img
                   style={{ maxWidth: 80 }}
-                  src={`https://www.artifactsmmo.com/images/maps/${map?.data.skin}.png`}
-                  alt={map?.data.content?.code}
-                  title={map?.data.content?.code}
+                  src={`https://www.artifactsmmo.com/images/maps/${map?.skin}.png`}
+                  alt={map?.content?.code}
+                  title={map?.content?.code}
                 />
               </Col>
               <Col>

@@ -1,25 +1,25 @@
-import { useContext, useEffect, useReducer } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import type { Position } from '../../types.ts'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
 
-const useMap = (pos: Position) => {
-  const { client, getCache } = useContext(ApiClientContext)
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
+const mapKey = 'map'
 
-  const cache = getCache<components['schemas']['MapResponseSchema']>('maps')
-  const key = `${pos.x},${pos.y}`
+const useMap = (pos?: Position) => {
+  const { client } = useContext(ApiClientContext)
 
-  useEffect(() => {
-    client.GET('/maps/{x}/{y}', { params: { path: pos } }).then((result) => {
-      if (result.data) {
-        cache[key] = result.data
-        forceUpdate()
-      }
-    })
-  }, [client, cache, pos, key])
-
-  return cache[key]
+  return useQuery({
+    queryKey: [mapKey, pos],
+    queryFn: async () => {
+      if (!pos) return
+      const result = await client.GET('/maps/{x}/{y}', { params: { path: { x: pos.x, y: pos.y } } })
+      return result.data?.data
+    },
+    staleTime: 600,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    enabled: !!pos,
+  })
 }
 
 export { useMap }
