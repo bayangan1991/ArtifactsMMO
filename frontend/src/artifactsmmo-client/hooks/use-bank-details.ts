@@ -1,23 +1,19 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
+
+const key = 'bankDetails'
 
 const useBankDetails = () => {
   const { client } = useContext(ApiClientContext)
-  const [bankDetails, setBankDetails] = useState<components['schemas']['BankResponseSchema'] | null>(null)
 
-  const refetch = useCallback(async () => {
-    const result = await client.GET('/my/bank')
-    if (result.data) {
-      setBankDetails(result.data)
-    }
-  }, [client])
-
-  useEffect(() => {
-    refetch()
-  }, [refetch])
-
-  return { bankDetails, refetch }
+  return useQuery({
+    queryKey: [key],
+    queryFn: async () => {
+      const result = await client.GET('/my/bank')
+      return result.data?.data
+    },
+  })
 }
 
 export { useBankDetails }

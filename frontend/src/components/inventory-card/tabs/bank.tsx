@@ -2,6 +2,7 @@ import { faBorderAll, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Card, Form, Table } from 'react-bootstrap'
+import { useBankDetails } from '../../../artifactsmmo-client/hooks/use-bank-details.ts'
 import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
 import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
@@ -13,7 +14,8 @@ const Bank = () => {
     character,
     actions: { withdraw },
   } = useCharacterContext()
-  const { bankItems, pagination, bankDetails, filter, setFilter } = useContext(BankItemsContext)
+  const { data: bankDetails } = useBankDetails()
+  const { bankItems, pagination, filter, setFilter } = useContext(BankItemsContext)
 
   if (!bankItems || !character) return
 
@@ -59,14 +61,14 @@ const Bank = () => {
       <Card.Footer>
         <div className="d-flex align-items-center justify-content-between">
           <span>
-            <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {bankDetails?.data.gold.toLocaleString()}
+            <Icon icon={faCoins} color="#ffd82f" fixedWidth /> {bankDetails?.gold.toLocaleString()}
           </span>
           <div className="d-flex justify-content-center align-items-center">
             <Pagination {...pagination} />
           </div>
           <span>
             <Icon icon={faBorderAll} fixedWidth />
-            {bankItems.total || 0} / {bankDetails?.data.slots || 0}
+            {bankItems.total || 0} / {bankDetails?.slots || 0}
           </span>
         </div>
       </Card.Footer>

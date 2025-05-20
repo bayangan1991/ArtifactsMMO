@@ -1,9 +1,9 @@
 import { faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Button, ButtonGroup, Dropdown, Form, InputGroup, Stack } from 'react-bootstrap'
+import { useBankDetails } from '../../../artifactsmmo-client/hooks/use-bank-details.ts'
 import type { Position } from '../../../types.ts'
-import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
 import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 
 const BankGoldAction = ({
@@ -27,7 +27,7 @@ const BankGoldAction = ({
 }
 
 const BankDetail = ({ pos }: { pos: Position }) => {
-  const { bankDetails } = useContext(BankItemsContext)
+  const { data: bankDetails } = useBankDetails()
   const {
     character,
     actions: { depositAll, buyExpansion, depositGold, withdrawGold },
@@ -59,12 +59,12 @@ const BankDetail = ({ pos }: { pos: Position }) => {
         </Dropdown>
         <Button onClick={() => buyExpansion()}>
           Buy Expansion (<Icon icon={faCoins} color="#ffd82f" fixedWidth />
-          {bankDetails?.data.next_expansion_cost.toLocaleString()})
+          {bankDetails?.next_expansion_cost.toLocaleString()})
         </Button>
       </Stack>
       <Stack gap={2} direction="horizontal">
         <BankGoldAction action={depositGold} label="Deposit" initial={character?.gold} />
-        <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.data.gold} />
+        <BankGoldAction action={withdrawGold} label="Withdraw" initial={bankDetails?.gold} />
       </Stack>
     </Stack>
   )
