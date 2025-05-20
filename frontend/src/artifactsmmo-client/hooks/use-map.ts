@@ -3,13 +3,13 @@ import { useContext } from 'react'
 import type { Position } from '../../types.ts'
 import { ApiClientContext } from '../client/context.ts'
 
-const mapKey = 'map'
+const key = 'map'
 
 const useMap = (pos?: Position) => {
   const { client } = useContext(ApiClientContext)
 
   return useQuery({
-    queryKey: [mapKey, pos],
+    queryKey: [key, pos],
     queryFn: async () => {
       if (!pos) return
       const result = await client.GET('/maps/{x}/{y}', { params: { path: { x: pos.x, y: pos.y } } })

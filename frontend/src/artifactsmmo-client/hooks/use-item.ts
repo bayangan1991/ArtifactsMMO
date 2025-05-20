@@ -6,13 +6,13 @@ interface Params {
   code?: string | null
 }
 
-const itemKey = 'item'
+const key = 'item'
 
 const useItem = ({ code }: Params) => {
   const { client } = useContext(ApiClientContext)
 
   return useQuery({
-    queryKey: [itemKey, code],
+    queryKey: [key, code],
     queryFn: async () => {
       if (!code) return
       const result = await client.GET('/items/{code}', { params: { path: { code } } })
