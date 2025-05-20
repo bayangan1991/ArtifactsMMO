@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useClient } from '../client/hooks.ts'
+import { useContext } from 'react'
+import { ApiClientContext } from '../client/context.ts'
 import type { operations } from '../spec'
 
 const itemsKey = 'items'
@@ -9,7 +10,7 @@ interface Params {
 }
 
 const useItems = ({ filters }: Params) => {
-  const { client } = useClient()
+  const { client } = useContext(ApiClientContext)
 
   return useQuery({
     queryKey: [itemsKey, filters],
