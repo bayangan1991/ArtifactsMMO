@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { Badge, Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
@@ -26,12 +26,14 @@ const FormFieldRow = ({ label, value }: { label: React.ReactNode; value: string 
 
 const ItemModal = ({ show, item, handleClose }: Props) => {
   const { goBack } = useContext(ItemModalContext)
-  const [page, setPage] = useState(1)
-  const { data } = useItems({ filters: { craft_material: item.code, size: 10, page } })
+  const {
+    query: { data },
+    pagination,
+  } = useItems({ filters: { craft_material: item.code, size: 10 } })
 
   if (!data) return
 
-  const { data: craftableItems, size, ...pagination } = data
+  const { data: craftableItems } = data
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -89,7 +91,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
               )}
             </>
           )}
-          {!!pagination?.total && (
+          {!!data?.total && (
             <>
               <hr />
               <h5 className="mt-3">Used in</h5>
@@ -104,7 +106,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
                 ))}
               </ListGroup>
               <div className="d-flex justify-content-center">
-                <Pagination {...pagination} setPage={setPage} size="sm" />
+                <Pagination {...pagination} size="sm" />
               </div>
             </>
           )}

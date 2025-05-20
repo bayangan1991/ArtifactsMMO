@@ -39,12 +39,14 @@ const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) 
 }
 
 const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill']; pos: Position }) => {
-  const [page, setPage] = useState(1)
-  const { data: items } = useItems({ filters: { craft_skill: skill, page, size: 15 } })
+  const {
+    query: { data: items },
+    pagination,
+  } = useItems({ filters: { craft_skill: skill, size: 15 } })
 
   if (!items) return
 
-  const { data, size, ...pagination } = items
+  const { data } = items
 
   return (
     <>
@@ -59,7 +61,7 @@ const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill'
         ))}
       </ListGroup>
       <div className="mt-2 d-flex justify-content-around align-items-center">
-        <Pagination {...pagination} setPage={setPage} />
+        <Pagination {...pagination} />
       </div>
     </>
   )

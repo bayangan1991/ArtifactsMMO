@@ -13,7 +13,7 @@ const useMap = (pos?: Position) => {
     queryFn: async () => {
       if (!pos) return
       const result = await client.GET('/maps/{x}/{y}', { params: { path: { x: pos.x, y: pos.y } } })
-      return result.data?.data
+      return result.data?.data || null
     },
     staleTime: 600,
     refetchOnMount: false,

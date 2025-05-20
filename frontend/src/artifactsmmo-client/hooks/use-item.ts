@@ -16,7 +16,7 @@ const useItem = ({ code }: Params) => {
     queryFn: async () => {
       if (!code) return
       const result = await client.GET('/items/{code}', { params: { path: { code } } })
-      return result?.data?.data
+      return result.data?.data || null
     },
     staleTime: Number.POSITIVE_INFINITY,
     refetchOnWindowFocus: false,

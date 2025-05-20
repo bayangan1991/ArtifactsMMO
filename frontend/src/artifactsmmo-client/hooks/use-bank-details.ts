@@ -11,7 +11,7 @@ const useBankDetails = () => {
     queryKey: [key],
     queryFn: async () => {
       const result = await client.GET('/my/bank')
-      return result.data?.data
+      return result.data?.data || null
     },
   })
 }

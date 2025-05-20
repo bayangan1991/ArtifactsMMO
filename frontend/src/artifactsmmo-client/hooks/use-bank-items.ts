@@ -19,14 +19,12 @@ const useBankItems = () => {
   }
 
   const query = useQuery({
-    queryKey: [key],
+    queryKey: [key, { page, debouncedFilter }],
     queryFn: async () => {
       const result = await client.GET('/my/bank/items', {
         params: { query: { page, item_code: debouncedFilter || undefined } },
       })
-
       setPages(result.data?.pages || null)
-
       return result.data
     },
   })
