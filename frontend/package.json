@@ -17,6 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@js-temporal/polyfill": "^0.4.4",
+    "@tanstack/react-query": "^5.76.1",
     "@tanstack/react-router": "^1.120.5",
     "bootstrap": "^5.3.6",
     "guid-typescript": "^1.0.9",
