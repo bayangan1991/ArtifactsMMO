@@ -7,14 +7,14 @@ interface Props {
 }
 
 const CharactersPage = ({ accountName }: Props) => {
-  const characters = useCharacters(accountName)
+  const { data: characters } = useCharacters({ account: accountName })
   return (
     <Container>
       <Row>
         <Col lg={2} />
         <Col lg={8}>
           <Row className="d-flex">
-            {characters.map((character) => (
+            {characters?.map((character) => (
               <Col lg={4} key={character.name} className="p-2 d-flex justify-content-center align-items-center">
                 <Card style={{ maxWidth: 200, width: '100%', margin: 'auto' }}>
                   <Card.Body>

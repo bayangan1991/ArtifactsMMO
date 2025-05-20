@@ -1,22 +1,28 @@
-import { useContext, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
 
-const useCharacters = (account?: string) => {
+const key = 'characters'
+
+interface Params {
+  account?: string | null
+}
+
+const useCharacters = ({ account }: Params) => {
   const { client } = useContext(ApiClientContext)
-  const [characters, setCharacters] = useState<components['schemas']['CharacterSchema'][]>([])
 
-  useEffect(() => {
-    if (account)
-      client
-        .GET('/accounts/{account}/characters', { params: { path: { account: account } } })
-        .then(({ data: result }) => {
-          if (result) {
-            setCharacters(result.data)
-          }
-        })
-  }, [client, account])
-
-  return characters
+  return useQuery({
+    queryKey: [key, account],
+    queryFn: async () => {
+      if (!account) return
+      const result = await client.GET('/accounts/{account}/characters', { params: { path: { account: account } } })
+      return result.data?.data || null
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    enabled: !!account,
+  })
 }
 export { useCharacters }

@@ -11,13 +11,13 @@ interface Props {
 }
 
 const CharacterPage = ({ accountName, characterName }: Props) => {
-  const characters = useCharacters(accountName)
+  const { data: characters } = useCharacters({ account: accountName })
   const grandExchange = useGrandExchange()
 
   return (
     <GrandExchangeContext.Provider value={grandExchange}>
       <Nav variant="underline" defaultActiveKey={characterName} className="mx-3 mb-3">
-        {characters.map((char) => (
+        {characters?.map((char) => (
           <Nav.Item key={char.name}>
             <Nav.Link as={Link} to={`/${accountName}/${char.name}/`} eventKey={char.name}>
               <img
@@ -31,7 +31,7 @@ const CharacterPage = ({ accountName, characterName }: Props) => {
           </Nav.Item>
         ))}
       </Nav>
-      {characters.map((char) => (
+      {characters?.map((char) => (
         <div className={characterName === char.name ? '' : 'd-none'} key={char.name}>
           <CharacterView characterName={char.name} />
         </div>
