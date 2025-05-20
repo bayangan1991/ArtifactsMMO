@@ -8,7 +8,7 @@ interface Props {
 }
 
 const CharacterEffect = ({ code, imgProps = { height: 25 } }: Props) => {
-  const effect = useCharacterEffect(code)
+  const { data: effect } = useCharacterEffect({ code })
 
   if (!effect)
     return (
