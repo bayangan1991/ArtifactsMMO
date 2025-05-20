@@ -1,11 +1,10 @@
-import { useContext } from 'react'
 import { Card, Form, Table } from 'react-bootstrap'
-import { GrandExchangeContext } from '../../../utils/contexts/grand-exchange/context.ts'
+import { useGrandExchange } from '../../../artifactsmmo-client/hooks/use-grand-exchange.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 
 const GrandExchange = () => {
-  const { grandExchange, pagination, filter, setFilter } = useContext(GrandExchangeContext)
+  const { query: grandExchange, pagination, filter, setFilter } = useGrandExchange()
 
   if (!grandExchange) return
 
@@ -29,8 +28,8 @@ const GrandExchange = () => {
             </tr>
           </thead>
           <tbody>
-            {grandExchange.data.map((item) => (
-              <tr key={item.code}>
+            {grandExchange.data?.map((item) => (
+              <tr key={item.id}>
                 <td>
                   <Item code={item.code} />
                 </td>

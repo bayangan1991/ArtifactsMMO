@@ -1,9 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Nav } from 'react-bootstrap'
 import { useCharacters } from '../../artifactsmmo-client/hooks/use-characters.ts'
-import { useGrandExchange } from '../../artifactsmmo-client/hooks/use-grand-exchange.ts'
 import { CharacterView } from '../../components/character-view/character-view.tsx'
-import { GrandExchangeContext } from '../../utils/contexts/grand-exchange/context.ts'
 
 interface Props {
   accountName: string
@@ -12,10 +10,9 @@ interface Props {
 
 const CharacterPage = ({ accountName, characterName }: Props) => {
   const { data: characters } = useCharacters({ account: accountName })
-  const grandExchange = useGrandExchange()
 
   return (
-    <GrandExchangeContext.Provider value={grandExchange}>
+    <>
       <Nav variant="underline" defaultActiveKey={characterName} className="mx-3 mb-3">
         {characters?.map((char) => (
           <Nav.Item key={char.name}>
@@ -36,7 +33,7 @@ const CharacterPage = ({ accountName, characterName }: Props) => {
           <CharacterView characterName={char.name} />
         </div>
       ))}
-    </GrandExchangeContext.Provider>
+    </>
   )
 }
 
