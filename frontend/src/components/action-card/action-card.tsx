@@ -24,10 +24,12 @@ const ActionCard = () => {
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)
 
   const [contentType, setContentType] = useState<components['schemas']['MapContentType']>('monster')
-  const maps = useMaps({ currentPosition, contentType })
+  const {
+    query: { data: maps },
+  } = useMaps({ currentPosition, filters: { content_type: contentType } })
 
   const mapLookup: Record<string, components['schemas']['MapSchema']> = Object.fromEntries(
-    maps.data ? maps.data.map((item) => [`${item.x},${item.y}`, item]) : []
+    maps ? maps.data.map((item) => [`${item.x},${item.y}`, item]) : []
   )
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -36,8 +38,8 @@ const ActionCard = () => {
   }
 
   useEffect(() => {
-    if (maps.data && maps.data.length > 0) setTargetMap(maps.data[0])
-  }, [maps?.data])
+    if (maps && maps.data.length > 0) setTargetMap(maps.data[0])
+  }, [maps])
 
   const distance =
     targetMap && currentPosition ? euclideanDistance({ x: targetMap.x, y: targetMap.y }, currentPosition) : 0
@@ -60,7 +62,7 @@ const ActionCard = () => {
             ))}
           </Nav>
           <InputGroup>
-            {maps.data && (
+            {maps?.data && (
               <Form.Select onChange={handleSelect} style={{ width: '30%' }}>
                 {maps.data.map((item) => {
                   const key = `${item.x},${item.y}`
