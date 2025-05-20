@@ -15,7 +15,7 @@ const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) 
   const {
     actions: { smartCraft },
   } = useCharacterContext()
-  const item = useItem(code)
+  const { data: item } = useItem({ code })
 
   return (
     <InputGroup size="sm">

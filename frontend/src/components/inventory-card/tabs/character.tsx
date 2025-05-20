@@ -44,7 +44,7 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
   } = useCharacterContext()
   const slotName: `${components['schemas']['ItemSlot']}_slot` = `${slot}_slot`
   const slotItem = character ? character[slotName] : null
-  const item = useItem(slotItem)
+  const { data: item } = useItem({ code: slotItem })
 
   const slotQuantity = useMemo(() => {
     if (character && slot === 'utility1') return character.utility1_slot_quantity
@@ -84,7 +84,7 @@ const TaskDetail = () => {
     actions: { taskAbandon },
   } = useCharacterContext()
   const monster = useMonster(character?.task || '')
-  const item = useItem(character?.task || '')
+  const { data: item } = useItem({ code: character?.task })
 
   if (!character || !character.task) return
 

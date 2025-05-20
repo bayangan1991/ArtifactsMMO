@@ -48,7 +48,7 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
   const {
     actions: { equip, consumeItem, recycleItem, deleteItem },
   } = useCharacterContext()
-  const item = useItem(code)
+  const { data: item } = useItem({ code })
   const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
 
   useEffect(() => {
