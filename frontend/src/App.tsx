@@ -6,6 +6,7 @@ import { Button, Container, Navbar } from 'react-bootstrap'
 import { ApiClientContext } from './artifactsmmo-client/client/context.ts'
 import { useClient } from './artifactsmmo-client/client/hooks.ts'
 import { AccountsModal } from './components/modals/accounts-modal.tsx'
+import { ItemModal } from './components/modals/item-modal.tsx'
 import { NoAccountPage } from './pages/no-account-page.tsx'
 import { AccountContext } from './utils/contexts/accounts/context.ts'
 import { useAccounts } from './utils/contexts/accounts/hooks.ts'
@@ -50,6 +51,13 @@ const App = () => {
                 handleClose={() => {
                   setShowAccountsModal(false)
                 }}
+              />
+            )}
+            {itemModalContext.show && itemModalContext.item && (
+              <ItemModal
+                show={itemModalContext.show}
+                item={itemModalContext.item}
+                handleClose={itemModalContext.handleClose}
               />
             )}
             {!activeAccount && <NoAccountPage />}

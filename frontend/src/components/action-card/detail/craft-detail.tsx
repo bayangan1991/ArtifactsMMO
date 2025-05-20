@@ -39,12 +39,17 @@ const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) 
 }
 
 const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill']; pos: Position }) => {
-  const { items, pagination } = useItems({ skill })
+  const [page, setPage] = useState(1)
+  const { data: items } = useItems({ filters: { craft_skill: skill, page, size: 15 } })
+
+  if (!items) return
+
+  const { data, size, ...pagination } = items
 
   return (
     <>
       <ListGroup variant="flush">
-        {items?.data.map((item) => (
+        {data.map((item) => (
           <ListGroup.Item key={item.code} className="d-flex justify-content-between align-items-center">
             <div className="w-100">
               <Item code={item.code} imgProps={{ height: 20 }} />
@@ -54,7 +59,7 @@ const CraftDetail = ({ skill, pos }: { skill: components['schemas']['CraftSkill'
         ))}
       </ListGroup>
       <div className="mt-2 d-flex justify-content-around align-items-center">
-        <Pagination {...pagination} />
+        <Pagination {...pagination} setPage={setPage} />
       </div>
     </>
   )

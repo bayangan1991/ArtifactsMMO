@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Badge, Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
@@ -26,7 +26,12 @@ const FormFieldRow = ({ label, value }: { label: React.ReactNode; value: string 
 
 const ItemModal = ({ show, item, handleClose }: Props) => {
   const { goBack } = useContext(ItemModalContext)
-  const { items: craftableItems, pagination } = useItems({ craftMaterial: item.code })
+  const [page, setPage] = useState(1)
+  const { data } = useItems({ filters: { craft_material: item.code, size: 10, page } })
+
+  if (!data) return
+
+  const { data: craftableItems, size, ...pagination } = data
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -84,12 +89,12 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
               )}
             </>
           )}
-          {!!craftableItems?.total && (
+          {!!pagination?.total && (
             <>
               <hr />
               <h5 className="mt-3">Used in</h5>
               <ListGroup className="mb-2">
-                {craftableItems.data.map((craftItem) => (
+                {craftableItems.map((craftItem) => (
                   <ListGroup.Item key={craftItem.code} className="d-flex justify-content-between">
                     <Item code={craftItem.code} useHistory />{' '}
                     <small className="text-muted">
@@ -99,7 +104,7 @@ const ItemModal = ({ show, item, handleClose }: Props) => {
                 ))}
               </ListGroup>
               <div className="d-flex justify-content-center">
-                <Pagination {...pagination} size="sm" />
+                <Pagination {...pagination} setPage={setPage} size="sm" />
               </div>
             </>
           )}

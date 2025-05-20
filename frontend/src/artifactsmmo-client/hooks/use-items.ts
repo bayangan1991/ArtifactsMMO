@@ -1,46 +1,27 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
-import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
+import { useQuery } from '@tanstack/react-query'
+import { useClient } from '../client/hooks.ts'
+import type { operations } from '../spec'
+
+const itemsKey = 'items'
 
 interface Params {
-  skill?: components['schemas']['CraftSkill']
-  craftMaterial?: string
-  size?: number
-  skip?: boolean
+  filters?: operations['get_all_items_items_get']['parameters']['query']
 }
 
-const useItems = ({ skill, craftMaterial, skip = false, size = 10 }: Params) => {
-  const { client } = useContext(ApiClientContext)
-  const [items, setItems] = useState<components['schemas']['DataPage_ItemSchema_'] | null>(null)
+const useItems = ({ filters }: Params) => {
+  const { client } = useClient()
 
-  const [page, setPage] = useState(1)
-  const [pages, setPages] = useState<number | null>(null)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the page when the skill changes
-  useEffect(() => {
-    setPage(1)
-  }, [skill])
-
-  const handleSetPage = useCallback(
-    (page: number) => setPage(Math.max(1, Math.min(page, items?.pages || 1))),
-    [items?.pages]
-  )
-
-  useEffect(() => {
-    if (!skip) {
-      client
-        .GET('/items', { params: { query: { craft_skill: skill, craft_material: craftMaterial, page, size } } })
-        .then((response) => {
-          if (response.data) {
-            setItems(response.data)
-            setPages(response.data.pages || null)
-          } else setItems(null)
-        })
-    }
-    if (skip) setItems(null)
-  }, [client, craftMaterial, skill, page, skip, size])
-
-  return { items, pagination: { setPage: handleSetPage, page, pages } }
+  return useQuery({
+    queryKey: [itemsKey, filters],
+    queryFn: async () => {
+      const result = await client.GET('/items', { params: { query: filters } })
+      return result.data
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  })
 }
 
 export { useItems }
