@@ -1,13 +1,15 @@
 import { faBank, faHatWizard, faSackDollar, faShop } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Nav } from 'react-bootstrap'
-import { BankItemsContext } from '../../utils/contexts/bank-items/context.ts'
+import { useBankItems } from '../../artifactsmmo-client/hooks/use-bank-items.ts'
 import * as Tabs from './tabs'
 
 const InventoryCard = () => {
   const [activeTab, setActiveTab] = useState<'character' | 'inventory' | 'bank' | 'grand-exchange'>('character')
-  const { refetch } = useContext(BankItemsContext)
+  const {
+    query: { refetch },
+  } = useBankItems()
 
   return (
     <>

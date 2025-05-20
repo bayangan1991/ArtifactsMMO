@@ -1,9 +1,8 @@
 import { faBorderAll, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
 import { Card, Form, Table } from 'react-bootstrap'
 import { useBankDetails } from '../../../artifactsmmo-client/hooks/use-bank-details.ts'
-import { BankItemsContext } from '../../../utils/contexts/bank-items/context.ts'
+import { useBankItems } from '../../../artifactsmmo-client/hooks/use-bank-items.ts'
 import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
@@ -15,7 +14,12 @@ const Bank = () => {
     actions: { withdraw },
   } = useCharacterContext()
   const { data: bankDetails } = useBankDetails()
-  const { bankItems, pagination, filter, setFilter } = useContext(BankItemsContext)
+  const {
+    query: { data: bankItems },
+    pagination,
+    filter,
+    setFilter,
+  } = useBankItems()
 
   if (!bankItems || !character) return
 
