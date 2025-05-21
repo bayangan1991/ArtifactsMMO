@@ -27,16 +27,23 @@ const App = () => {
           <ItemModalProvider value={itemModalContext}>
             <Navbar bg="black" fixed="top">
               <Container fluid className="gap-2">
-                <Navbar.Brand>
-                  <img
-                    src="logo.svg"
-                    width="30"
-                    height="30"
-                    className="d-inline-block align-top me-2"
-                    alt="React Bootstrap logo"
-                  />
-                  Artifacts MMO Client
-                </Navbar.Brand>
+                <a
+                  href="https://www.artifactsmmo.com/"
+                  target="_blank"
+                  rel="noreferrer nofollow"
+                  className="text-decoration-none"
+                >
+                  <Navbar.Brand>
+                    <img
+                      src="logo.svg"
+                      width="30"
+                      height="30"
+                      className="d-inline-block align-top me-2"
+                      alt="React Bootstrap logo"
+                    />
+                    Artifacts MMO Client
+                  </Navbar.Brand>
+                </a>
                 <Button variant="warning" onClick={() => setShowAccountsModal(true)}>
                   Accounts
                 </Button>

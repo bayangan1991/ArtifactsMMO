@@ -17,7 +17,7 @@ const useCharacter = ({ name }: Params) => {
       const result = await client.GET('/characters/{name}', { params: { path: { name } } })
       return result.data?.data || null
     },
-    refetchInterval: 15_000,
+    refetchInterval: 30_000,
     placeholderData: keepPreviousData,
     enabled: !!name,
   })
