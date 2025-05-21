@@ -1,12 +1,12 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
-import { useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { useInterval } from '../../hooks/use-interval.ts'
 import type { ActionData, Position, Queue, QueueParams } from '../../types.ts'
 import { Stack } from '../../utils/stack.ts'
-import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
 import { useActions } from './use-actions.ts'
+import { useApiClient } from './use-api-client.ts'
 import { useQueueableAction } from './use-queuable-action.ts'
 import { useSimpleAction } from './use-simple-action.ts'
 import { useStatus } from './use-status.ts'
@@ -19,7 +19,7 @@ enum Status {
 }
 
 const useCharacter = (name: string | null) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
   const {
     data: { timeDiff },
   } = useStatus()

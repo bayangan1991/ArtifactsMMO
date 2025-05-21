@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useState } from 'react'
-import { ApiClientContext } from '../client/context.ts'
+import { useEffect, useState } from 'react'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'npcItems'
 
@@ -9,7 +9,7 @@ interface Params {
 }
 
 const useNpcItems = ({ npc }: Params) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)

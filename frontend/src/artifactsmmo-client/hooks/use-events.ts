@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
+import { useApiClient } from './use-api-client.ts'
 
 interface Params {
   currentPosition?: Position
@@ -10,7 +10,7 @@ interface Params {
 }
 
 const useEvents = (params?: Params) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
   const [events, setEvents] = useState<components['schemas']['DataPage_ActiveEventSchema_'] | null>(null)
 
   useEffect(() => {

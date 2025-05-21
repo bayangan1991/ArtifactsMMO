@@ -1,5 +1,6 @@
-import createClient, { type Middleware } from 'openapi-fetch'
+import createClient, { type Client, type Middleware } from 'openapi-fetch'
 import { useEffect, useState } from 'react'
+import React from 'react'
 import type { paths } from '../spec'
 
 const CORSMiddleware: Middleware = {
@@ -9,7 +10,7 @@ const CORSMiddleware: Middleware = {
   },
 }
 
-const useClient = (apiKey?: string) => {
+const useApiClientContext = (apiKey?: string) => {
   const [client] = useState(createClient<paths>({ baseUrl: 'https://api.artifactsmmo.com/' }))
   const [authMiddleware, setAuthMiddleware] = useState<Middleware | null>(null)
 
@@ -31,15 +32,22 @@ const useClient = (apiKey?: string) => {
     }
   }, [client, authMiddleware])
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const [cache] = useState<Record<string, any>>({})
-
-  const getCache = (name: string) => {
-    if (!Object.keys(cache).includes(name)) cache[name] = {}
-    return cache[name]
-  }
-
-  return { client, getCache }
+  return { client }
 }
 
-export { useClient }
+interface ApiClientContextType {
+  client: Client<paths>
+}
+
+const ApiClientContext = React.createContext<ApiClientContextType | undefined>(undefined)
+const ApiClientProvider = ApiClientContext.Provider
+
+const useApiClient = () => {
+  const context = React.useContext(ApiClientContext)
+  if (!context) {
+    throw new Error('useClient must be used within a ApiClientContextProvider')
+  }
+  return context
+}
+
+export { useApiClientContext, useApiClient, ApiClientProvider }

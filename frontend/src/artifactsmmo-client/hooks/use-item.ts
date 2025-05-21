@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { ApiClientContext } from '../client/context.ts'
+import { useApiClient } from './use-api-client.ts'
 
 interface Params {
   code?: string | null
@@ -9,7 +8,7 @@ interface Params {
 const key = 'item'
 
 const useItem = ({ code }: Params) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   return useQuery({
     queryKey: [key, code],

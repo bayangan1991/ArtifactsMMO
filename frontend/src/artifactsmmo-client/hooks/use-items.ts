@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useContext, useEffect, useState } from 'react'
-import { ApiClientContext } from '../client/context.ts'
+import { useEffect, useState } from 'react'
 import type { operations } from '../spec'
+import { useApiClient } from './use-api-client.ts'
 import { itemKey } from './use-item.ts'
 
 const key = 'items'
@@ -13,7 +13,7 @@ interface Params {
 const useItems = ({ filters }: Params) => {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
   const queryClient = useQueryClient()
 
   const query = useQuery({

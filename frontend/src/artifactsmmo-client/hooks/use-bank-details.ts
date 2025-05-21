@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { ApiClientContext } from '../client/context.ts'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'bankDetails'
 
 const useBankDetails = () => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   return useQuery({
     queryKey: [key],

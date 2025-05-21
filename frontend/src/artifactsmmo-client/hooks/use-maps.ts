@@ -1,9 +1,9 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
-import { ApiClientContext } from '../client/context.ts'
 import type { operations } from '../spec'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'maps'
 
@@ -15,7 +15,7 @@ interface Params {
 const useMaps = ({ currentPosition, filters }: Params) => {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   const query = useQuery({
     queryKey: [key, { ...filters, currentPosition, page }],

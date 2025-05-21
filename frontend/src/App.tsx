@@ -3,8 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Outlet, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Button, Container, Navbar } from 'react-bootstrap'
-import { ApiClientContext } from './artifactsmmo-client/client/context.ts'
-import { useClient } from './artifactsmmo-client/client/hooks.ts'
+import { ApiClientProvider, useApiClientContext } from './artifactsmmo-client/hooks/use-api-client.ts'
 import { AccountsModal } from './components/modals/accounts-modal.tsx'
 import { ItemModal } from './components/modals/item-modal.tsx'
 import { NoAccountPage } from './pages/no-account-page.tsx'
@@ -20,11 +19,11 @@ const App = () => {
   const [showAccountsModal, setShowAccountsModal] = useState<boolean>(false)
   const accountContext = useAccounts()
   const activeAccount = accountContext.findAccount(accountName)
-  const apiClientContext = useClient(activeAccount?.apiKey)
+  const apiClientContext = useApiClientContext(activeAccount?.apiKey)
   const itemModalContext = useItemModal()
 
   return (
-    <ApiClientContext.Provider value={apiClientContext}>
+    <ApiClientProvider value={apiClientContext}>
       <QueryClientProvider client={queryClient}>
         <AccountContext.Provider value={accountContext}>
           <ItemModalContext.Provider value={itemModalContext}>
@@ -69,7 +68,7 @@ const App = () => {
           </ItemModalContext.Provider>
         </AccountContext.Provider>
       </QueryClientProvider>
-    </ApiClientContext.Provider>
+    </ApiClientProvider>
   )
 }
 

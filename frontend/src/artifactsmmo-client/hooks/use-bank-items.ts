@@ -1,12 +1,12 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
-import { ApiClientContext } from '../client/context.ts'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'bankItems'
 
 const useBankItems = () => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)
   const [filter, setFilter] = useState<string | null>(null)

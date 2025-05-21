@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
 import type { Position } from '../../types.ts'
-import { ApiClientContext } from '../client/context.ts'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'map'
 
 const useMap = (pos?: Position) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   return useQuery({
     queryKey: [key, pos],

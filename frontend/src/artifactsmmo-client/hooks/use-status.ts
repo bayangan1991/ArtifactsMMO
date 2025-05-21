@@ -1,12 +1,11 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { ApiClientContext } from '../client/context.ts'
+import { useApiClient } from './use-api-client.ts'
 
 const key = 'status'
 
 const useStatus = () => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   return useSuspenseQuery({
     queryKey: [key],

@@ -1,10 +1,10 @@
-import { useCallback, useContext } from 'react'
+import { useCallback } from 'react'
 import type { Position } from '../../types.ts'
-import { ApiClientContext } from '../client/context.ts'
 import type { components } from '../spec'
+import { useApiClient } from './use-api-client.ts'
 
 const useActions = (name: string | null | undefined) => {
-  const { client } = useContext(ApiClientContext)
+  const { client } = useApiClient()
 
   const doMove = useCallback(
     async ({ pos }: { pos: Position }) => {
