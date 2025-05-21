@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback } from 'react'
 import type { Position } from '../../types.ts'
 import type { components } from '../spec'
 import { useApiClient } from '../use-api-client/use-api-client.ts'
@@ -11,7 +10,7 @@ const useActions = (name: string | null | undefined) => {
 
   const doMove = useMutation({
     mutationFn: async ({ pos }: { pos: Position }) => {
-      if (!name) throw new Error('Specify name before calling action')
+      if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/move', {
         body: pos,
         params: {
@@ -27,22 +26,25 @@ const useActions = (name: string | null | undefined) => {
     },
   })
 
-  const doFight = useCallback(async () => {
-    if (!name) throw new Error('Function not implemented.')
-    const { data, error } = await client.POST('/my/{name}/action/fight', {
-      params: {
-        path: { name },
-      },
-    })
-    if (data?.data) {
-      return data.data
-    }
-    // @ts-ignore
-    throw new Error(error?.error.message || 'unknown error')
-  }, [client, name])
+  const doFight = useMutation({
+    mutationFn: async () => {
+      if (!name) throw new Error('Function not implemented.')
+      const { data, error } = await client.POST('/my/{name}/action/fight', {
+        params: {
+          path: { name },
+        },
+      })
+      if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
+        return data.data
+      }
+      // @ts-ignore
+      throw new Error(error?.error.message || 'unknown error')
+    },
+  })
 
-  const doWithdraw = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doWithdraw = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
         body: { code, quantity },
@@ -51,16 +53,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doDeposit = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doDeposit = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
         body: { code, quantity },
@@ -69,16 +71,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doCraft = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doCraft = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/crafting', {
         body: { code, quantity },
@@ -87,15 +89,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
-  const doUnEquip = useCallback(
-    async ({ slot, quantity }: { slot: components['schemas']['ItemSlot']; quantity: number }) => {
+  })
+
+  const doUnEquip = useMutation({
+    mutationFn: async ({ slot, quantity }: { slot: components['schemas']['ItemSlot']; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/unequip', {
         body: { slot, quantity },
@@ -104,16 +107,20 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doEquip = useCallback(
-    async ({ code, slot, quantity }: { code: string; slot: components['schemas']['ItemSlot']; quantity: number }) => {
+  const doEquip = useMutation({
+    mutationFn: async ({
+      code,
+      slot,
+      quantity,
+    }: { code: string; slot: components['schemas']['ItemSlot']; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/equip', {
         body: { slot, quantity, code },
@@ -122,16 +129,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doWithdrawGold = useCallback(
-    async ({ quantity }: { quantity: number }) => {
+  const doWithdrawGold = useMutation({
+    mutationFn: async ({ quantity }: { quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/gold', {
         body: { quantity },
@@ -140,16 +147,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doDepositGold = useCallback(
-    async ({ quantity }: { quantity: number }) => {
+  const doDepositGold = useMutation({
+    mutationFn: async ({ quantity }: { quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/bank/deposit/gold', {
         body: { quantity },
@@ -158,16 +165,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doTaskTrade = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doTaskTrade = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/task/trade', {
         body: { code, quantity },
@@ -176,16 +183,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doBuyItem = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doBuyItem = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/npc/buy', {
         body: { code, quantity },
@@ -194,16 +201,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doSellItem = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doSellItem = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/npc/sell', {
         body: { code, quantity },
@@ -212,16 +219,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doConsumeItem = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doConsumeItem = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/use', {
         body: { code, quantity },
@@ -230,16 +237,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doRecycleItem = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doRecycleItem = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/recycling', {
         body: { code, quantity },
@@ -248,16 +255,16 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
-  const doDeleteItem = useCallback(
-    async ({ code, quantity }: { code: string; quantity: number }) => {
+  const doDeleteItem = useMutation({
+    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
       if (!name) throw new Error('Function not implemented.')
       const { data, error } = await client.POST('/my/{name}/action/delete', {
         body: { code, quantity },
@@ -266,13 +273,13 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
   return {
     doMove,

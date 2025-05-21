@@ -174,7 +174,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const deposit = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x ${code}`,
-    action: doDeposit,
+    action: doDeposit.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -182,7 +182,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const withdraw = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
-    action: doWithdraw,
+    action: doWithdraw.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -190,7 +190,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const craft = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat c' : 'C'}raft ${quantity} x ${code}`,
-    action: doCraft,
+    action: doCraft.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -198,7 +198,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const unEquip = useQueueableAction({
     label: ({ slot, quantity, requeue }) => `${requeue ? 'Repeat u' : 'U'}nequip ${quantity} x ${slot}`,
-    action: doUnEquip,
+    action: doUnEquip.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -207,7 +207,7 @@ const useCharacterActionsContext = (name: string | null) => {
   const equip = useQueueableAction({
     label: ({ code, slot, quantity, requeue }) =>
       `${requeue ? 'Repeat e' : 'E'}quip ${quantity} x ${code} into ${slot}`,
-    action: doEquip,
+    action: doEquip.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -215,7 +215,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const depositGold = useQueueableAction({
     label: ({ quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x gold`,
-    action: doDepositGold,
+    action: doDepositGold.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -223,7 +223,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const withdrawGold = useQueueableAction({
     label: ({ quantity, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x gold`,
-    action: doWithdrawGold,
+    action: doWithdrawGold.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -231,7 +231,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const taskTrade = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat t' : 'T'}rade ${quantity} x ${code} to task master`,
-    action: doTaskTrade,
+    action: doTaskTrade.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -239,7 +239,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const buyItem = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat b' : 'B'}uy ${quantity} x ${code}`,
-    action: doBuyItem,
+    action: doBuyItem.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -247,7 +247,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const sellItem = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat s' : 'S'}ell ${quantity} x ${code}`,
-    action: doSellItem,
+    action: doSellItem.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -255,7 +255,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const recycleItem = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat r' : 'R'}ecycle ${quantity} x ${code}`,
-    action: doRecycleItem,
+    action: doRecycleItem.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -263,7 +263,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const deleteItem = useQueueableAction({
     label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}elete ${quantity} x ${code}`,
-    action: doDeleteItem,
+    action: doDeleteItem.mutateAsync,
     onSuccess,
     onError,
     queueAction,
@@ -333,7 +333,7 @@ const useCharacterActionsContext = (name: string | null) => {
       const action = async () => {
         const before = await refetch()
         try {
-          const result = await doFight()
+          const result = await doFight.mutateAsync()
           const hpLost = (before.data?.hp || 0) - result.character.hp
           if (params?.requeue) {
             if (result.character.hp - hpLost * 1.5 > 0) {
@@ -367,7 +367,7 @@ const useCharacterActionsContext = (name: string | null) => {
       requeue,
     }: { item: components['schemas']['ItemSchema']; quantity: number } & QueueParams) => {
       const action = async () => {
-        let result: Awaited<ReturnType<typeof doConsumeItem>> | null
+        let result: Awaited<ReturnType<typeof doConsumeItem.mutateAsync>> | null
         let toConsume = quantity
         if (item.effects?.some((effect) => effect.code === 'heal')) {
           const current = await refetch()
@@ -376,7 +376,7 @@ const useCharacterActionsContext = (name: string | null) => {
             const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
             toConsume = Math.min(quantity, fullHealQuantity)
             try {
-              result = await doConsumeItem({ code: item.code, quantity: toConsume })
+              result = await doConsumeItem.mutateAsync({ code: item.code, quantity: toConsume })
             } catch (err) {
               if (err instanceof Error && err.message) onError(err.message)
               return null
@@ -386,7 +386,7 @@ const useCharacterActionsContext = (name: string | null) => {
           }
         } else {
           try {
-            result = await doConsumeItem({ code: item.code, quantity: quantity })
+            result = await doConsumeItem.mutateAsync({ code: item.code, quantity: quantity })
           } catch (err) {
             if (err instanceof Error && err.message) onError(err.message)
             return null
