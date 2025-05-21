@@ -1,12 +1,12 @@
 import { faMagnifyingGlass, faUserLargeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap'
 import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import { useMonster } from '../../../artifactsmmo-client/hooks/use-monster.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
+import { useItemModal } from '../../../hooks/use-item-modal.ts'
 import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
-import { ItemModalContext } from '../../../utils/contexts/modal/context.ts'
 
 const SkillBar = ({
   skill,
@@ -37,7 +37,7 @@ interface SlotProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Slot = ({ slot, ...rest }: SlotProps) => {
-  const { handleShow } = useContext(ItemModalContext)
+  const { handleShow } = useItemModal()
   const {
     character,
     actions: { unEquip },

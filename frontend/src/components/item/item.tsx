@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
-import React, { useContext } from 'react'
+import React from 'react'
 import { Placeholder } from 'react-bootstrap'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
-import { ItemModalContext } from '../../utils/contexts/modal/context.ts'
+import { useItemModal } from '../../hooks/use-item-modal.ts'
 
 interface Props {
   code: string
@@ -12,7 +12,7 @@ interface Props {
 
 const Item = ({ code, imgProps = { height: 25 }, useHistory = false }: Props) => {
   const { data: item } = useItem({ code })
-  const { handleShow } = useContext(ItemModalContext)
+  const { handleShow } = useItemModal()
 
   if (!item)
     return (

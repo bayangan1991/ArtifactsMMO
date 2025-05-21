@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Badge, Button, Col, Form, ListGroup, Modal, Row } from 'react-bootstrap'
 import { useItems } from '../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { ItemModalContext } from '../../utils/contexts/modal/context.ts'
+import { useItemModal } from '../../hooks/use-item-modal.ts'
 import { CharacterEffect } from '../character-effect/character-effect.tsx'
 import { Item } from '../item/item.tsx'
 import { Pagination } from '../pagination/pagination.tsx'
@@ -25,7 +25,7 @@ const FormFieldRow = ({ label, value }: { label: React.ReactNode; value: string 
 )
 
 const ItemModal = ({ show, item, handleClose }: Props) => {
-  const { goBack } = useContext(ItemModalContext)
+  const { goBack } = useItemModal()
   const {
     query: { data },
     pagination,
