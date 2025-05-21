@@ -2,12 +2,11 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Temporal } from '@js-temporal/polyfill'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Button, Col, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { BUILD_TIME } from '../../build-time.ts'
-import { AccountContext } from '../../utils/contexts/accounts/context.ts'
-import type { Account } from '../../utils/contexts/accounts/types.ts'
+import { type Account, useAccounts } from '../../hooks/use-accounts.ts'
 
 interface Props {
   show: boolean
@@ -16,7 +15,7 @@ interface Props {
 
 const AccountsModal = ({ show, handleClose }: Props) => {
   const navigate = useNavigate()
-  const { accounts, save } = useContext(AccountContext)
+  const { accounts, save } = useAccounts()
   const [currentAccounts, setCurrentAccounts] = useState<Account[]>(accounts)
   const { accountName } = useParams({ strict: false })
   const [selectedAccount, setSelectedAccount] = useState<string | null>(accountName || accounts[0]?.name || null)

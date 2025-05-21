@@ -6,17 +6,16 @@ import { Button, Container, Navbar } from 'react-bootstrap'
 import { ApiClientProvider, useApiClientContext } from './artifactsmmo-client/hooks/use-api-client.ts'
 import { AccountsModal } from './components/modals/accounts-modal.tsx'
 import { ItemModal } from './components/modals/item-modal.tsx'
+import { AccountsProvider, useAccountsContext } from './hooks/use-accounts.ts'
 import { ItemModalProvider, useItemModalContext } from './hooks/use-item-modal.ts'
 import { NoAccountPage } from './pages/no-account-page.tsx'
-import { AccountContext } from './utils/contexts/accounts/context.ts'
-import { useAccounts } from './utils/contexts/accounts/hooks.ts'
 
 const queryClient = new QueryClient()
 
 const App = () => {
   const { accountName } = useParams({ strict: false })
   const [showAccountsModal, setShowAccountsModal] = useState<boolean>(false)
-  const accountContext = useAccounts()
+  const accountContext = useAccountsContext()
   const activeAccount = accountContext.findAccount(accountName)
   const apiClientContext = useApiClientContext(activeAccount?.apiKey)
   const itemModalContext = useItemModalContext()
@@ -24,7 +23,7 @@ const App = () => {
   return (
     <ApiClientProvider value={apiClientContext}>
       <QueryClientProvider client={queryClient}>
-        <AccountContext.Provider value={accountContext}>
+        <AccountsProvider value={accountContext}>
           <ItemModalProvider value={itemModalContext}>
             <Navbar bg="black" fixed="top">
               <Container fluid className="gap-2">
@@ -65,7 +64,7 @@ const App = () => {
               </Container>
             )}
           </ItemModalProvider>
-        </AccountContext.Provider>
+        </AccountsProvider>
       </QueryClientProvider>
     </ApiClientProvider>
   )
