@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { Button, Dropdown, Form, InputGroup } from 'react-bootstrap'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
 import type { components } from '../../artifactsmmo-client/spec'
-import { useCharacterContext } from '../../utils/contexts/character/context.ts'
+
+import {useCharacterActions} from "../../hooks/use-character-actions.ts";
 
 type SlotItemType =
   | 'weapon'
@@ -47,7 +48,7 @@ interface Props {
 export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
   const {
     actions: { equip, consumeItem, recycleItem, deleteItem },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const { data: item } = useItem({ code })
   const [selectedQuantity, setSelectedQuantity] = useState(Math.min(quantity, max))
 

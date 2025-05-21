@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { useActions } from '../artifactsmmo-client/hooks/use-actions.ts'
 import { useStatus } from '../artifactsmmo-client/hooks/use-status.ts'
 import type { components } from '../artifactsmmo-client/spec'
@@ -18,7 +18,7 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
-const useCharacterActions = (name: string | null) => {
+const useCharacterActionsContext = (name: string | null) => {
   const { client } = useApiClient()
   const {
     data: { timeDiff },
@@ -538,4 +538,68 @@ const useCharacterActions = (name: string | null) => {
     forceUpdate,
   }
 }
-export { useCharacterActions, Status }
+
+interface CharacterActionsContextType {
+  character: components['schemas']['CharacterSchema'] | null
+  actions: {
+    move(args: { pos: Position } & QueueParams): void
+    rest(args?: QueueParams): void
+    fight(args?: QueueParams): void
+    deposit(args: { code: string; quantity: number } & QueueParams): void
+    withdraw(args: { code: string; quantity: number } & QueueParams): void
+    gathering(args?: QueueParams): void
+    craft(args: { code: string; quantity: number } & QueueParams): void
+    unEquip(args: { slot: components['schemas']['ItemSlot']; quantity: number } & QueueParams): void
+    equip(
+      args: {
+        code: string
+        slot: components['schemas']['ItemSlot']
+        quantity: number
+      } & QueueParams
+    ): void
+    buyExpansion(args?: QueueParams): void
+    withdrawGold(args: { quantity: number } & QueueParams): void
+    depositGold(args: { quantity: number } & QueueParams): void
+    taskAccept(args?: QueueParams): void
+    taskTrade(args: { code: string; quantity: number } & QueueParams): void
+    taskComplete(args?: QueueParams): void
+    taskExchange(args?: QueueParams): void
+    taskAbandon(args?: QueueParams): void
+    buyItem(args: { code: string; quantity: number } & QueueParams): void
+    sellItem(args: { code: string; quantity: number } & QueueParams): void
+    recycleItem(args: { code: string; quantity: number } & QueueParams): void
+    deleteItem(args: { code: string; quantity: number } & QueueParams): void
+    consumeItem(
+      args: {
+        item: components['schemas']['ItemSchema']
+        quantity: number
+      } & QueueParams
+    ): void
+    smartCraft(
+      args: { item: components['schemas']['ItemSchema']; workshop: Position; quantity?: number } & QueueParams
+    ): void
+    depositAll(args: { pos: Position; returnToPos?: boolean; ifFull?: boolean } & QueueParams): void
+  }
+  lastAction: ActionData | null
+  error: string | null
+  status: Status
+  timeUntilReady: Temporal.Duration | null
+  actionQueue: Stack<Queue<ActionData>>
+
+  togglePause(): void
+
+  forceUpdate(): void
+}
+
+const CharacterActionsContext = React.createContext<CharacterActionsContextType | undefined>(undefined)
+const CharacterActionsProvider = CharacterActionsContext.Provider
+
+const useCharacterActions = () => {
+  const context = React.useContext(CharacterActionsContext)
+  if (!context) {
+    throw new Error('useCharacterContext must be used within a CharacterProvider')
+  }
+  return context
+}
+
+export { CharacterActionsProvider, useCharacterActionsContext, Status, useCharacterActions }

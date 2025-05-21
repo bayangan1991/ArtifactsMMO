@@ -5,7 +5,6 @@ import { Accordion, Button, Card, Form, InputGroup, Nav } from 'react-bootstrap'
 import { useMaps } from '../../artifactsmmo-client/hooks/use-maps.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 import { MAP_CONTENT_TYPES } from '../../constants.ts'
-import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { BankDetail } from './detail/bank-detail.tsx'
 import { CraftDetail } from './detail/craft-detail.tsx'
@@ -13,12 +12,13 @@ import { MonsterDetail } from './detail/monster-detail.tsx'
 import { NpcDetail } from './detail/npc-detail.tsx'
 import { ResourceDetail } from './detail/resource-detail.tsx'
 import { TasksMasterDetail } from './detail/tasks-master-detail.tsx'
+import {useCharacterActions} from "../../hooks/use-character-actions.ts";
 
 const ActionCard = () => {
   const {
     character,
     actions: { move },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const currentPosition = character ? { x: character.x, y: character.y } : { x: 0, y: 0 }
 
   const [targetMap, setTargetMap] = useState<components['schemas']['MapSchema'] | null>(null)

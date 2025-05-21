@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Button, ButtonGroup, Dropdown, Form, InputGroup, Stack } from 'react-bootstrap'
 import { useBankDetails } from '../../../artifactsmmo-client/hooks/use-bank-details.ts'
 import type { Position } from '../../../types.ts'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
+
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const BankGoldAction = ({
   action,
@@ -31,7 +32,7 @@ const BankDetail = ({ pos }: { pos: Position }) => {
   const {
     character,
     actions: { depositAll, buyExpansion, depositGold, withdrawGold },
-  } = useCharacterContext()
+  } = useCharacterActions()
 
   return (
     <Stack gap={2}>

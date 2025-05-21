@@ -6,14 +6,15 @@ import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import { useMonster } from '../../../artifactsmmo-client/hooks/use-monster.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
 import { useItemModal } from '../../../hooks/use-item-modal.ts'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
+
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const SkillBar = ({
   skill,
 }: {
   skill: components['schemas']['Skill']
 }) => {
-  const { character } = useCharacterContext()
+  const { character } = useCharacterActions()
 
   if (!character) return
 
@@ -41,7 +42,7 @@ const Slot = ({ slot, ...rest }: SlotProps) => {
   const {
     character,
     actions: { unEquip },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const slotName: `${components['schemas']['ItemSlot']}_slot` = `${slot}_slot`
   const slotItem = character ? character[slotName] : null
   const { data: item } = useItem({ code: slotItem })
@@ -82,7 +83,7 @@ const TaskDetail = () => {
   const {
     character,
     actions: { taskAbandon },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const { data: monster } = useMonster({ code: character?.task })
   const { data: item } = useItem({ code: character?.task })
 

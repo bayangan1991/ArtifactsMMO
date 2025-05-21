@@ -4,15 +4,15 @@ import { useState } from 'react'
 import { Badge, Button, Form, InputGroup, ListGroup } from 'react-bootstrap'
 import { useNpcItems } from '../../../artifactsmmo-client/hooks/use-npc-items.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const BuyItemControl = ({ item }: { item: components['schemas']['NPCItem'] }) => {
   const [quantity, setQuantity] = useState(1)
   const {
     actions: { buyItem, sellItem },
-  } = useCharacterContext()
+  } = useCharacterActions()
 
   return (
     <InputGroup size="sm">

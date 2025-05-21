@@ -6,15 +6,15 @@ import { useItem } from '../../../artifactsmmo-client/hooks/use-item.ts'
 import { useItems } from '../../../artifactsmmo-client/hooks/use-items.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
 import type { Position } from '../../../types.ts'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const CraftControl = ({ code, workshop }: { code: string; workshop: Position }) => {
   const [quantity, setQuantity] = useState(1)
   const {
     actions: { smartCraft },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const { data: item } = useItem({ code })
 
   return (

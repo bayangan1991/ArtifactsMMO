@@ -4,7 +4,7 @@ import React from 'react'
 import { useMemo } from 'react'
 import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
-import { Status } from '../../hooks/use-character-actions.ts'
+import {Status, useCharacterActions} from '../../hooks/use-character-actions.ts'
 import '@formatjs/intl-durationformat/polyfill'
 import { StatusColour } from '../../constants.ts'
 import type {
@@ -16,7 +16,6 @@ import type {
   RestData,
   SkillData,
 } from '../../types.ts'
-import { useCharacterContext } from '../../utils/contexts/character/context.ts'
 import { isActionType } from '../../utils/is-action-type.ts'
 import { Item } from '../item/item.tsx'
 
@@ -29,7 +28,7 @@ const CharacterCard = () => {
     error,
     togglePause,
     status,
-  } = useCharacterContext()
+  } = useCharacterActions()
 
   const { data: map } = useMap(character ? { x: character.x, y: character.y } : undefined)
 

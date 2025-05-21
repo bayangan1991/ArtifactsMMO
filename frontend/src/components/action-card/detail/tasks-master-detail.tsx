@@ -1,11 +1,12 @@
 import { Button, Stack } from 'react-bootstrap'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
+
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const TasksMasterDetail = () => {
   const {
     character,
     actions: { taskAccept, taskComplete, taskExchange, taskTrade },
-  } = useCharacterContext()
+  } = useCharacterActions()
 
   const taskItemQuantity = Math.min(
     character?.inventory?.reduce((acc, item) => {

@@ -3,16 +3,16 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
 import { Card, Form, Table } from 'react-bootstrap'
 import { useBankDetails } from '../../../artifactsmmo-client/hooks/use-bank-details.ts'
 import { useBankItems } from '../../../artifactsmmo-client/hooks/use-bank-items.ts'
-import { useCharacterContext } from '../../../utils/contexts/character/context.ts'
 import { Item } from '../../item/item.tsx'
 import { Pagination } from '../../pagination/pagination.tsx'
 import { ItemActionGroup } from '../item-action-group.tsx'
+import {useCharacterActions} from "../../../hooks/use-character-actions.ts";
 
 const Bank = () => {
   const {
     character,
     actions: { withdraw },
-  } = useCharacterContext()
+  } = useCharacterActions()
   const { data: bankDetails } = useBankDetails()
   const {
     query: { data: bankItems },
