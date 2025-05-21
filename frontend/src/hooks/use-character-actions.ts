@@ -1,10 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill'
+import { useQueryClient } from '@tanstack/react-query'
 import { Guid } from 'guid-typescript'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { useActions } from '../artifactsmmo-client/hooks/use-actions.ts'
-import { useStatus } from '../artifactsmmo-client/hooks/use-status.ts'
+import { characterKey, useCharacter } from '../artifactsmmo-client/hooks/use-character.ts'
 import type { components } from '../artifactsmmo-client/spec'
-import { useApiClient } from '../artifactsmmo-client/use-api-client/use-api-client.ts'
 import type { ActionData, Position, Queue, QueueParams } from '../types.ts'
 import { Stack } from '../utils/stack.ts'
 import { useInterval } from './use-interval.ts'
@@ -19,11 +19,7 @@ enum Status {
 }
 
 const useCharacterActionsContext = (name: string | null) => {
-  const { client } = useApiClient()
-  const {
-    data: { timeDiff },
-  } = useStatus()
-  const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
+  const queryClient = useQueryClient()
   const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
   const [lastAction, setLastAction] = useState<ActionData | null>(null)
@@ -34,32 +30,7 @@ const useCharacterActionsContext = (name: string | null) => {
   const [_, forceUpdate] = useReducer((x) => x + 1, 0)
 
   // Character Data
-
-  const refetch = useCallback(() => {
-    if (name)
-      return client.GET('/characters/{name}', { params: { path: { name } } }).then(({ data: result }) => {
-        if (result) {
-          setCharacter(result.data)
-          if (result.data?.cooldown_expiration) {
-            const newCooldown = Temporal.Instant.from(result.data.cooldown_expiration).add(timeDiff)
-            setCooldown(newCooldown)
-            const ready = Temporal.Instant.compare(Temporal.Now.instant(), newCooldown) > -1
-            setStatus((currentStatus) => {
-              if (ready) {
-                if ([Status.Paused, Status.Waiting].includes(currentStatus)) return currentStatus
-                return Status.Ready
-              }
-              return Status.Cooldown
-            })
-          }
-        }
-        return result
-      })
-  }, [client, name, timeDiff])
-
-  useEffect(() => {
-    if (name) refetch()
-  }, [name, refetch])
+  const { data: character, refetch } = useCharacter({ name })
 
   // State management
 
@@ -137,13 +108,16 @@ const useCharacterActionsContext = (name: string | null) => {
     [actionQueue]
   )
 
-  const onSuccess = useCallback((data: ActionData) => {
-    setStatus(Status.Cooldown)
-    setCooldown(Temporal.Instant.from(data.cooldown.expiration))
-    setLastAction(data)
-    setError(null)
-    setCharacter(data.character)
-  }, [])
+  const onSuccess = useCallback(
+    (data: ActionData) => {
+      setStatus(Status.Cooldown)
+      setCooldown(Temporal.Instant.from(data.cooldown.expiration))
+      setLastAction(data)
+      setError(null)
+      queryClient.setQueryData([characterKey, name], data.character)
+    },
+    [queryClient.setQueryData, name]
+  )
 
   const onError = useCallback((error: string) => {
     setLastAction(null)
@@ -339,7 +313,7 @@ const useCharacterActionsContext = (name: string | null) => {
         const before = await refetch()
         try {
           const result = await doFight()
-          const hpLost = (before?.data.hp || 0) - result.character.hp
+          const hpLost = (before.data?.hp || 0) - result.character.hp
           if (params?.requeue) {
             if (result.character.hp - hpLost * 1.5 > 0) {
               fight({ queueIndex: 0, requeue: params?.requeue })
@@ -376,7 +350,7 @@ const useCharacterActionsContext = (name: string | null) => {
         let toConsume = quantity
         if (item.effects?.some((effect) => effect.code === 'heal')) {
           const current = await refetch()
-          if (current) {
+          if (current.data) {
             const missingHp = current.data.max_hp - current.data.hp
             const fullHealQuantity = Math.ceil(missingHp / item.effects[0].value)
             toConsume = Math.min(quantity, fullHealQuantity)
@@ -427,7 +401,7 @@ const useCharacterActionsContext = (name: string | null) => {
         if (!item.craft || !item?.craft.items) return null
         const itemCount = item.craft.items.reduce((count, component) => count + component.quantity, 0)
         const data = await refetch()
-        if (!itemCount || !data) return null
+        if (!itemCount || !data.data) return null
         const craftAmount = quantity || Math.floor(data.data.inventory_max_items / itemCount)
         item.craft.items.map((component) => {
           withdraw({ code: component.code, quantity: component.quantity * craftAmount, queueIndex: 0 })
@@ -462,7 +436,7 @@ const useCharacterActionsContext = (name: string | null) => {
       const action = async () => {
         const data = await refetch()
 
-        if (ifFull && data?.data.inventory) {
+        if (ifFull && data.data?.inventory) {
           const { usedSlots, usedInventory } = data.data.inventory.reduce(
             (curr, slot) => {
               return {
@@ -480,8 +454,8 @@ const useCharacterActionsContext = (name: string | null) => {
         }
 
         move({ pos, queueIndex: 0 })
-        if (returnToPos) move({ pos: { x: data?.data.x || 0, y: data?.data.y || 0 }, queueIndex: 1 })
-        for (const slot of data?.data.inventory || []) {
+        if (returnToPos) move({ pos: { x: data.data?.x || 0, y: data.data?.y || 0 }, queueIndex: 1 })
+        for (const slot of data.data?.inventory || []) {
           if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
         }
         if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
