@@ -1,15 +1,15 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext, useEffect, useState } from 'react'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
+
+const key = 'npcItems'
 
 interface Params {
-  npc: string
-  size?: number
+  npc?: string | null
 }
 
-const useNpcItems = ({ npc, size = 10 }: Params) => {
+const useNpcItems = ({ npc }: Params) => {
   const { client } = useContext(ApiClientContext)
-  const [items, setItems] = useState<components['schemas']['DataPage_NPCItem_'] | null>(null)
 
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)
@@ -19,21 +19,19 @@ const useNpcItems = ({ npc, size = 10 }: Params) => {
     setPage(1)
   }, [npc])
 
-  const handleSetPage = useCallback(
-    (page: number) => setPage(Math.max(1, Math.min(page, items?.pages || 1))),
-    [items?.pages]
-  )
+  const query = useQuery({
+    queryKey: [key, { npc, page }],
+    queryFn: async () => {
+      if (!npc) return
+      const result = await client.GET('/npcs/{code}/items', {
+        params: { path: { code: npc }, query: { page, size: 10 } },
+      })
+      setPages(result.data?.pages || null)
+      return result.data || null
+    },
+  })
 
-  useEffect(() => {
-    client.GET('/npcs/{code}/items', { params: { path: { code: npc }, query: { page, size } } }).then((response) => {
-      if (response.data) {
-        setItems(response.data)
-        setPages(response.data.pages || null)
-      } else setItems(null)
-    })
-  }, [client, npc, page, size])
-
-  return { items, pagination: { setPage: handleSetPage, page, pages } }
+  return { query, pagination: { setPage, page, pages } }
 }
 
 export { useNpcItems }

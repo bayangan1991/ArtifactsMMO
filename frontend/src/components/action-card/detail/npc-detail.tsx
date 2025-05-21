@@ -34,7 +34,10 @@ const BuyItemControl = ({ item }: { item: components['schemas']['NPCItem'] }) =>
 }
 
 const NpcDetail = ({ npc }: { npc: string }) => {
-  const { items, pagination } = useNpcItems({ npc })
+  const {
+    query: { data: items },
+    pagination,
+  } = useNpcItems({ npc })
 
   return (
     <>
