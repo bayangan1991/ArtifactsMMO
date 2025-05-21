@@ -1,9 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { useQueryClient } from '@tanstack/react-query'
 import { Guid } from 'guid-typescript'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { useActions } from '../artifactsmmo-client/hooks/use-actions.ts'
-import { characterKey, useCharacter } from '../artifactsmmo-client/hooks/use-character.ts'
+import { useCharacter } from '../artifactsmmo-client/hooks/use-character.ts'
 import { useStatus } from '../artifactsmmo-client/hooks/use-status.ts'
 import type { components } from '../artifactsmmo-client/spec'
 import type { ActionData, Position, Queue, QueueParams } from '../types.ts'
@@ -20,7 +19,6 @@ enum Status {
 }
 
 const useCharacterActionsContext = (name: string | null) => {
-  const queryClient = useQueryClient()
   const {
     data: { timeDiff },
   } = useStatus()
@@ -129,16 +127,12 @@ const useCharacterActionsContext = (name: string | null) => {
     [actionQueue]
   )
 
-  const onSuccess = useCallback(
-    (data: ActionData) => {
-      setStatus(Status.Cooldown)
-      setCooldown(Temporal.Instant.from(data.cooldown.expiration))
-      setLastAction(data)
-      setError(null)
-      queryClient.setQueryData([characterKey, name], data.character)
-    },
-    [queryClient.setQueryData, name]
-  )
+  const onSuccess = useCallback((data: ActionData) => {
+    setStatus(Status.Cooldown)
+    setCooldown(Temporal.Instant.from(data.cooldown.expiration))
+    setLastAction(data)
+    setError(null)
+  }, [])
 
   const onError = useCallback((error: string) => {
     setLastAction(null)

@@ -4,7 +4,7 @@ import type { components } from '../spec'
 import { useApiClient } from '../use-api-client/use-api-client.ts'
 import { characterKey } from './use-character.ts'
 
-const useActions = (name: string | null | undefined) => {
+const useActions = (name?: string | null) => {
   const queryClient = useQueryClient()
   const { client } = useApiClient()
 
