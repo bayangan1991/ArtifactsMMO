@@ -4,6 +4,7 @@ import { Guid } from 'guid-typescript'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { useActions } from '../artifactsmmo-client/hooks/use-actions.ts'
 import { characterKey, useCharacter } from '../artifactsmmo-client/hooks/use-character.ts'
+import { useStatus } from '../artifactsmmo-client/hooks/use-status.ts'
 import type { components } from '../artifactsmmo-client/spec'
 import type { ActionData, Position, Queue, QueueParams } from '../types.ts'
 import { Stack } from '../utils/stack.ts'
@@ -20,6 +21,9 @@ enum Status {
 
 const useCharacterActionsContext = (name: string | null) => {
   const queryClient = useQueryClient()
+  const {
+    data: { timeDiff },
+  } = useStatus()
   const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)
   const [lastAction, setLastAction] = useState<ActionData | null>(null)
@@ -33,6 +37,23 @@ const useCharacterActionsContext = (name: string | null) => {
   const { data: character, refetch } = useCharacter({ name })
 
   // State management
+
+  // Check if ready
+  const checkReady = useCallback(() => {
+    if (character?.cooldown_expiration) {
+      const newCooldown = Temporal.Instant.from(character.cooldown_expiration).add(timeDiff)
+      setCooldown(newCooldown)
+      const ready = Temporal.Instant.compare(Temporal.Now.instant(), newCooldown) > -1
+      setStatus((currentStatus) => {
+        if (ready) {
+          if ([Status.Paused, Status.Waiting].includes(currentStatus)) return currentStatus
+          return Status.Ready
+        }
+        return Status.Cooldown
+      })
+    }
+  }, [character, timeDiff])
+  useInterval(checkReady, 1000)
 
   // Update timeUntilReady
   const onTick = useCallback(() => {
@@ -57,9 +78,9 @@ const useCharacterActionsContext = (name: string | null) => {
   )
   // Set status to ready
   // We don't do this above as we want to guarantee state
-  const pollCooldown = useCallback(() => {
+  const pollCooldown = useCallback(async () => {
     if (cooldownExpiration === null && status === Status.Cooldown) {
-      refetch()
+      await refetch()
     }
   }, [cooldownExpiration, refetch, status])
   useInterval(pollCooldown, 5000)
@@ -145,7 +166,7 @@ const useCharacterActionsContext = (name: string | null) => {
 
   const move = useQueueableAction({
     label: ({ pos, requeue }) => `${requeue ? 'Repeat m' : 'M'}ove to ${pos.x},${pos.y}`,
-    action: doMove,
+    action: doMove.mutateAsync,
     onSuccess,
     onError,
     queueAction,

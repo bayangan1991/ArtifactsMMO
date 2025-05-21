@@ -1,14 +1,17 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import type { Position } from '../../types.ts'
 import type { components } from '../spec'
 import { useApiClient } from '../use-api-client/use-api-client.ts'
+import { characterKey } from './use-character.ts'
 
 const useActions = (name: string | null | undefined) => {
+  const queryClient = useQueryClient()
   const { client } = useApiClient()
 
-  const doMove = useCallback(
-    async ({ pos }: { pos: Position }) => {
-      if (!name) throw new Error('Function not implemented.')
+  const doMove = useMutation({
+    mutationFn: async ({ pos }: { pos: Position }) => {
+      if (!name) throw new Error('Specify name before calling action')
       const { data, error } = await client.POST('/my/{name}/action/move', {
         body: pos,
         params: {
@@ -16,13 +19,13 @@ const useActions = (name: string | null | undefined) => {
         },
       })
       if (data?.data) {
+        queryClient.setQueryData([characterKey, name], data.data.character)
         return data.data
       }
       // @ts-ignore
       throw new Error(error?.error.message || 'unknown error')
     },
-    [client, name]
-  )
+  })
 
   const doFight = useCallback(async () => {
     if (!name) throw new Error('Function not implemented.')
