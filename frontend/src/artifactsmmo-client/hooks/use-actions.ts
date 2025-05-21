@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import type { Position } from '../../types.ts'
 import type { components } from '../spec'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 const useActions = (name: string | null | undefined) => {
   const { client } = useApiClient()

@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import type { operations } from '../spec'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 import { itemKey } from './use-item.ts'
 
 const key = 'items'

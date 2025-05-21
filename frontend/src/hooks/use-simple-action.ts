@@ -1,9 +1,9 @@
 import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback } from 'react'
-import type { ActionData, Queue, QueueParams } from '../../types.ts'
-import type { paths } from '../spec'
-import { useApiClient } from './use-api-client.ts'
+import type { paths } from '../artifactsmmo-client/spec'
+import { useApiClient } from '../artifactsmmo-client/use-api-client/use-api-client.ts'
+import type { ActionData, Queue, QueueParams } from '../types.ts'
 
 interface UseSimpleActionParams<T> {
   name: string | null

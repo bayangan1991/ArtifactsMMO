@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 const key = 'status'
 

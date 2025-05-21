@@ -1,5 +1,5 @@
-import { Status } from './artifactsmmo-client/hooks/use-character.ts'
 import type { components } from './artifactsmmo-client/spec'
+import { Status } from './hooks/use-character-actions.ts'
 
 export const MAP_CONTENT_TYPES: Record<components['schemas']['MapContentType'], string> = {
   monster: 'Monster',

@@ -1,6 +1,6 @@
 import { Guid } from 'guid-typescript'
 import { useCallback } from 'react'
-import type { ActionData, Queue, QueueParams } from '../../types.ts'
+import type { ActionData, Queue, QueueParams } from '../types.ts'
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type ActionType = (...[args]: any[]) => Promise<ActionData>

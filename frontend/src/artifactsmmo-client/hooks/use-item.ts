@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 interface Params {
   code?: string | null

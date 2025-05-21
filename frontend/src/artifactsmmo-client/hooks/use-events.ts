@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import type { components } from '../spec'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 interface Params {
   currentPosition?: Position

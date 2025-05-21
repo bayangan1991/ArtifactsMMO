@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import type { operations } from '../spec'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 const key = 'maps'
 

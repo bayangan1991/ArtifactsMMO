@@ -1,7 +1,7 @@
 import type { Temporal } from '@js-temporal/polyfill'
 import React from 'react'
-import type { Status } from '../../../artifactsmmo-client/hooks/use-character.ts'
 import type { components } from '../../../artifactsmmo-client/spec'
+import type { Status } from '../../../hooks/use-character-actions.ts'
 import type { ActionData, Position, Queue, QueueParams } from '../../../types.ts'
 import type { Stack } from '../../stack.ts'
 

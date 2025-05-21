@@ -1,15 +1,15 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { Guid } from 'guid-typescript'
 import { useCallback, useEffect, useReducer, useState } from 'react'
-import { useInterval } from '../../hooks/use-interval.ts'
-import type { ActionData, Position, Queue, QueueParams } from '../../types.ts'
-import { Stack } from '../../utils/stack.ts'
-import type { components } from '../spec'
-import { useActions } from './use-actions.ts'
-import { useApiClient } from './use-api-client.ts'
+import { useActions } from '../artifactsmmo-client/hooks/use-actions.ts'
+import { useStatus } from '../artifactsmmo-client/hooks/use-status.ts'
+import type { components } from '../artifactsmmo-client/spec'
+import { useApiClient } from '../artifactsmmo-client/use-api-client/use-api-client.ts'
+import type { ActionData, Position, Queue, QueueParams } from '../types.ts'
+import { Stack } from '../utils/stack.ts'
+import { useInterval } from './use-interval.ts'
 import { useQueueableAction } from './use-queuable-action.ts'
 import { useSimpleAction } from './use-simple-action.ts'
-import { useStatus } from './use-status.ts'
 
 enum Status {
   Ready = 'ready', // Ready to do the next action
@@ -18,7 +18,7 @@ enum Status {
   Cooldown = 'cooldown', // Currently in cooldown
 }
 
-const useCharacter = (name: string | null) => {
+const useCharacterActions = (name: string | null) => {
   const { client } = useApiClient()
   const {
     data: { timeDiff },
@@ -538,4 +538,4 @@ const useCharacter = (name: string | null) => {
     forceUpdate,
   }
 }
-export { useCharacter, Status }
+export { useCharacterActions, Status }

@@ -1,5 +1,5 @@
 import { Col, Container, Row } from 'react-bootstrap'
-import { useCharacter } from '../../artifactsmmo-client/hooks/use-character.ts'
+import { useCharacterActions } from '../../hooks/use-character-actions.ts'
 import { CharacterContextProvider } from '../../utils/contexts/character/context.ts'
 import { ActionCard } from '../action-card/action-card.tsx'
 import { ActionQueueCard } from '../action-queue-card/action-queue-card.tsx'
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const CharacterView = ({ characterName }: Props) => {
-  const character = useCharacter(characterName || null)
+  const character = useCharacterActions(characterName || null)
 
   return (
     <CharacterContextProvider value={character}>

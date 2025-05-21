@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type { Position } from '../../types.ts'
-import { useApiClient } from './use-api-client.ts'
+import { useApiClient } from '../use-api-client/use-api-client.ts'
 
 const key = 'map'
 
