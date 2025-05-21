@@ -1,23 +1,29 @@
-import { useContext, useEffect, useReducer } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
 
-const useResource = (code: string) => {
-  const { client, getCache } = useContext(ApiClientContext)
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
+const key = 'resource'
 
-  const cache = getCache<components['schemas']['ResourceSchema']>('resources')
+interface Params {
+  code?: string | null
+}
 
-  useEffect(() => {
-    client.GET('/resources/{code}', { params: { path: { code } } }).then((result) => {
-      if (result.data) {
-        cache[code] = result.data.data
-        forceUpdate()
-      }
-    })
-  }, [client, code, cache])
+const useResource = ({ code }: Params) => {
+  const { client } = useContext(ApiClientContext)
 
-  return cache[code]
+  return useQuery({
+    queryKey: [key, code],
+    queryFn: async () => {
+      if (!code) return
+      const result = await client.GET('/resources/{code}', { params: { path: { code } } })
+      return result.data?.data || null
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    enabled: !!code,
+  })
 }
 
 export { useResource }

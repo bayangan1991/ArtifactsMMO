@@ -3,7 +3,7 @@ import { useResource } from '../../../artifactsmmo-client/hooks/use-resource.ts'
 import { Item } from '../../item/item.tsx'
 
 const ResourceDetail = ({ code }: { code: string }) => {
-  const resource = useResource(code)
+  const { data: resource } = useResource({ code })
 
   if (!resource) return null
 
