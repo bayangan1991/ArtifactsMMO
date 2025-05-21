@@ -490,6 +490,8 @@ const useCharacterActionsContext = (name: string | null) => {
     [refetch, deposit, move, queueAction]
   )
 
+  if (!character) return undefined
+
   return {
     character,
     actions: {
