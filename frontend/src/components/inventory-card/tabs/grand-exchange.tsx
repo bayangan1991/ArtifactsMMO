@@ -28,7 +28,7 @@ const GrandExchange = () => {
             </tr>
           </thead>
           <tbody>
-            {grandExchange.data?.map((item) => (
+            {grandExchange.data?.data.map((item) => (
               <tr key={item.id}>
                 <td>
                   <Item code={item.code} />

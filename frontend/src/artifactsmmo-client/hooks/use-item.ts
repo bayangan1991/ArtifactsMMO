@@ -26,4 +26,4 @@ const useItem = ({ code }: Params) => {
   })
 }
 
-export { useItem }
+export { useItem, key as itemKey }

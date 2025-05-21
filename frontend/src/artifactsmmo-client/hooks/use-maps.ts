@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
 import { ApiClientContext } from '../client/context.ts'
@@ -21,7 +21,6 @@ const useMaps = ({ currentPosition, filters }: Params) => {
     queryKey: [key, { ...filters, currentPosition, page }],
     queryFn: async () => {
       const result = await client.GET('/maps', { params: { query: { page, ...filters } } })
-      setPages(result.data?.pages || null)
       if (!result.data) return
       if (!currentPosition) return result.data
       const { data, ...rest } = result.data
@@ -36,6 +35,15 @@ const useMaps = ({ currentPosition, filters }: Params) => {
       }
     },
   })
+
+  useEffect(() => {
+    setPages(query.data?.pages || null)
+  }, [query.data?.pages])
+
+  const values = Object.values(filters || {})
+  useEffect(() => {
+    setPage(1)
+  }, [...values])
 
   return { query, pagination: { page, pages, setPage } }
 }

@@ -14,11 +14,6 @@ const useNpcItems = ({ npc }: Params) => {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState<number | null>(null)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the page when the skill changes
-  useEffect(() => {
-    setPage(1)
-  }, [npc])
-
   const query = useQuery({
     queryKey: [key, { npc, page }],
     queryFn: async () => {
@@ -26,10 +21,18 @@ const useNpcItems = ({ npc }: Params) => {
       const result = await client.GET('/npcs/{code}/items', {
         params: { path: { code: npc }, query: { page, size: 10 } },
       })
-      setPages(result.data?.pages || null)
       return result.data || null
     },
   })
+
+  useEffect(() => {
+    setPages(query.data?.pages || null)
+  }, [query.data?.pages])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the page when the skill changes
+  useEffect(() => {
+    setPage(1)
+  }, [npc])
 
   return { query, pagination: { setPage, page, pages } }
 }

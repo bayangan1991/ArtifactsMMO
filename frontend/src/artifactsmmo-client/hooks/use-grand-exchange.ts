@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 import { ApiClientContext } from '../client/context.ts'
 
@@ -24,10 +24,18 @@ const useGrandExchange = () => {
       const result = await client.GET('/grandexchange/orders', {
         params: { query: { page, code: debouncedFilter || undefined } },
       })
-      setPages(result.data?.pages || null)
-      return result.data?.data || null
+      return result.data || null
     },
   })
+
+  useEffect(() => {
+    setPages(query.data?.pages || null)
+  }, [query.data?.pages])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Reset page when filter changes
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedFilter])
 
   return { query, pagination: { setPage, page, pages }, filter, setFilter: handleSetFilter }
 }
