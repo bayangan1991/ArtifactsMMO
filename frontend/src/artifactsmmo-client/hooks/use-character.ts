@@ -20,7 +20,9 @@ enum Status {
 
 const useCharacter = (name: string | null) => {
   const { client } = useContext(ApiClientContext)
-  const timeDiff = useStatus()
+  const {
+    data: { timeDiff },
+  } = useStatus()
   const [character, setCharacter] = useState<components['schemas']['CharacterSchema'] | null>(null)
   const [actionQueue] = useState<Stack<Queue<ActionData>>>(new Stack())
   const [doNextAction, setDoNextAction] = useState<boolean>(false)

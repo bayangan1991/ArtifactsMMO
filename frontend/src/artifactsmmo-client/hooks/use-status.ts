@@ -1,24 +1,25 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { useCallback, useContext, useState } from 'react'
-import { useInterval } from '../../hooks/use-interval.ts'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { ApiClientContext } from '../client/context.ts'
 
+const key = 'status'
+
 const useStatus = () => {
-  const [timeDiff, setTimeDiff] = useState<Temporal.Duration>(Temporal.Duration.from('PT10S'))
   const { client } = useContext(ApiClientContext)
-  const getTime = useCallback(() => {
-    client.GET('/').then((response) => {
-      if (response.data) {
-        const serverTime = Temporal.Instant.from(response.data.data.server_time)
-        const now = Temporal.Now.instant()
-        setTimeDiff(serverTime.until(now))
-      }
-    })
-  }, [client])
 
-  useInterval(getTime, 30_000)
-
-  return timeDiff
+  return useSuspenseQuery({
+    queryKey: [key],
+    queryFn: async () => {
+      const result = await client.GET('/')
+      if (!result.data) return { timeDiff: Temporal.Duration.from('PT10S') }
+      const serverTime = Temporal.Instant.from(result.data.data.server_time)
+      const now = Temporal.Now.instant()
+      const timeDiff = serverTime.until(now)
+      return { ...result.data.data, timeDiff }
+    },
+    refetchInterval: 30_000,
+  })
 }
 
 export { useStatus }
