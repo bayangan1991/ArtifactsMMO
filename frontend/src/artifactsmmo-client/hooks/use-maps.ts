@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import type { Position } from '../../types.ts'
 import { euclideanDistance } from '../../utils/euclidean-distance.ts'
@@ -34,6 +34,7 @@ const useMaps = ({ currentPosition, filters }: Params) => {
         ),
       }
     },
+    placeholderData: keepPreviousData,
   })
 
   useEffect(() => {

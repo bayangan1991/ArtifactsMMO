@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 import { ApiClientContext } from '../client/context.ts'
@@ -26,6 +26,7 @@ const useGrandExchange = () => {
       })
       return result.data || null
     },
+    placeholderData: keepPreviousData,
   })
 
   useEffect(() => {

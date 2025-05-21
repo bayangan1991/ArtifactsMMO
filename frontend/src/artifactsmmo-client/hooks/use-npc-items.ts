@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import { ApiClientContext } from '../client/context.ts'
 
@@ -23,6 +23,7 @@ const useNpcItems = ({ npc }: Params) => {
       })
       return result.data || null
     },
+    placeholderData: keepPreviousData,
   })
 
   useEffect(() => {

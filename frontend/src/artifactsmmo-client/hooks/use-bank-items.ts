@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 import { ApiClientContext } from '../client/context.ts'
@@ -22,10 +22,11 @@ const useBankItems = () => {
     queryKey: [key, { page, debouncedFilter }],
     queryFn: async () => {
       const result = await client.GET('/my/bank/items', {
-        params: { query: { page, item_code: debouncedFilter || undefined } },
+        params: { query: { page, item_code: debouncedFilter || undefined, size: 20 } },
       })
       return result.data
     },
+    placeholderData: keepPreviousData,
   })
 
   useEffect(() => {

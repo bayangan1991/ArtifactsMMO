@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import { ApiClientContext } from '../client/context.ts'
 import type { operations } from '../spec'
@@ -28,6 +28,7 @@ const useItems = ({ filters }: Params) => {
       }
       return result.data
     },
+    placeholderData: keepPreviousData,
     staleTime: Number.POSITIVE_INFINITY,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
