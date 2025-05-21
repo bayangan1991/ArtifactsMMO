@@ -6,7 +6,7 @@ import { CharacterEffect } from '../../character-effect/character-effect.tsx'
 import { Item } from '../../item/item.tsx'
 
 const MonsterDetail = ({ code }: { code: string }) => {
-  const monster = useMonster(code)
+  const { data: monster } = useMonster({ code: code })
   const damageTypes = ['air', 'earth', 'fire', 'water'] as const
 
   if (!monster) return null

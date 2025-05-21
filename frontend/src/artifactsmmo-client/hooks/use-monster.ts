@@ -1,23 +1,29 @@
-import { useContext, useEffect, useReducer } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { ApiClientContext } from '../client/context.ts'
-import type { components } from '../spec'
 
-const useMonster = (code: string) => {
-  const { client, getCache } = useContext(ApiClientContext)
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
+const key = 'monster'
 
-  const cache = getCache<components['schemas']['MonsterSchema']>('monsters')
+interface Params {
+  code?: string | null
+}
 
-  useEffect(() => {
-    client.GET('/monsters/{code}', { params: { path: { code } } }).then((result) => {
-      if (result.data) {
-        cache[code] = result.data.data
-        forceUpdate()
-      }
-    })
-  }, [client, code, cache])
+const useMonster = ({ code }: Params) => {
+  const { client } = useContext(ApiClientContext)
 
-  return cache[code]
+  return useQuery({
+    queryKey: [key, code],
+    queryFn: async () => {
+      if (!code) return
+      const result = await client.GET('/monsters/{code}', { params: { path: { code } } })
+      return result.data?.data || null
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: !!code,
+  })
 }
 
 export { useMonster }

@@ -83,7 +83,7 @@ const TaskDetail = () => {
     character,
     actions: { taskAbandon },
   } = useCharacterContext()
-  const monster = useMonster(character?.task || '')
+  const { data: monster } = useMonster({ code: character?.task })
   const { data: item } = useItem({ code: character?.task })
 
   if (!character || !character.task) return
