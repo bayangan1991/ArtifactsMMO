@@ -8,7 +8,7 @@ import { AccountsModal } from './components/modals/accounts-modal.tsx'
 import { ItemModal } from './components/modals/item-modal.tsx'
 import { AccountsProvider, useAccountsContext } from './hooks/use-accounts.ts'
 import { ItemModalProvider, useItemModalContext } from './hooks/use-item-modal.ts'
-import { NoAccountPage } from './pages/no-account-page.tsx'
+import { NoAccountPage } from './pages/no-account-page/no-account-page.tsx'
 
 const queryClient = new QueryClient()
 
