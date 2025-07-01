@@ -18,7 +18,7 @@ const useNpcItems = ({ npc }: Params) => {
     queryKey: [key, { npc, page }],
     queryFn: async () => {
       if (!npc) return
-      const result = await client.GET('/npcs/{code}/items', {
+      const result = await client.GET('/npcs/items/{code}', {
         params: { path: { code: npc }, query: { page, size: 10 } },
       })
       return result.data || null

@@ -4,7 +4,7 @@ import React from 'react'
 import { useMemo } from 'react'
 import { Badge, Button, ButtonGroup, Card, Col, Container, ProgressBar, Row, Stack } from 'react-bootstrap'
 import { useMap } from '../../artifactsmmo-client/hooks/use-map.ts'
-import {Status, useCharacterActions} from '../../hooks/use-character-actions.ts'
+import { Status, useCharacterActions } from '../../hooks/use-character-actions.ts'
 import '@formatjs/intl-durationformat/polyfill'
 import { StatusColour } from '../../constants.ts'
 import type {
@@ -104,19 +104,19 @@ const CharacterCard = () => {
     if (isActionType<BankGoldTransaction>(lastAction, ['withdraw_gold', 'deposit_gold'])) {
       return `Bank gold updated. New amount: ${lastAction.bank.quantity.toLocaleString()}`
     }
-    if (isActionType<BankTransactionData>(lastAction, 'withdraw')) {
-      return (
-        <>
-          <Item code={lastAction.item.code} /> withdrawn
-        </>
-      )
+    if (isActionType<BankTransactionData>(lastAction, 'withdraw_item')) {
+      return lastAction.items.map((item) => (
+        <span key={item.code}>
+          <Item code={item.code} /> x{item.quantity} withdrawn
+        </span>
+      ))
     }
-    if (isActionType<BankTransactionData>(lastAction, 'deposit')) {
-      return (
-        <>
-          <Item code={lastAction.item.code} /> deposited
-        </>
-      )
+    if (isActionType<BankTransactionData>(lastAction, 'deposit_item')) {
+      return lastAction.items.map((item) => (
+        <span key={item.code}>
+          <Item code={item.code} /> x{item.quantity} deposited
+        </span>
+      ))
     }
     if (isActionType<EquipmentData>(lastAction, ['equip', 'unequip'])) {
       return (

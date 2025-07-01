@@ -167,7 +167,7 @@ const useCharacterActionsContext = (name: string | null) => {
   })
 
   const deposit = useQueueableAction({
-    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${quantity} x ${code}`,
+    label: ({ items, requeue }) => `${requeue ? 'Repeat d' : 'D'}eposit ${items.length} items`,
     action: doDeposit.mutateAsync,
     onSuccess,
     onError,
@@ -175,7 +175,7 @@ const useCharacterActionsContext = (name: string | null) => {
   })
 
   const withdraw = useQueueableAction({
-    label: ({ code, quantity, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${quantity} x ${code}`,
+    label: ({ items, requeue }) => `${requeue ? 'Repeat w' : 'W'}ithdraw ${items.length} items`,
     action: doWithdraw.mutateAsync,
     onSuccess,
     onError,
@@ -418,9 +418,11 @@ const useCharacterActionsContext = (name: string | null) => {
         const data = await refetch()
         if (!itemCount || !data.data) return null
         const craftAmount = quantity || Math.floor(data.data.inventory_max_items / itemCount)
-        item.craft.items.map((component) => {
-          withdraw({ code: component.code, quantity: component.quantity * craftAmount, queueIndex: 0 })
-        })
+        const toWithdraw = item.craft.items.map((component) => ({
+          code: component.code,
+          quantity: component.quantity * craftAmount,
+        }))
+        withdraw({ items: toWithdraw, queueIndex: 0 })
         craft({ code: item.code, quantity: craftAmount, queueIndex: item.craft.items.length })
         move({ pos: workshop, queueIndex: item.craft.items.length })
         if (requeue) smartCraft({ item, workshop, quantity, requeue })
@@ -470,9 +472,12 @@ const useCharacterActionsContext = (name: string | null) => {
 
         move({ pos, queueIndex: 0 })
         if (returnToPos) move({ pos: { x: data.data?.x || 0, y: data.data?.y || 0 }, queueIndex: 1 })
-        for (const slot of data.data?.inventory || []) {
-          if (slot.code) deposit({ code: slot.code, quantity: slot.quantity, queueIndex: 1 })
-        }
+        const toDeposit =
+          data.data?.inventory
+            ?.filter((slot) => slot.code && slot.quantity > 0)
+            .map(({ code, quantity }) => ({ code, quantity })) || []
+
+        if (toDeposit.length) deposit({ items: toDeposit, queueIndex: 1 })
         if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
         setStatus(Status.Cooldown)
         return null
@@ -536,8 +541,8 @@ interface CharacterActionsContextType {
     move(args: { pos: Position } & QueueParams): void
     rest(args?: QueueParams): void
     fight(args?: QueueParams): void
-    deposit(args: { code: string; quantity: number } & QueueParams): void
-    withdraw(args: { code: string; quantity: number } & QueueParams): void
+    deposit(args: { items: { code: string; quantity: number }[] } & QueueParams): void
+    withdraw(args: { items: { code: string; quantity: number }[] } & QueueParams): void
     gathering(args?: QueueParams): void
     craft(args: { code: string; quantity: number } & QueueParams): void
     unEquip(args: { slot: components['schemas']['ItemSlot']; quantity: number } & QueueParams): void

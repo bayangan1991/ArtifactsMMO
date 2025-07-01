@@ -44,10 +44,10 @@ const useActions = (name?: string | null) => {
   })
 
   const doWithdraw = useMutation({
-    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
+    mutationFn: async ({ items }: { items: { code: string; quantity: number }[] }) => {
       if (!name) throw new Error('Function not implemented.')
-      const { data, error } = await client.POST('/my/{name}/action/bank/withdraw', {
-        body: { code, quantity },
+      const { data, error } = await client.POST('/my/{name}/action/bank/withdraw/item', {
+        body: items,
         params: {
           path: { name },
         },
@@ -62,10 +62,10 @@ const useActions = (name?: string | null) => {
   })
 
   const doDeposit = useMutation({
-    mutationFn: async ({ code, quantity }: { code: string; quantity: number }) => {
+    mutationFn: async ({ items }: { items: { code: string; quantity: number }[] }) => {
       if (!name) throw new Error('Function not implemented.')
-      const { data, error } = await client.POST('/my/{name}/action/bank/deposit', {
-        body: { code, quantity },
+      const { data, error } = await client.POST('/my/{name}/action/bank/deposit/item', {
+        body: items,
         params: {
           path: { name },
         },

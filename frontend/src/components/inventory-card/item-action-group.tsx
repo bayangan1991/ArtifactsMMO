@@ -5,7 +5,7 @@ import { Button, Dropdown, Form, InputGroup } from 'react-bootstrap'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
 import type { components } from '../../artifactsmmo-client/spec'
 
-import {useCharacterActions} from "../../hooks/use-character-actions.ts";
+import { useCharacterActions } from '../../hooks/use-character-actions.ts'
 
 type SlotItemType =
   | 'weapon'
@@ -39,7 +39,7 @@ const SLOTS: Record<SlotItemType, components['schemas']['ItemSlot'][]> = {
 const isSlotType = (type: string): type is SlotItemType => Object.keys(SLOTS).includes(type)
 
 interface Props {
-  action(args: { code: string; quantity: number; queueIndex?: number; requeue?: boolean }): void
+  action(args: { items: { code: string; quantity: number }[]; queueIndex?: number; requeue?: boolean }): void
   code: string
   quantity: number
   max: number
@@ -106,13 +106,13 @@ export const ItemActionGroup = ({ action, code, quantity, max }: Props) => {
         max={max}
         min={1}
       />
-      <Button variant="primary" onClick={() => action({ code, quantity: selectedQuantity })}>
+      <Button variant="primary" onClick={() => action({ items: [{ code, quantity: selectedQuantity }] })}>
         <Icon icon={faHashtag} />
       </Button>
-      <Button variant="warning" onClick={() => action({ code, quantity: 1 })}>
+      <Button variant="warning" onClick={() => action({ items: [{ code, quantity: 1 }] })}>
         <Icon icon={fa1} />
       </Button>
-      <Button variant="info" onClick={() => action({ code, quantity: selectedQuantity, requeue: true })}>
+      <Button variant="info" onClick={() => action({ items: [{ code, quantity: selectedQuantity }], requeue: true })}>
         <Icon icon={faRepeat} />
       </Button>
       <Button variant="success" onClick={() => recycleItem({ code, quantity: selectedQuantity })}>
