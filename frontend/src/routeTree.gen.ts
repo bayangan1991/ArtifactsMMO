@@ -8,13 +8,10 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createRootRoute } from '@tanstack/react-router'
-
+import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AccountNameIndexRouteImport } from './routes/$accountName.index'
-import { Route as AccountNameCharacterNameIndexRouteImport } from './routes/$accountName.$characterName.index'
-
-const rootRouteImport = createRootRoute()
+import { Route as AccountNameIndexRouteImport } from './routes/$accountName/index'
+import { Route as AccountNameCharacterNameIndexRouteImport } from './routes/$accountName/$characterName/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
