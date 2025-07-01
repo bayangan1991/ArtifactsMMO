@@ -8,83 +8,47 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { createRootRoute } from '@tanstack/react-router'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as AccountNameIndexImport } from './routes/$accountName.index'
-import { Route as AccountNameCharacterNameIndexImport } from './routes/$accountName.$characterName.index'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountNameIndexRouteImport } from './routes/$accountName.index'
+import { Route as AccountNameCharacterNameIndexRouteImport } from './routes/$accountName.$characterName.index'
 
-// Create/Update Routes
+const rootRouteImport = createRootRoute()
 
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AccountNameIndexRoute = AccountNameIndexImport.update({
+const AccountNameIndexRoute = AccountNameIndexRouteImport.update({
   id: '/$accountName/',
   path: '/$accountName/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const AccountNameCharacterNameIndexRoute =
-  AccountNameCharacterNameIndexImport.update({
+  AccountNameCharacterNameIndexRouteImport.update({
     id: '/$accountName/$characterName/',
     path: '/$accountName/$characterName/',
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => rootRouteImport,
   } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/$accountName/': {
-      id: '/$accountName/'
-      path: '/$accountName'
-      fullPath: '/$accountName'
-      preLoaderRoute: typeof AccountNameIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/$accountName/$characterName/': {
-      id: '/$accountName/$characterName/'
-      path: '/$accountName/$characterName'
-      fullPath: '/$accountName/$characterName'
-      preLoaderRoute: typeof AccountNameCharacterNameIndexImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$accountName': typeof AccountNameIndexRoute
   '/$accountName/$characterName': typeof AccountNameCharacterNameIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$accountName': typeof AccountNameIndexRoute
   '/$accountName/$characterName': typeof AccountNameCharacterNameIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$accountName/': typeof AccountNameIndexRoute
   '/$accountName/$characterName/': typeof AccountNameCharacterNameIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/$accountName' | '/$accountName/$characterName'
@@ -93,11 +57,36 @@ export interface FileRouteTypes {
   id: '__root__' | '/' | '/$accountName/' | '/$accountName/$characterName/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountNameIndexRoute: typeof AccountNameIndexRoute
   AccountNameCharacterNameIndexRoute: typeof AccountNameCharacterNameIndexRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$accountName/': {
+      id: '/$accountName/'
+      path: '/$accountName'
+      fullPath: '/$accountName'
+      preLoaderRoute: typeof AccountNameIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$accountName/$characterName/': {
+      id: '/$accountName/$characterName/'
+      path: '/$accountName/$characterName'
+      fullPath: '/$accountName/$characterName'
+      preLoaderRoute: typeof AccountNameCharacterNameIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -105,31 +94,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccountNameIndexRoute: AccountNameIndexRoute,
   AccountNameCharacterNameIndexRoute: AccountNameCharacterNameIndexRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/$accountName/",
-        "/$accountName/$characterName/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/$accountName/": {
-      "filePath": "$accountName.index.tsx"
-    },
-    "/$accountName/$characterName/": {
-      "filePath": "$accountName.$characterName.index.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
