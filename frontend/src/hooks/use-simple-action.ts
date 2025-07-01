@@ -1,6 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { Guid } from 'guid-typescript'
 import type { PathsWithMethod } from 'openapi-typescript-helpers'
 import { useCallback } from 'react'
+import { characterKey } from '../artifactsmmo-client/hooks/use-character.ts'
 import type { paths } from '../artifactsmmo-client/spec'
 import { useApiClient } from '../artifactsmmo-client/use-api-client/use-api-client.ts'
 import type { ActionData, Queue, QueueParams } from '../types.ts'
@@ -22,6 +24,7 @@ export const useSimpleAction = <T extends ActionData>({
   onError,
   queueAction,
 }: UseSimpleActionParams<T>) => {
+  const queryClient = useQueryClient()
   const { client } = useApiClient()
   const doAction = useCallback(async (): Promise<T | null> => {
     if (name) {
@@ -33,6 +36,8 @@ export const useSimpleAction = <T extends ActionData>({
           // @ts-ignore
           onSuccess(data.data as unknown as T)
           // @ts-ignore
+          queryClient.setQueryData([characterKey, name], (data.data as unknown as T).character)
+          // @ts-ignore
           return data.data as unknown as T
         }
         // @ts-ignore
@@ -40,7 +45,7 @@ export const useSimpleAction = <T extends ActionData>({
       } catch {}
     }
     return null
-  }, [client, name, path, onSuccess, onError])
+  }, [client, name, path, onSuccess, onError, queryClient])
 
   const action = useCallback(
     (params?: QueueParams) => {
