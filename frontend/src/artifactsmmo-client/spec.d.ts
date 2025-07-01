@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+  '/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Server Details
+     * @description Return the status of the game server.
+     */
+    get: operations['get_server_details__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/my/bank': {
     parameters: {
       query?: never
@@ -304,7 +324,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/my/{name}/action/bank/deposit': {
+  '/my/{name}/action/bank/deposit/item': {
     parameters: {
       query?: never
       header?: never
@@ -314,17 +334,18 @@ export interface paths {
     get?: never
     put?: never
     /**
-     * Action Deposit Bank
-     * @description Deposit an item in a bank on the character's map.
+     * Action Deposit Bank Item
+     * @description Deposit multiple items in a bank on the character's map.
+     *     The cooldown will be 3 seconds multiplied by the number of different items withdrawn.
      */
-    post: operations['action_deposit_bank_my__name__action_bank_deposit_post']
+    post: operations['action_deposit_bank_item_my__name__action_bank_deposit_item_post']
     delete?: never
     options?: never
     head?: never
     patch?: never
     trace?: never
   }
-  '/my/{name}/action/bank/withdraw': {
+  '/my/{name}/action/bank/withdraw/item': {
     parameters: {
       query?: never
       header?: never
@@ -334,10 +355,11 @@ export interface paths {
     get?: never
     put?: never
     /**
-     * Action Withdraw Bank
-     * @description Take an item from your bank and put it in the character's inventory.
+     * Action Withdraw Bank Item
+     * @description Take items from your bank and put them in the character's inventory.
+     *     The cooldown will be 3 seconds multiplied by the number of different items withdrawn.
      */
-    post: operations['action_withdraw_bank_my__name__action_bank_withdraw_post']
+    post: operations['action_withdraw_bank_item_my__name__action_bank_withdraw_item_post']
     delete?: never
     options?: never
     head?: never
@@ -375,7 +397,7 @@ export interface paths {
     put?: never
     /**
      * Action Buy Bank Expansion
-     * @description Buy a 20 slots bank expansion.
+     * @description Buy a 25 slots bank expansion.
      */
     post: operations['action_buy_bank_expansion_my__name__action_bank_buy_expansion_post']
     delete?: never
@@ -604,6 +626,47 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/my/{name}/action/give/gold': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Action Give Gold
+     * @description Give gold to another character in your account on the same map.
+     */
+    post: operations['action_give_gold_my__name__action_give_gold_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/my/{name}/action/give/item': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Action Give Items
+     * @description Give items to another character in your account on the same map.
+     *     The cooldown will be 3 seconds multiplied by the number of different items given.
+     */
+    post: operations['action_give_items_my__name__action_give_item_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/my/{name}/action/delete': {
     parameters: {
       query?: never
@@ -618,6 +681,26 @@ export interface paths {
      * @description Delete an item from your character's inventory.
      */
     post: operations['action_delete_item_my__name__action_delete_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/my/{name}/action/change_skin': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Action Change Skin
+     * @description Change the skin of your character.
+     */
+    post: operations['action_change_skin_my__name__action_change_skin_post']
     delete?: never
     options?: never
     head?: never
@@ -695,6 +778,46 @@ export interface paths {
     put?: never
     /** Create Account */
     post: operations['create_account_accounts_create_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/accounts/forgot_password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Forgot Password
+     * @description Request a password reset.
+     */
+    post: operations['forgot_password_accounts_forgot_password_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/accounts/reset_password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Reset Password
+     * @description Reset password with a token. Use /forgot_password to get a token by email.
+     */
+    post: operations['reset_password_accounts_reset_password_post']
     delete?: never
     options?: never
     head?: never
@@ -1201,7 +1324,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/npcs': {
+  '/npcs/details': {
     parameters: {
       query?: never
       header?: never
@@ -1212,7 +1335,7 @@ export interface paths {
      * Get All Npcs
      * @description Fetch NPCs details.
      */
-    get: operations['get_all_npcs_npcs_get']
+    get: operations['get_all_npcs_npcs_details_get']
     put?: never
     post?: never
     delete?: never
@@ -1221,7 +1344,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/npcs/{code}': {
+  '/npcs/details/{code}': {
     parameters: {
       query?: never
       header?: never
@@ -1232,7 +1355,7 @@ export interface paths {
      * Get Npc
      * @description Retrieve the details of a NPC.
      */
-    get: operations['get_npc_npcs__code__get']
+    get: operations['get_npc_npcs_details__code__get']
     put?: never
     post?: never
     delete?: never
@@ -1241,7 +1364,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/npcs/{code}/items': {
+  '/npcs/items/{code}': {
     parameters: {
       query?: never
       header?: never
@@ -1250,9 +1373,29 @@ export interface paths {
     }
     /**
      * Get Npc Items
-     * @description Retrieve the items list of a NPC. If the NPC has items to buy or sell, they will be displayed.
+     * @description Retrieve the items list of a NPC. If the NPC has items to buy, sell or trade, they will be displayed.
      */
-    get: operations['get_npc_items_npcs__code__items_get']
+    get: operations['get_npc_items_npcs_items__code__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/npcs/items': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get All Npcs Items
+     * @description Retrieve the list of all NPC items.
+     */
+    get: operations['get_all_npcs_items_npcs_items_get']
     put?: never
     post?: never
     delete?: never
@@ -1401,26 +1544,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get Status
-     * @description Return the status of the game server.
-     */
-    get: operations['get_status__get']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -1480,17 +1603,22 @@ export interface components {
        */
       username: string
       /**
-       * Subscribed
-       * @description Subscribed for the current season.
+       * Member
+       * @description Member status.
        */
-      subscribed: boolean
-      /** @description Member status. */
+      member: boolean
+      /** @description Account status. */
       status: components['schemas']['AccountStatus']
       /**
        * Badges
        * @description Account badges.
        */
       badges?: unknown[]
+      /**
+       * Skins
+       * @description Skins owned.
+       */
+      skins: unknown[]
       /**
        * Achievements Points
        * @description Achievement points.
@@ -1626,8 +1754,8 @@ export interface components {
       | 'sell_npc'
       | 'cancel_ge'
       | 'delete_item'
-      | 'deposit'
-      | 'withdraw'
+      | 'deposit_item'
+      | 'withdraw_item'
       | 'deposit_gold'
       | 'withdraw_gold'
       | 'equip'
@@ -1638,6 +1766,10 @@ export interface components {
       | 'rest'
       | 'use'
       | 'buy_bank_expansion'
+      | 'give_item'
+      | 'give_gold'
+      | 'change_skin'
+      | 'rename'
     /** ActiveEventSchema */
     ActiveEventSchema: {
       /**
@@ -1652,11 +1784,8 @@ export interface components {
       code: string
       /** @description Map of the event. */
       map: components['schemas']['MapSchema']
-      /**
-       * Previous Skin
-       * @description Previous map skin.
-       */
-      previous_skin: string
+      /** @description Previous map skin. */
+      previous_map: components['schemas']['MapSchema']
       /**
        * Duration
        * @description Duration in minutes.
@@ -1690,8 +1819,9 @@ export interface components {
       /**
        * Email
        * Format: email
+       * @description Your email.
        */
-      email?: string
+      email: string
     }
     /** AddCharacterSchema */
     AddCharacterSchema: {
@@ -1700,7 +1830,7 @@ export interface components {
        * @description Your desired character name. It's unique and all players can see it.
        */
       name: string
-      /** @description Your desired skin. */
+      /** @description Your desired skin. Skins unlocked by default: 'men1', 'men2', 'men3', 'women1', 'women2', 'women3'. */
       skin: components['schemas']['CharacterSkin']
     }
     /** AnnouncementSchema */
@@ -1799,8 +1929,11 @@ export interface components {
     BankItemTransactionSchema: {
       /** @description Cooldown details. */
       cooldown: components['schemas']['CooldownSchema']
-      /** @description Item details. */
-      item: components['schemas']['ItemSchema']
+      /**
+       * Items
+       * @description Items details.
+       */
+      items: components['schemas']['SimpleItemSchema'][]
       /**
        * Bank
        * @description Items in your banks.
@@ -1836,34 +1969,6 @@ export interface components {
        */
       gold: number
     }
-    /** BlockedHitsSchema */
-    BlockedHitsSchema: {
-      /**
-       * Fire
-       * @description The amount of fire hits blocked.
-       */
-      fire: number
-      /**
-       * Earth
-       * @description The amount of earth hits blocked.
-       */
-      earth: number
-      /**
-       * Water
-       * @description The amount of water hits blocked.
-       */
-      water: number
-      /**
-       * Air
-       * @description The amount of air hits blocked.
-       */
-      air: number
-      /**
-       * Total
-       * @description The amount of total hits blocked.
-       */
-      total: number
-    }
     /** ChangePassword */
     ChangePassword: {
       /**
@@ -1876,6 +1981,27 @@ export interface components {
        * @description New password.
        */
       new_password: string
+    }
+    /** ChangeSkinCharacterDataSchema */
+    ChangeSkinCharacterDataSchema: {
+      /** @description Cooldown details. */
+      cooldown: components['schemas']['CooldownSchema']
+      /**
+       * Skin
+       * @description Craft details.
+       */
+      skin: string
+      /** @description Player details. */
+      character: components['schemas']['CharacterSchema']
+    }
+    /** ChangeSkinCharacterSchema */
+    ChangeSkinCharacterSchema: {
+      /** @description Your desired skin. Skins unlocked by default: 'men1', 'men2', 'men3', 'women1', 'women2', 'women3'. */
+      skin: components['schemas']['CharacterSkin']
+    }
+    /** ChangeSkinResponseSchema */
+    ChangeSkinResponseSchema: {
+      data: components['schemas']['ChangeSkinCharacterDataSchema']
     }
     /** CharacterFightDataSchema */
     CharacterFightDataSchema: {
@@ -2239,12 +2365,12 @@ export interface components {
       critical_strike: number
       /**
        * Wisdom
-       * @description Wisdom increases the amount of XP gained from fights (1% extra per 10 wisdom).
+       * @description Wisdom increases the amount of XP gained from fights and skills (1% extra per 10 wisdom).
        */
       wisdom: number
       /**
        * Prospecting
-       * @description Prospecting increases the chances of getting better loot (1% extra per 10 PP).
+       * @description Prospecting increases the chances of getting drops from fights and skills (1% extra per 10 PP).
        */
       prospecting: number
       /**
@@ -2458,7 +2584,7 @@ export interface components {
      * CharacterSkin
      * @enum {string}
      */
-    CharacterSkin: 'men1' | 'men2' | 'men3' | 'women1' | 'women2' | 'women3'
+    CharacterSkin: 'men1' | 'men2' | 'men3' | 'women1' | 'women2' | 'women3' | 'corrupted1' | 'zombie1'
     /** CharactersListSchema */
     CharactersListSchema: {
       /**
@@ -2466,6 +2592,26 @@ export interface components {
        * @description List of your characters.
        */
       data: components['schemas']['CharacterSchema'][]
+    }
+    /**
+     * ConditionOperator
+     * @enum {string}
+     */
+    ConditionOperator: 'eq' | 'ne' | 'gt' | 'lt'
+    /** ConditionSchema */
+    ConditionSchema: {
+      /**
+       * Code
+       * @description Condition code.
+       */
+      code: string
+      /** @description Condition operator. */
+      operator: components['schemas']['ConditionOperator']
+      /**
+       * Value
+       * @description Condition value.
+       */
+      value: number
     }
     /** CooldownSchema */
     CooldownSchema: {
@@ -2964,6 +3110,11 @@ export interface components {
        * @description Position Y of the map.
        */
       y: number
+      /**
+       * Skin
+       * @description Map skin of the map
+       */
+      skin: string
     }
     /** EventSchema */
     EventSchema: {
@@ -2984,11 +3135,6 @@ export interface components {
        * @description Map list of the event.
        */
       maps: components['schemas']['EventMapSchema'][]
-      /**
-       * Skin
-       * @description Map skin of the event.
-       */
-      skin: string
       /**
        * Duration
        * @description Duration in minutes.
@@ -3027,10 +3173,6 @@ export interface components {
        * @description Numbers of the turns of the combat.
        */
       turns: number
-      /** @description The amount of blocked hits by the monster. */
-      monster_blocked_hits: components['schemas']['BlockedHitsSchema']
-      /** @description The amount of blocked hits by the player. */
-      player_blocked_hits: components['schemas']['BlockedHitsSchema']
       /**
        * Logs
        * @description The fight logs.
@@ -3254,6 +3396,68 @@ export interface components {
        */
       sold_at: string
     }
+    /** GiveGoldDataSchema */
+    GiveGoldDataSchema: {
+      /** @description Cooldown details. */
+      cooldown: components['schemas']['CooldownSchema']
+      /**
+       * Quantity
+       * @description Quantity of gold given.
+       */
+      quantity: number
+      /** @description Character details of the receiving character. */
+      receiver_character: components['schemas']['CharacterSchema']
+      /** @description Character details. */
+      character: components['schemas']['CharacterSchema']
+    }
+    /** GiveGoldReponseSchema */
+    GiveGoldReponseSchema: {
+      data: components['schemas']['GiveGoldDataSchema']
+    }
+    /** GiveGoldSchema */
+    GiveGoldSchema: {
+      /**
+       * Quantity
+       * @description Gold quantity.
+       */
+      quantity: number
+      /**
+       * Character
+       * @description Character name. The name of the character who will receive the gold.
+       */
+      character: string
+    }
+    /** GiveItemDataSchema */
+    GiveItemDataSchema: {
+      /** @description Cooldown details. */
+      cooldown: components['schemas']['CooldownSchema']
+      /**
+       * Items
+       * @description Items given.
+       */
+      items: components['schemas']['SimpleItemSchema'][]
+      /** @description Character details of the receiving character. */
+      receiver_character: components['schemas']['CharacterSchema']
+      /** @description Character details of the sending character. */
+      character: components['schemas']['CharacterSchema']
+    }
+    /** GiveItemReponseSchema */
+    GiveItemReponseSchema: {
+      data: components['schemas']['GiveItemDataSchema']
+    }
+    /** GiveItemsSchema */
+    GiveItemsSchema: {
+      /**
+       * Items
+       * @description List of items to give
+       */
+      items: components['schemas']['SimpleItemSchema'][]
+      /**
+       * Character
+       * @description Character name. The name of the character who will receive the items.
+       */
+      character: string
+    }
     /** GoldSchema */
     GoldSchema: {
       /**
@@ -3321,6 +3525,11 @@ export interface components {
        * @description Item description.
        */
       description: string
+      /**
+       * Conditions
+       * @description Item conditions. If applicable. Conditions for using or equipping the item.
+       */
+      conditions?: components['schemas']['ConditionSchema'][]
       /**
        * Effects
        * @description List of object effects. For equipment, it will include item stats.
@@ -3433,8 +3642,8 @@ export interface components {
       | 'sell_npc'
       | 'cancel_ge'
       | 'delete_item'
-      | 'deposit'
-      | 'withdraw'
+      | 'deposit_item'
+      | 'withdraw_item'
       | 'deposit_gold'
       | 'withdraw_gold'
       | 'equip'
@@ -3450,6 +3659,12 @@ export interface components {
       | 'use'
       | 'buy_bank_expansion'
       | 'achievement'
+      | 'give_item'
+      | 'give_gold'
+      | 'receive_item'
+      | 'receive_gold'
+      | 'change_skin'
+      | 'rename'
     /** MapContentSchema */
     MapContentSchema: {
       /** @description Type of the content. */
@@ -3601,17 +3816,27 @@ export interface components {
        */
       email: string
       /**
-       * Subscribed
-       * @description Subscribed for the current season.
+       * Member
+       * @description Member status.
        */
-      subscribed: boolean
-      /** @description Member status. */
+      member: boolean
+      /**
+       * Member Expiration
+       * @description Member expiration date.
+       */
+      member_expiration?: string | null
+      /** @description Account status. */
       status: components['schemas']['AccountStatus']
       /**
        * Badges
        * @description Account badges.
        */
       badges?: unknown[]
+      /**
+       * Skins
+       * @description Skins owned.
+       */
+      skins: unknown[]
       /**
        * Gems
        * @description Gems.
@@ -3658,6 +3883,11 @@ export interface components {
        */
       npc: string
       /**
+       * Currency
+       * @description Currency used to buy/sell the item. If it's not gold, it's the item code.
+       */
+      currency: string
+      /**
        * Buy Price
        * @description Price to buy the item.
        */
@@ -3694,9 +3924,9 @@ export interface components {
     }
     /**
      * NPCType
-     * @constant
+     * @enum {string}
      */
-    NPCType: 'merchant'
+    NPCType: 'merchant' | 'trader'
     'NPCType_a-zA-Z0-9_-_____': components['schemas']['NPCType']
     /** NpcItemTransactionSchema */
     NpcItemTransactionSchema: {
@@ -3710,6 +3940,11 @@ export interface components {
        * @description Item quantity.
        */
       quantity: number
+      /**
+       * Currency
+       * @description Currency used for the transaction.
+       */
+      currency: string
       /**
        * Price
        * @description Item price.
@@ -3746,6 +3981,49 @@ export interface components {
       transaction: components['schemas']['NpcItemTransactionSchema']
       /** @description Character details. */
       character: components['schemas']['CharacterSchema']
+    }
+    /** PasswordResetConfirmSchema */
+    PasswordResetConfirmSchema: {
+      /**
+       * Token
+       * @description Password reset token.
+       */
+      token: string
+      /**
+       * New Password
+       * @description Your new password.
+       */
+      new_password: string
+    }
+    /** PasswordResetRequestSchema */
+    PasswordResetRequestSchema: {
+      /**
+       * Email
+       * Format: email
+       * @description Your email address.
+       */
+      email: string
+    }
+    /** PasswordResetResponseSchema */
+    PasswordResetResponseSchema: {
+      /**
+       * Message
+       * @description Success message.
+       */
+      message: string
+    }
+    /** RateLimitSchema */
+    RateLimitSchema: {
+      /**
+       * Type
+       * @description Type of rate limit.
+       */
+      type: string
+      /**
+       * Value
+       * @description Value of the rate limit.
+       */
+      value: string
     }
     /** RecyclingDataSchema */
     RecyclingDataSchema: {
@@ -3849,6 +4127,71 @@ export interface components {
        */
       gold: number
     }
+    /** SeasonBadgeSchema */
+    SeasonBadgeSchema: {
+      /**
+       * Code
+       * @description Badge code.
+       */
+      code: string
+      /**
+       * Description
+       * @description Badge description.
+       */
+      description: string
+      /**
+       * Required Points
+       * @description Required achievement points to earn the badge.
+       */
+      required_points: number
+    }
+    /** SeasonSchema */
+    SeasonSchema: {
+      /**
+       * Name
+       * @description Season name.
+       */
+      name?: string
+      /**
+       * Number
+       * @description Season number.
+       */
+      number?: number
+      /**
+       * Start Date
+       * Format: date-time
+       * @description Season start date.
+       */
+      start_date?: string
+      /**
+       * Badges
+       * @description Season badges with required achievement points.
+       */
+      badges: components['schemas']['SeasonBadgeSchema'][]
+      /**
+       * Skins
+       * @description Season skins with required achievement points.
+       */
+      skins: components['schemas']['SeasonSkinSchema'][]
+    }
+    /** SeasonSkinSchema */
+    SeasonSkinSchema: {
+      /**
+       * Code
+       * @description Skin code.
+       */
+      code: string
+      /**
+       * Description
+       * @description Skin description.
+       */
+      description: string
+      /**
+       * Required Points
+       * @description Required achievement points to earn the skin.
+       */
+      required_points: number
+    }
     /** SimpleEffectSchema */
     SimpleEffectSchema: {
       /**
@@ -3861,6 +4204,11 @@ export interface components {
        * @description Effect value.
        */
       value: number
+      /**
+       * Description
+       * @description Description of the effect.
+       */
+      description: string
     }
     /** SimpleItemSchema */
     SimpleItemSchema: {
@@ -3922,25 +4270,10 @@ export interface components {
     /** StatusSchema */
     StatusSchema: {
       /**
-       * Status
-       * @description Server status
-       */
-      status: string
-      /**
        * Version
        * @description Game version.
        */
       version: string
-      /**
-       * Max Level
-       * @description Maximum level.
-       */
-      max_level: number
-      /**
-       * Characters Online
-       * @description Characters online.
-       */
-      characters_online: number
       /**
        * Server Time
        * Format: date-time
@@ -3948,20 +4281,32 @@ export interface components {
        */
       server_time: string
       /**
+       * Max Level
+       * @description Maximum level.
+       */
+      max_level: number
+      /**
+       * Max Skill Level
+       * @description Maximum skill level.
+       */
+      max_skill_level: number
+      /**
+       * Characters Online
+       * @description Characters online.
+       */
+      characters_online: number
+      /** @description Current season details. */
+      season?: components['schemas']['SeasonSchema']
+      /**
        * Announcements
        * @description Server announcements.
        */
       announcements: components['schemas']['AnnouncementSchema'][]
       /**
-       * Last Wipe
-       * @description Last server wipe.
+       * Rate Limits
+       * @description Rate limits.
        */
-      last_wipe: string
-      /**
-       * Next Wipe
-       * @description Next server wipe.
-       */
-      next_wipe: string
+      rate_limits: components['schemas']['RateLimitSchema'][]
     }
     /** TaskCancelledResponseSchema */
     TaskCancelledResponseSchema: {
@@ -4125,6 +4470,26 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  get_server_details__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StatusResponseSchema']
+        }
+      }
+    }
+  }
   get_bank_details_my_bank_get: {
     parameters: {
       query?: never
@@ -4270,8 +4635,15 @@ export interface operations {
           'application/json': components['schemas']['ResponseSchema']
         }
       }
-      /** @description Use a different password. */
+      /** @description Please use a different password. */
       458: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The current password you entered is invalid. */
+      459: {
         headers: {
           [name: string]: unknown
         }
@@ -4311,14 +4683,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character already at destination. */
+      /** @description The character is already at the destination. */
       490: {
         headers: {
           [name: string]: unknown
@@ -4332,7 +4704,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4362,7 +4734,7 @@ export interface operations {
           'application/json': components['schemas']['CharacterRestResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -4376,7 +4748,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4424,7 +4796,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character can't equip more than 100 utilities in the same slot. */
+      /** @description The character cannot equip more than 100 utilities in the same slot. */
       484: {
         headers: {
           [name: string]: unknown
@@ -4438,28 +4810,28 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Slot is not empty. */
+      /** @description The equipment slot is not empty. */
       491: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character level is insufficient. */
+      /** @description The character does not meet the required condition. */
       496: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -4473,7 +4845,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4521,28 +4893,28 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character has no enough HP to unequip this item. */
+      /** @description The character does not have enough HP to unequip this item. */
       483: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Slot is empty. */
+      /** @description The equipment slot is empty. */
       491: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -4556,7 +4928,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4611,14 +4983,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character level is insufficient. */
+      /** @description The character does not meet the required condition. */
       496: {
         headers: {
           [name: string]: unknown
@@ -4632,7 +5004,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4662,14 +5034,14 @@ export interface operations {
           'application/json': components['schemas']['CharacterFightResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -4683,7 +5055,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4720,21 +5092,21 @@ export interface operations {
           'application/json': components['schemas']['SkillResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Not skill level required. */
+      /** @description The character's skill level is too low. */
       493: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -4748,7 +5120,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4803,21 +5175,21 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Not skill level required. */
+      /** @description The character's skill level is too low. */
       493: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -4831,7 +5203,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4872,21 +5244,21 @@ export interface operations {
           'application/json': components['schemas']['BankGoldTransactionResponseSchema']
         }
       }
-      /** @description A transaction is already in progress with this item/your gold in your bank. */
+      /** @description Some of your items or your gold in the bank are already part of an ongoing transaction. */
       461: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Insufficient gold on your character. */
+      /** @description The character does not have enough gold. */
       492: {
         headers: {
           [name: string]: unknown
@@ -4900,7 +5272,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4916,7 +5288,7 @@ export interface operations {
       }
     }
   }
-  action_deposit_bank_my__name__action_bank_deposit_post: {
+  action_deposit_bank_item_my__name__action_bank_deposit_item_post: {
     parameters: {
       query?: never
       header?: never
@@ -4928,11 +5300,11 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['SimpleItemSchema']
+        'application/json': components['schemas']['SimpleItemSchema'][]
       }
     }
     responses: {
-      /** @description Item successfully deposited in your bank. */
+      /** @description Items successfully deposited in your bank. */
       200: {
         headers: {
           [name: string]: unknown
@@ -4948,7 +5320,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description A transaction is already in progress with this item/your gold in your bank. */
+      /** @description Some of your items or your gold in the bank are already part of an ongoing transaction. */
       461: {
         headers: {
           [name: string]: unknown
@@ -4969,7 +5341,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -4983,7 +5355,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -4999,7 +5371,7 @@ export interface operations {
       }
     }
   }
-  action_withdraw_bank_my__name__action_bank_withdraw_post: {
+  action_withdraw_bank_item_my__name__action_bank_withdraw_item_post: {
     parameters: {
       query?: never
       header?: never
@@ -5011,11 +5383,11 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['SimpleItemSchema']
+        'application/json': components['schemas']['SimpleItemSchema'][]
       }
     }
     responses: {
-      /** @description Item successfully withdraw from your bank. */
+      /** @description Items successfully withdrawn from your bank. */
       200: {
         headers: {
           [name: string]: unknown
@@ -5031,7 +5403,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description A transaction is already in progress with this item/your gold in your bank. */
+      /** @description Some of your items or your gold in the bank are already part of an ongoing transaction. */
       461: {
         headers: {
           [name: string]: unknown
@@ -5045,14 +5417,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5066,7 +5438,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5114,14 +5486,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description A transaction is already in progress with this item/your gold in your bank. */
+      /** @description Some of your items or your gold in the bank are already part of an ongoing transaction. */
       461: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -5135,7 +5507,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5172,14 +5544,14 @@ export interface operations {
           'application/json': components['schemas']['BankExtensionTransactionResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Insufficient gold on your character. */
+      /** @description The character does not have enough gold. */
       492: {
         headers: {
           [name: string]: unknown
@@ -5193,7 +5565,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5241,28 +5613,35 @@ export interface operations {
         }
         content?: never
       }
-      /** @description This item cannot be purchased. */
+      /** @description This item is not available for purchase. */
       441: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description Missing item or insufficient quantity. */
+      478: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Insufficient gold on your character. */
+      /** @description The character does not have enough gold. */
       492: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5276,7 +5655,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5338,14 +5717,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5359,7 +5738,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5421,21 +5800,21 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Not skill level required. */
+      /** @description The character's skill level is too low. */
       493: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5449,7 +5828,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5497,42 +5876,42 @@ export interface operations {
         }
         content?: never
       }
-      /** @description This offer does not contain as many items. */
+      /** @description This offer does not contain that many items. */
       434: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description You can't buy to yourself. */
+      /** @description You cannot trade with yourself. */
       435: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description A transaction is already in progress on this order by a another character. */
+      /** @description A transaction is already in progress for this order by another character. */
       436: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Insufficient gold on your character. */
+      /** @description The character does not have enough gold. */
       492: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5546,7 +5925,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5594,7 +5973,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description You can't create more than 100 orders at the same time. */
+      /** @description You cannot create more than 100 orders at the same time. */
       433: {
         headers: {
           [name: string]: unknown
@@ -5615,14 +5994,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Insufficient gold on your character. */
+      /** @description The character does not have enough gold. */
       492: {
         headers: {
           [name: string]: unknown
@@ -5636,7 +6015,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5684,28 +6063,28 @@ export interface operations {
         }
         content?: never
       }
-      /** @description A transaction is already in progress on this order by a another character. */
+      /** @description A transaction is already in progress for this order by another character. */
       436: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description You can't cancel an order that is not yours. */
+      /** @description You cannot cancel an order that is not yours. */
       438: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5719,7 +6098,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5756,28 +6135,28 @@ export interface operations {
           'application/json': components['schemas']['RewardDataResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character has no task. */
+      /** @description The character has no task assigned. */
       487: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character has not completed the task. */
+      /** @description The character has not completed the task. */
       488: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5791,7 +6170,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5835,14 +6214,14 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character inventory is full. */
+      /** @description The character's inventory is full. */
       497: {
         headers: {
           [name: string]: unknown
@@ -5856,7 +6235,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5893,14 +6272,14 @@ export interface operations {
           'application/json': components['schemas']['TaskResponseSchema']
         }
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character already has a task. */
+      /** @description The character already has an assigned task. */
       489: {
         headers: {
           [name: string]: unknown
@@ -5914,7 +6293,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -5955,14 +6334,14 @@ export interface operations {
           'application/json': components['schemas']['TaskTradeResponseSchema']
         }
       }
-      /** @description Character does not have this task. */
+      /** @description The character does not have this task. */
       474: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Character have already completed the task or are trying to trade too many items. */
+      /** @description Task already completed or too many items submitted. */
       475: {
         headers: {
           [name: string]: unknown
@@ -5976,7 +6355,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -5990,7 +6369,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -6034,7 +6413,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -6048,7 +6427,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
         headers: {
           [name: string]: unknown
@@ -6057,6 +6436,130 @@ export interface operations {
       }
       /** @description Tasks Master not found on this map. */
       598: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  action_give_gold_my__name__action_give_gold_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description Name of your character. */
+        name: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GiveGoldSchema']
+      }
+    }
+    responses: {
+      /** @description Gold given successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['GiveGoldReponseSchema']
+        }
+      }
+      /** @description An action is already in progress for this character. */
+      486: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The character does not have enough gold. */
+      492: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Character not found. */
+      498: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The character is in cooldown. */
+      499: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  action_give_items_my__name__action_give_item_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description Name of your character. */
+        name: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GiveItemsSchema']
+      }
+    }
+    responses: {
+      /** @description Items given successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['GiveItemReponseSchema']
+        }
+      }
+      /** @description Item not found. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Missing item or insufficient quantity. */
+      478: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description An action is already in progress for this character. */
+      486: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The character's inventory is full. */
+      497: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Character not found. */
+      498: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The character is in cooldown. */
+      499: {
         headers: {
           [name: string]: unknown
         }
@@ -6096,7 +6599,7 @@ export interface operations {
         }
         content?: never
       }
-      /** @description An action is already in progress by your character. */
+      /** @description An action is already in progress for this character. */
       486: {
         headers: {
           [name: string]: unknown
@@ -6110,8 +6613,56 @@ export interface operations {
         }
         content?: never
       }
-      /** @description Character in cooldown. */
+      /** @description The character is in cooldown. */
       499: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  action_change_skin_my__name__action_change_skin_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description Name of your character. */
+        name: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeSkinCharacterSchema']
+      }
+    }
+    responses: {
+      /** @description Skin successfully changed. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ChangeSkinResponseSchema']
+        }
+      }
+      /** @description An action is already in progress for this character. */
+      486: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The character is in cooldown. */
+      499: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description You cannot choose this skin because you do not own it. */
+      550: {
         headers: {
           [name: string]: unknown
         }
@@ -6235,15 +6786,84 @@ export interface operations {
           'application/json': components['schemas']['ResponseSchema']
         }
       }
-      /** @description Username already used. */
+      /** @description This username is already taken. */
       456: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Email already used. */
+      /** @description This email is already in use. */
       457: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  forgot_password_accounts_forgot_password_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PasswordResetRequestSchema']
+      }
+    }
+    responses: {
+      /** @description If this email address is associated with an account, a reset link has been sent. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PasswordResetResponseSchema']
+        }
+      }
+    }
+  }
+  reset_password_accounts_reset_password_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PasswordResetConfirmSchema']
+      }
+    }
+    responses: {
+      /** @description Password has been successfully reset. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PasswordResetResponseSchema']
+        }
+      }
+      /** @description The password reset token is invalid. */
+      560: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The password reset token has expired. */
+      561: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description This password reset token has already been used. */
+      562: {
         headers: {
           [name: string]: unknown
         }
@@ -6477,15 +7097,22 @@ export interface operations {
           'application/json': components['schemas']['CharacterResponseSchema']
         }
       }
-      /** @description Name already used. */
+      /** @description This name is already in use. */
       494: {
         headers: {
           [name: string]: unknown
         }
         content?: never
       }
-      /** @description Maximum characters reached on your account. */
+      /** @description You have reached the maximum number of characters on your account. */
       495: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description You cannot choose this skin because you do not own it. */
+      550: {
         headers: {
           [name: string]: unknown
         }
@@ -6762,12 +7389,12 @@ export interface operations {
   get_all_items_items_get: {
     parameters: {
       query?: {
+        /** @description Name of the item. */
+        name?: string
         /** @description Minimum level items. */
         min_level?: number
         /** @description Maximum level items. */
         max_level?: number
-        /** @description Name of the item. */
-        name?: string
         /** @description Type of items. */
         type?: components['schemas']['ItemType_a-zA-Z0-9_-_____']
         /** @description Skill to craft items. */
@@ -6948,6 +7575,8 @@ export interface operations {
   get_all_monsters_monsters_get: {
     parameters: {
       query?: {
+        /** @description Name of the monster. */
+        name?: string
         /** @description Monster minimum level. */
         min_level?: number
         /** @description Monster maximum level. */
@@ -7006,9 +7635,11 @@ export interface operations {
       }
     }
   }
-  get_all_npcs_npcs_get: {
+  get_all_npcs_npcs_details_get: {
     parameters: {
       query?: {
+        /** @description Name of the npc. */
+        name?: string
         /** @description The type of the NPC. */
         type?: components['schemas']['NPCType_a-zA-Z0-9_-_____']
         /** @description Page number */
@@ -7033,7 +7664,7 @@ export interface operations {
       }
     }
   }
-  get_npc_npcs__code__get: {
+  get_npc_npcs_details__code__get: {
     parameters: {
       query?: never
       header?: never
@@ -7063,7 +7694,7 @@ export interface operations {
       }
     }
   }
-  get_npc_items_npcs__code__items_get: {
+  get_npc_items_npcs_items__code__get: {
     parameters: {
       query?: {
         /** @description Page number */
@@ -7080,7 +7711,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Successfully fetched NPC. */
+      /** @description Successfully fetched NPC Items. */
       200: {
         headers: {
           [name: string]: unknown
@@ -7095,6 +7726,37 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+    }
+  }
+  get_all_npcs_items_npcs_items_get: {
+    parameters: {
+      query?: {
+        /** @description The code of the item. */
+        code?: string
+        /** @description The code of the npc. */
+        npc?: string
+        /** @description The code of the currency. */
+        currency?: string
+        /** @description Page number */
+        page?: number
+        /** @description Page size */
+        size?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successfully fetched NPC Items. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['DataPage_NPCItem_']
+        }
       }
     }
   }
@@ -7300,32 +7962,12 @@ export interface operations {
           'application/json': components['schemas']['TokenResponseSchema']
         }
       }
-      /** @description Token generation failed. */
+      /** @description Failed to generate token. */
       455: {
         headers: {
           [name: string]: unknown
         }
         content?: never
-      }
-    }
-  }
-  get_status__get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['StatusResponseSchema']
-        }
       }
     }
   }
