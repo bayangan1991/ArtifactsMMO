@@ -1,6 +1,5 @@
-import { Link } from '@tanstack/react-router'
 import React from 'react'
-import { Placeholder } from 'react-bootstrap'
+import { Button, Placeholder } from 'react-bootstrap'
 import { useItem } from '../../artifactsmmo-client/hooks/use-item.ts'
 import { useItemModal } from '../../hooks/use-item-modal.ts'
 
@@ -23,8 +22,9 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false }: Props) =>
 
   return (
     <>
-      <Link
-        to="#"
+      <Button
+        as={'a'}
+        href="#"
         className="text-decoration-none text-light"
         onClick={(e) => {
           e.preventDefault()
@@ -34,7 +34,7 @@ const Item = ({ code, imgProps = { height: 25 }, useHistory = false }: Props) =>
       >
         <img {...imgProps} src={`https://artifactsmmo.com/images/items/${code}.png`} alt={code} />
         <span className="ms-2">{item.name}</span>
-      </Link>
+      </Button>
     </>
   )
 }

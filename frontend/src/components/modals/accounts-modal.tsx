@@ -44,7 +44,7 @@ const AccountsModal = ({ show, handleClose }: Props) => {
   const handleSave = () => {
     save(currentAccounts)
     handleClose()
-    if (selectedAccount) navigate({ to: '/$accountName/', params: { accountName: selectedAccount } })
+    if (selectedAccount) navigate({ to: '/$accountName', params: { accountName: selectedAccount } })
   }
 
   return (

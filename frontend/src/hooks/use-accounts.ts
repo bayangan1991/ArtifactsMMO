@@ -22,7 +22,7 @@ const useAccountsContext = () => {
     [load]
   )
 
-  const findAccount = (name: string) => {
+  const findAccount = (name?: string | null) => {
     return accounts.find((account) => account.name === name) || null
   }
 

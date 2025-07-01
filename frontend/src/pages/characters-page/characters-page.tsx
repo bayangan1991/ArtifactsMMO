@@ -18,7 +18,7 @@ const CharactersPage = ({ accountName }: Props) => {
               <Col lg={4} key={character.name} className="p-2 d-flex justify-content-center align-items-center">
                 <Card style={{ maxWidth: 200, width: '100%', margin: 'auto' }}>
                   <Card.Body>
-                    <Link to="/$accountName/$characterName/" params={{ accountName, characterName: character.name }}>
+                    <Link to="/$accountName/$characterName" params={{ accountName, characterName: character.name }}>
                       <Card.Img
                         src={`https://artifactsmmo.com/images/characters/${character.skin}.png`}
                         height={100}
