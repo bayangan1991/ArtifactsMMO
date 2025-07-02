@@ -470,7 +470,7 @@ const useCharacterActionsContext = (name: string | null) => {
           }
         }
 
-        if (returnToPos) move({ pos: { x: data.data?.x || 0, y: data.data?.y || 0 }, queueIndex: 1 })
+        if (returnToPos) move({ pos: { x: data.data?.x || 0, y: data.data?.y || 0 }, queueIndex: 0 })
         const toDeposit =
           data.data?.inventory
             ?.filter((slot) => slot.code && slot.quantity > 0)
