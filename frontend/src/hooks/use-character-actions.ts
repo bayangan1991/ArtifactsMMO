@@ -422,9 +422,9 @@ const useCharacterActionsContext = (name: string | null) => {
           code: component.code,
           quantity: component.quantity * craftAmount,
         }))
+        craft({ code: item.code, quantity: craftAmount, queueIndex: 0 })
+        move({ pos: workshop, queueIndex: 0 })
         withdraw({ items: toWithdraw, queueIndex: 0 })
-        craft({ code: item.code, quantity: craftAmount, queueIndex: item.craft.items.length })
-        move({ pos: workshop, queueIndex: item.craft.items.length })
         if (requeue) smartCraft({ item, workshop, quantity, requeue })
         setStatus(Status.Cooldown)
         return null
@@ -470,14 +470,14 @@ const useCharacterActionsContext = (name: string | null) => {
           }
         }
 
-        move({ pos, queueIndex: 0 })
         if (returnToPos) move({ pos: { x: data.data?.x || 0, y: data.data?.y || 0 }, queueIndex: 1 })
         const toDeposit =
           data.data?.inventory
             ?.filter((slot) => slot.code && slot.quantity > 0)
             .map(({ code, quantity }) => ({ code, quantity })) || []
 
-        if (toDeposit.length) deposit({ items: toDeposit, queueIndex: 1 })
+        if (toDeposit.length) deposit({ items: toDeposit, queueIndex: 0 })
+        move({ pos, queueIndex: 0 })
         if (requeue) depositAll({ pos, returnToPos, ifFull, requeue, queueIndex })
         setStatus(Status.Cooldown)
         return null
